@@ -2238,6 +2238,21 @@
       setTimeout(() => {
         toast.style.display = 'none';
       }, 3000);
+      
+      async function carregarTurmas() {
+  const { data, error } = await supabaseClient
+    .from('turmas')                // Nome da tabela
+    .select('*')                    // Traz todas as colunas
+    .order('ano_formatura', { ascending: false }); // Ordena do mais recente ao mais antigo
+
+  if (error) {
+    console.error('Erro ao buscar dados:', error.message);
+    return;
+  }
+
+  console.log('Turmas vindas do banco:', data);
+  // Aqui você chama a função para exibir os dados na tela
+}
     }
   </script>
 </body>
