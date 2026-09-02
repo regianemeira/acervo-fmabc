@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acervo de Turmas & Painel Admin - FMABC</title>
+  <style>
+    :root {
+      /* Cores Oficiais do Manual de Identidade Visual FMABC */
+      --fmabc-blue: #4B5172;         
+      --fmabc-green-dark: #377166;    
+      --fmabc-green-mid: #358661;     
+      --fmabc-green-main: #339C5B;    
+      --fmabc-green-deep: #38853A;    
+
+      /* Variáveis do Manual e Snippet */
+      --azul-institucional: #4B5172;
+      --verde-escuro: #377166;
+      --verde-intermediario: #358661;
+      --verde-principal: #339C5B;
+      --verde-classico: #38853A;
+      --verde-pastel-medio: #C6E2B4;
+      --verde-pastel-suave: #E3EFD3;
+      --amarelo-destaque: #FFF2CC;
+      --fonte-padrao: Arial, Helvetica, sans-serif;
+
+      /* Cores Secundárias e Suporte */
+      --fmabc-pastel-green-1: #C6E2B4; 
+      --fmabc-pastel-green-2: #E3EFD3; 
+      --fmabc-pastel-yellow: #FFF2CC;  
+
+      /* Tipografia Oficial (Arial) */
+      --font-main: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+      --navy-dark: #232738;
+      --slate-muted: #555E70;
+      --slate-light: #F2F5F3;
+      --bg-main: #F7F9F8;
+      --card-bg: #FFFFFF;
+      --border-color: #D8DFDB;
+      
+      /* Sombras */
+      --shadow-sm: 0 2px 4px rgba(75, 81, 114, 0.06);
+      --shadow-md: 0 10px 20px -3px rgba(75, 81, 114, 0.1), 0 4px 6px -2px rgba(75, 81, 114, 0.05);
+      --shadow-lg: 0 20px 30px -10px rgba(75, 81, 114, 0.18);
+      --shadow-glow: 0 0 22px rgba(51, 156, 91, 0.25);
+      
+      --transition-fast: all 0.2s ease;
+      --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--navy-dark);
+      line-height: 1.6;
+      padding-bottom: 60px;
+      overflow-x: hidden;
+    }
+
+    .top-nav {
+      background-color: var(--azul-institucional);
+      padding: 0.8rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--verde-pastel-medio);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-img {
+      height: 45px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+      transition: transform 0.3s ease, filter 0.3s ease;
+      background-color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .logo-img:hover {
+      transform: scale(1.06) translateY(-2px);
+      filter: brightness(1.1);
+      cursor: pointer;
+    }
+
+    .btn-admin-access {
+      background-color: var(--verde-principal);
+      color: #ffffff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-admin-access:hover {
+      background-color: var(--verde-escuro);
+      box-shadow: 0 4px 12px rgba(55, 113, 102, 0.3);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .hero-banner {
+      background: linear-gradient(135deg, var(--azul-institucional) 0%, var(--verde-escuro) 100%);
+      border-radius: 20px;
+      padding: 44px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(51, 156, 91, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: var(--verde-pastel-suave);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--verde-pastel-suave);
+      max-width: 720px;
+      font-weight: normal;
+      margin-bottom: 28px;
+    }
+
+    .search-filter-wrapper {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 280px;
+      max-width: 480px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      font-size: 0.95rem;
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.12);
+      color: white;
+      transition: var(--transition-smooth);
+    }
+
+    .search-box input::placeholder {
+      color: #D3D8E2;
+    }
+
+    .search-box input:focus {
+      background-color: rgba(255, 255, 255, 0.22);
+      border-color: var(--verde-pastel-medio);
+      box-shadow: 0 0 0 4px rgba(198, 226, 180, 0.25);
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #D3D8E2;
+      pointer-events: none;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-pill {
+      background-color: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 9px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: bold;
+      transition: var(--transition-smooth);
+    }
+
+    .filter-pill:hover, .filter-pill.active {
+      background-color: var(--verde-principal);
+      color: white;
+      border-color: var(--verde-principal);
+      box-shadow: 0 4px 12px rgba(51, 156, 91, 0.35);
+    }
+
+    .decadas-bar {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-bottom: 2px solid var(--verde-pastel-medio);
+      border-radius: 14px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .decadas-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .decadas-label {
+      font-weight: bold;
+      font-size: 0.85rem;
+      color: var(--azul-institucional);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .decadas-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-decada {
+      background-color: var(--verde-pastel-suave);
+      border: 1px solid var(--verde-pastel-medio);
+      color: var(--verde-escuro);
+      padding: 0.45rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-decada:hover {
+      background-color: var(--verde-pastel-medio);
+      color: var(--azul-institucional);
+    }
+
+    .btn-decada.active {
+      background-color: var(--verde-principal);
+      color: #ffffff;
+      border-color: var(--verde-principal);
+      box-shadow: 0 2px 6px rgba(51, 156, 91, 0.3);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 28px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(75, 81, 114, 0.15), var(--shadow-glow);
+      border-color: var(--verde-principal);
+    }
+
+    .card-img-area {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      color: white;
+    }
+
+    .card-img-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s ease;
+      z-index: 1;
+    }
+
+    .card-img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(35, 39, 56, 0.3) 0%, rgba(35, 39, 56, 0.88) 100%);
+      z-index: 2;
+    }
+
+    .card:hover .card-img-bg {
+      transform: scale(1.08);
+    }
+
+    .card-img-header {
+      position: relative;
+      z-index: 3;
+    }
+
+    .card-badge {
+      background-color: var(--verde-principal);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: inline-block;
+    }
+
+    .card-title-row {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-title-row h2 {
+      font-size: 1.35rem;
+      font-weight: bold;
+      color: white;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .card-title-row .ano {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--amarelo-destaque);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: var(--slate-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      flex-grow: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 14px;
+    }
+
+    .formandos-count {
+      font-size: 0.85rem;
+      color: var(--navy-dark);
+      font-weight: bold;
+    }
+
+    .btn-acervo {
+      color: var(--verde-principal);
+      font-size: 0.9rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .paginacao-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2.5rem;
+      padding: 1rem 0;
+    }
+
+    .paginacao-controles {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-paginacao {
+      background-color: var(--azul-institucional);
+      color: #ffffff;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .btn-paginacao:hover:not(:disabled) {
+      background-color: var(--verde-principal);
+      transform: translateY(-1px);
+    }
+
+    .btn-paginacao:disabled {
+      background-color: #cbd5e1;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .paginacao-info {
+      font-size: 0.9rem;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .secao-depoimento-aluno {
+      margin-top: 4rem;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(75, 81, 114, 0.08);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .secao-depoimento-aluno::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 5px;
+      background: linear-gradient(90deg, var(--azul-institucional), var(--verde-principal));
+    }
+
+    .depoimento-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .depoimento-header h2 {
+      color: var(--azul-institucional);
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .depoimento-header p {
+      color: #64748b;
+      font-size: 0.95rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-depoimento-aluno {
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    .grid-form-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+
+    @media (max-width: 640px) {
+      .grid-form-2 { grid-template-columns: 1fr; }
+    }
+
+    .campo-depoimento-wrapper {
+      position: relative;
+      margin-bottom: 1.2rem;
+    }
+
+    .campo-depoimento-wrapper label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--azul-institucional);
+      margin-bottom: 6px;
+    }
+
+    .input-depoimento {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-depoimento:focus {
+      border-color: var(--verde-principal);
+      box-shadow: 0 0 0 3px rgba(51, 156, 91, 0.15);
+    }
+
+    textarea.input-depoimento {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .contador-caracteres {
+      display: block;
+      text-align: right;
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .btn-enviar-depoimento {
+      background-color: var(--verde-principal);
+      color: #ffffff;
+      border: none;
+      padding: 0.8rem 1.8rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-enviar-depoimento:hover {
+      background-color: var(--verde-escuro);
+      box-shadow: 0 4px 12px rgba(55, 113, 102, 0.3);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(35, 39, 56, 0.82);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background-color: #FFFFFF;
+      width: 100%;
+      max-width: 880px;
+      max-height: 88vh;
+      border-radius: 20px;
+      position: relative;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      transform: scale(0.95) translateY(15px);
+      transition: var(--transition-smooth);
+      border: 1px solid var(--border-color);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: white;
+      border: 1px solid var(--border-color);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      color: var(--navy-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-fast);
+      z-index: 10;
+    }
+
+    .modal-close:hover {
+      background-color: #FEE2E2;
+      color: #DC2626;
+      border-color: #FCA5A5;
+      transform: rotate(90deg);
+    }
+
+    .modal-header-hero {
+      background: linear-gradient(135deg, var(--azul-institucional) 0%, var(--verde-escuro) 100%);
+      padding: 36px 36px 24px 36px;
+      color: white;
+    }
+
+    .modal-header-hero h2 {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .modal-card-desc-box {
+      background: rgba(255, 255, 255, 0.12);
+      border-left: 4px solid var(--verde-pastel-medio);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--verde-pastel-suave);
+      line-height: 1.5;
+    }
+
+    .modal-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-card .label {
+      font-size: 0.7rem;
+      color: #D3D8E2;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .stat-card .value {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: white;
+      margin-top: 2px;
+    }
+
+    .modal-body {
+      padding: 32px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .modal-section-title {
+      font-size: 1.15rem;
+      color: var(--azul-institucional);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-grid img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .depoimentos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .depoimento-card {
+      background-color: var(--verde-pastel-suave);
+      border: 1px solid var(--verde-pastel-medio);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .depoimento-texto {
+      font-size: 0.9rem;
+      color: var(--navy-dark);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .depoimento-autor {
+      font-weight: bold;
+      color: var(--verde-escuro);
+      font-size: 0.85rem;
+    }
+
+    .lista-formandos-container {
+      background-color: var(--slate-light);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .lista-formandos {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+
+    .lista-formandos li {
+      background-color: #FFFFFF;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--navy-dark);
+      border-left: 3px solid var(--verde-principal);
+    }
+
+    .admin-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(35, 39, 56, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition-smooth);
+      padding: 20px;
+    }
+
+    .admin-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .login-box {
+      background: white;
+      width: 100%;
+      max-width: 420px;
+      padding: 36px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      border-top: 6px solid var(--verde-principal);
+      position: relative;
+    }
+
+    .login-box h2 {
+      color: var(--azul-institucional);
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .login-box p {
+      color: var(--slate-muted);
+      font-size: 0.88rem;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .admin-panel-container {
+      background-color: #F8FAFC;
+      width: 100%;
+      max-width: 1100px;
+      height: 90vh;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .admin-header {
+      background: var(--azul-institucional);
+      color: white;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-header h3 {
+      font-size: 1.15rem;
+      font-weight: bold;
+    }
+
+    .btn-close-admin {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-close-admin:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .admin-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .admin-sidebar {
+      width: 240px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-nav-item {
+      padding: 14px 24px;
+      border: none;
+      background: transparent;
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--slate-muted);
+      cursor: pointer;
+      border-left: 4px solid transparent;
+      transition: var(--transition-fast);
+    }
+
+    .admin-nav-item:hover {
+      background-color: var(--verde-pastel-suave);
+      color: var(--verde-escuro);
+    }
+
+    .admin-nav-item.active {
+      border-left-color: var(--verde-principal);
+      background-color: var(--verde-pastel-suave);
+      color: var(--verde-escuro);
+    }
+
+    .admin-content {
+      flex: 1;
+      padding: 28px 36px;
+      overflow-y: auto;
+      background: white;
+    }
+
+    .admin-tab-pane {
+      display: none;
+    }
+
+    .admin-tab-pane.active {
+      display: block;
+    }
+
+    .admin-section-title {
+      font-size: 1.3rem;
+      color: var(--azul-institucional);
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--verde-pastel-suave);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--azul-institucional);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      outline: none;
+      transition: var(--transition-fast);
+    }
+
+    .form-control:focus {
+      border-color: var(--verde-principal);
+      box-shadow: 0 0 0 3px rgba(51, 156, 91, 0.2);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn-save {
+      background-color: var(--verde-principal);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .btn-save:hover {
+      background-color: var(--verde-escuro);
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--verde-escuro);
+      color: white;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      z-index: 3000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .top-nav { padding: 12px 20px; }
+      .admin-body { flex-direction: column; }
+      .admin-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </style>
+
+</head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acervo de Turmas - FMABC</title>
+
+  <!-- Importação da SDK do Supabase via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    /* Seus estilos CSS permanecem aqui */
+  </style>
+<body>
+
+  <nav class="top-nav">
+    <a href="#" class="brand-logo">
+      <img src="https://www.fmabc.br/img/logo-fmabc.81be2f48.png" alt="Logotipo FMABC Centro Universitário" class="logo-img">
+    </a>
+    <button class="btn-admin-access" id="btnOpenAdmin">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8Z"/></svg>
+      Área Administrativa
+    </button>
+  </nav>
+
+  <div class="container">
+    
+    <section class="hero-banner">
+      <div class="hero-badge" id="publicHeroBadge">
+        Acervo Acadêmico FMABC
+      </div>
+      <h1 class="hero-title" id="publicHeroTitle">Galeria de Turmas Formadas</h1>
+      <p class="hero-subtitle" id="publicHeroSubtitle">
+        Explore a história, memórias e conquistas das turmas de graduação que fizeram e fazem história no Centro Universitário FMABC.
+      </p>
+      
+      <div class="search-filter-wrapper">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Buscar por ano, número da turma ou palavras-chave...">
+          <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </div>
+        
+        <!-- Filtros Dinâmicos por Curso -->
+        <div class="filter-pills" id="courseFilterContainer"></div>
+      </div>
+    </section>
+
+    <section class="decadas-bar">
+      <div class="decadas-container">
+        <span class="decadas-label">Filtrar por Década:</span>
+        <div class="decadas-pills" id="containerDecadas">
+          <button class="btn-decada active" onclick="filtrarPorDecada('Todas', event)">Todas</button>
+          <button class="btn-decada" onclick="filtrarPorDecada('2020', event)">Década de 2020</button>
+          <button class="btn-decada" onclick="filtrarPorDecada('2010', event)">2010</button>
+          <button class="btn-decada" onclick="filtrarPorDecada('2000', event)">2000</button>
+          <button class="btn-decada" onclick="filtrarPorDecada('1990', event)">Anos 90</button>
+          <button class="btn-decada" onclick="filtrarPorDecada('1980', event)">Anos 80</button>
+          <button class="btn-decada" onclick="filtrarPorDecada('1970', event)">Primeiras Turmas (Anos 70)</button>
+        </div>
+      </div>
+    </section>
+
+    <main class="cards-grid" id="cardsGridContainer"></main>
+
+    <!-- Controles de Paginação -->
+    <div class="paginacao-wrapper" id="paginacaoWrapper">
+      <div class="paginacao-controles">
+        <button class="btn-paginacao" id="btnPagAnterior" onclick="mudarPagina(-1)">← Anterior</button>
+        <span class="paginacao-info" id="paginacaoTexto">Página 1 de 1</span>
+        <button class="btn-paginacao" id="btnPagProxima" onclick="mudarPagina(1)">Próxima →</button>
+      </div>
+    </div>
+
+    <section class="secao-depoimento-aluno">
+      <div class="depoimento-header">
+        <h2>🎓 É Ex-Aluno(a) da FMABC? Deixe seu Depoimento!</h2>
+        <p>Compartilhe suas memórias, aprendizados e conquistas. Seu depoimento enriquecerá o acervo histórico da sua turma no portal.</p>
+      </div>
+
+      <form class="form-depoimento-aluno" onsubmit="enviarDepoimentoExAluno(event)">
+        <div class="grid-form-2">
+          <div class="campo-depoimento-wrapper">
+            <label for="depoimentoNome">Seu Nome Completo (ou Nome Social)</label>
+            <input type="text" id="depoimentoNome" class="input-depoimento" placeholder="Ex: Dr. Fernando Medeiros" required>
+          </div>
+          <div class="campo-depoimento-wrapper">
+            <label for="depoimentoTurmaSelect">Sua Turma / Curso</label>
+            <select id="depoimentoTurmaSelect" class="input-depoimento" required>
+              <option value="">Selecione sua turma...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="campo-depoimento-wrapper">
+          <label for="depoimentoTexto">Seu Depoimento ou Mensagem Especial</label>
+          <textarea id="depoimentoTexto" class="input-depoimento" maxlength="300" placeholder="Escreva aqui uma mensagem sobre seu período na FMABC..." required oninput="atualizarContadorCaracteres()"></textarea>
+          <span class="contador-caracteres" id="contadorCaracteres">0 / 300 caracteres</span>
+        </div>
+
+        <div style="text-align: center;">
+          <button type="submit" class="btn-enviar-depoimento">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            Enviar Depoimento para o Acervo
+          </button>
+        </div>
+      </form>
+    </section>
+
+  </div>
+
+  <div class="modal-overlay" id="modalAcervo">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal" aria-label="Fechar">&times;</button>
+      
+      <div class="modal-header-hero">
+        <span class="card-badge" id="modalCursoBadge">Medicina FMABC</span>
+        <h2 id="modalTurmaTitle">Turma L (50)</h2>
+        
+        <div class="modal-card-desc-box" id="modalCardDesc"></div>
+
+        <div class="modal-stats-grid">
+          <div class="stat-card">
+            <div class="label">Ano de Formatura</div>
+            <div class="value" id="modalAnoFormatura">2018</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total Formandos</div>
+            <div class="value" id="modalQtdFormandos">120</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Paraninfo</div>
+            <div class="value" id="modalParaninfo">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <section>
+          <h3 class="modal-section-title">📖 Trajetória Acadêmica & Memórias</h3>
+          <p id="modalHistoriaText" style="color: var(--slate-muted); line-height: 1.6;"></p>
+        </section>
+
+        <section>
+          <h3 class="modal-section-title">📸 Galeria de Fotos</h3>
+          <div class="gallery-grid" id="modalGaleria"></div>
+        </section>
+
+        <section>
+          <h3 class="modal-section-title">💬 Depoimentos</h3>
+          <div class="depoimentos-grid" id="modalDepoimentos"></div>
+        </section>
+
+        <section>
+          <h3 class="modal-section-title">🎓 Corpo de Formandos</h3>
+          <div class="lista-formandos-container">
+            <ul class="lista-formandos" id="modalListaFormandos"></ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-overlay" id="adminModalOverlay">
+    
+    <!-- LOGIN -->
+    <div class="login-box" id="adminLoginBox">
+      <button class="modal-close" onclick="fecharAdminModal()" style="top: 14px; right: 14px;">&times;</button>
+      <h2>Painel Administrativo</h2>
+      <p>Acesso restrito para gestão de conteúdo da FMABC</p>
+      
+      <form onsubmit="autenticarAdmin(event)">
+        <div class="form-group">
+          <label>Usuário de Acesso</label>
+          <input type="text" id="adminUser" class="form-control" value="admin" required>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="adminPass" class="form-control" value="1234" required>
+        </div>
+        <button type="submit" class="btn-save" style="width: 100%;">Entrar no Painel</button>
+      </form>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="admin-panel-container" id="adminDashboardBox" style="display: none;">
+      <div class="admin-header">
+        <h3>FMABC | Painel de Gestão de Conteúdo</h3>
+        <div>
+          <button class="btn-close-admin" onclick="fazerLogoutAdmin()" style="margin-right: 8px;">Sair</button>
+          <button class="btn-close-admin" onclick="fecharAdminModal()">Fechar ✕</button>
+        </div>
+      </div>
+
+      <div class="admin-body">
+        <nav class="admin-sidebar">
+          <button class="admin-nav-item active" onclick="switchAdminTab(event, 'tabHome')">Página Inicial</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabCursos')">Inclusão de Cursos</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Inclusão de Turmas</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Turmas</button>
+        </nav>
+
+        <main class="admin-content">
+          
+          <!-- ABA 1: EDITAR PÁGINA INICIAL -->
+          <section id="tabHome" class="admin-tab-pane active">
+            <h3 class="admin-section-title">Editar Informações da Página Inicial</h3>
+            <form onsubmit="salvarHomeContent(event)">
+              <div class="form-group">
+                <label>Texto do Selo Superior (Badge)</label>
+                <input type="text" id="inputHomeBadge" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>Título Principal (Hero Banner)</label>
+                <input type="text" id="inputHomeTitle" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>Subtítulo / Descrição Inicial</label>
+                <textarea id="inputHomeSubtitle" class="form-control" required></textarea>
+              </div>
+              <button type="submit" class="btn-save">Atualizar Página Inicial</button>
+            </form>
+          </section>
+
+          <!-- ABA 2: INCLUSÃO DE CURSOS -->
+          <section id="tabCursos" class="admin-tab-pane">
+            <h3 class="admin-section-title">Inclusão de Novos Cursos</h3>
+            <form onsubmit="cadastrarNovoCurso(event)">
+              <div class="form-group">
+                <label>Nome do Curso</label>
+                <input type="text" id="inputNovoCursoNome" class="form-control" placeholder="Ex: Enfermagem, Fisioterapia, Nutrição" required>
+              </div>
+              <div class="form-group">
+                <label>Descrição do Curso</label>
+                <textarea id="inputNovoCursoDesc" class="form-control" placeholder="Breve resumo da história do curso..."></textarea>
+              </div>
+              <button type="submit" class="btn-save">Cadastrar Novo Curso</button>
+            </form>
+          </section>
+
+          <!-- ABA 3: INCLUSÃO DE TURMAS -->
+          <section id="tabTurmas" class="admin-tab-pane">
+            <h3 class="admin-section-title">Inclusão de Novas Turmas</h3>
+            <form onsubmit="cadastrarNovaTurma(event)">
+              <div class="grid-2">
+                <div class="form-group">
+                  <label>Curso Relacionado</label>
+                  <select id="selectTurmaCurso" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                  <label>Nome / Identificação da Turma</label>
+                  <input type="text" id="inputTurmaNome" class="form-control" placeholder="Ex: Turma LI (51)" required>
+                </div>
+              </div>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label>Ano de Formatura</label>
+                  <input type="number" id="inputTurmaAno" class="form-control" placeholder="2020" required>
+                </div>
+                <div class="form-group">
+                  <label>Quantidade de Formandos</label>
+                  <input type="number" id="inputTurmaQtd" class="form-control" placeholder="120" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Capa da Turma (Upload de Imagem)</label>
+                <input type="file" id="novoImagemArquivo" class="form-control" accept="image/*" onchange="processarUploadImagem(event)">
+                <input type="hidden" id="novoImagemBase64" value="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80">
+                <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">Selecione um arquivo de imagem (PNG, JPG, JPEG).</small>
+              </div>
+              <div class="form-group">
+                <label>Resumo para o Card Inicial</label>
+                <textarea id="inputTurmaDescCard" class="form-control" placeholder="Resumo das conquistas da turma..." required></textarea>
+              </div>
+              <button type="submit" class="btn-save">Cadastrar Turma</button>
+            </form>
+          </section>
+
+          <!-- ABA 4: ALTERAÇÃO DENTRO DO MODAL -->
+          <section id="tabModalEdicao" class="admin-tab-pane">
+            <h3 class="admin-section-title">Alteração Completa das Informações do Modal</h3>
+            
+            <div class="form-group">
+              <label>Selecione a Turma que deseja editar:</label>
+              <select id="selectTurmaParaEditar" class="form-control" onchange="carregarDadosTurmaParaEdicao()"></select>
+            </div>
+
+            <form onsubmit="salvarAlteracoesModalTurma(event)">
+              <div class="grid-2">
+                <div class="form-group">
+                  <label>Paraninfo</label>
+                  <input type="text" id="editModalParaninfo" class="form-control">
+                </div>
+                <div class="form-group">
+                  <label>Patrono</label>
+                  <input type="text" id="editModalPatrono" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>História / Trajetória Acadêmica</label>
+                <textarea id="editModalHistoria" class="form-control"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Galeria de Fotos da Turma</label>
+                <div style="margin-bottom: 10px;">
+                  <input type="file" id="editModalGaleriaUpload" class="form-control" accept="image/*" multiple onchange="processarUploadGaleria(event)">
+                  <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">
+                    Selecione uma ou várias fotos de uma só vez do seu dispositivo (PNG, JPG, JPEG).
+                  </small>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                  <label style="font-size: 0.8rem; color: var(--slate-muted); font-weight: normal; display: block; margin-bottom: 4px;">
+                    Ou adicione por URL (opcional, uma por linha):
+                  </label>
+                  <textarea id="editModalGaleriaUrls" class="form-control" style="min-height: 50px;" placeholder="https://..." onblur="adicionarUrlsExternasGaleria()"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 6px;">
+                  <label style="font-size: 0.85rem; font-weight: bold; color: var(--azul-institucional);">
+                    Fotos na Galeria (<span id="countFotosGaleria">0</span>):
+                  </label>
+                </div>
+                <div id="previewGaleriaContainer" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 12px; background: var(--slate-light); border-radius: 8px; border: 1px solid var(--border-color); max-height: 240px; overflow-y: auto;"></div>
+              </div>
+
+              <!-- Gestão de Depoimentos -->
+              <div class="form-group">
+                <label style="font-weight: bold; color: var(--azul-institucional);">Depoimentos de Formandos (<span id="countDepoimentos">0</span>)</label>
+                <div style="background: var(--slate-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-top: 6px; margin-bottom: 10px;">
+                  <div class="grid-2" style="margin-bottom: 10px;">
+                    <div>
+                      <label style="font-size: 0.8rem; color: var(--slate-muted);">Autor do Depoimento</label>
+                      <input type="text" id="inputNovoDepoimentoAutor" class="form-control" placeholder="Ex: Dr. Lucas Andrade">
+                    </div>
+                    <div>
+                      <label style="font-size: 0.8rem; color: var(--slate-muted);">Texto do Depoimento</label>
+                      <input type="text" id="inputNovoDepoimentoTexto" class="form-control" placeholder="Ex: A FMABC me ensinou...">
+                    </div>
+                  </div>
+                  <button type="button" class="btn-save" style="padding: 8px 16px; font-size: 0.82rem;" onclick="adicionarDepoimentoEdicao()">+ Adicionar Depoimento</button>
+                </div>
+
+                <div id="previewDepoimentosContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;"></div>
+              </div>
+
+              <div class="form-group">
+                <label>Nomes dos Formandos (separados por vírgula)</label>
+                <textarea id="editModalFormandos" class="form-control" placeholder="Dr. Nome 1, Dra. Nome 2..."></textarea>
+              </div>
+
+              <button type="submit" class="btn-save">Salvar Alterações da Turma</button>
+            </form>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-msg" id="toastNotification">Alterações salvas com sucesso!</div>
+
+  <script>
+    // 1. Insira as credenciais que você copiou do Supabase
+  const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; // Cole sua URL aqui
+  const SUPABASE_ANON_KEY = 'sb_publishable_YEKwd9ffjv5rJTNd0WcZSQ_XD6ekkT4';            // Cole sua chave anon aqui
+
+  // 2. Cria a conexão com o banco de dados
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // 3. Teste rápido de conexão (Opcional - exibe no console do navegador)
+  console.log('Supabase inicializado com sucesso:', supabaseClient);
+
+  // ... Restante do seu código JavaScript (funções de turmas, filtros, depoimentos)
+    const appState = {
+      home: {
+        badge: "Acervo Acadêmico FMABC",
+        title: "Galeria de Turmas Formadas",
+        subtitle: "Explore a história, memórias e conquistas das turmas de graduação que fizeram e fazem história no Centro Universitário FMABC."
+      },
+      cursos: ["Todos", "Medicina", "Enfermagem", "Farmácia", "Fisioterapia", "Nutrição", "Biomedicina"],
+      cursoAtivo: "Todos",
+      decadaAtiva: "Todas",
+      termoBusca: "",
+      paginaAtual: 1,
+      itensPorPagina: 6,
+      turmas: [
+        {
+          id: "turma-l",
+          curso: "Medicina",
+          titulo: "Turma L (50)",
+          ano: "2018",
+          qtdFormandos: "120",
+          cardDesc: "A 50ª Turma de Medicina da FMABC, carinhosamente chamada de 'Turma Dourada', marcou época com recordes em pesquisas científicas e extensão comunitária.",
+          img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&q=80",
+          paraninfo: "Prof. Dr. Roberto Silva",
+          patrono: "Prof. Dr. Carlos Mendes",
+          historia: "Ingressamos no campus da FMABC em 2013 unidos pelo ideal de cuidar do ser humano. Durante seis anos inesquecíveis, vivenciamos plantões marcantes no Hospital de Ensino, participações em congressos nacionais e um engajamento modelo no Diretório Acadêmico.",
+          galeria: [
+            "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&q=80",
+            "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=400&q=80",
+            "https://images.unsplash.com/photo-1551076805-e1869033e561?w=400&q=80"
+          ],
+          depoimentos: [
+            { texto: '"A FMABC me ensinou que a verdadeira medicina se constrói na escuta e na empatia."', autor: 'Dr. Lucas Andrade' },
+            { texto: '"Foram os anos mais desafiadores e gratificantes da minha vida. Orgulho FMABC!"', autor: 'Dra. Mariana Costa' }
+          ],
+          formandos: [
+            'Dr. Alexandre Silva', 'Dra. Beatriz Santos', 'Dr. Carlos Eduardo', 
+            'Dra. Daniela Rocha', 'Dr. Felipe Oliveira', 'Dra. Gabriela Lima',
+            'Dr. Henrique Alves', 'Dra. Isabela Martins', 'Dr. Lucas Ferreira'
+          ]
+        },
+        {
+          id: "turma-xlix",
+          curso: "Medicina",
+          titulo: "Turma XLIX (49)",
+          ano: "2017",
+          qtdFormandos: "115",
+          cardDesc: "Uma turma notável por seu compromisso social e pesquisas pioneiras na área de pediatria e saúde da família em todo o ABC Paulista.",
+          img: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=600&q=80",
+          paraninfo: "Dra. Helena Souza",
+          patrono: "Dr. Marcos Paulo",
+          historia: "Marcada pelo pioneirismo em ações de saúde da família e extensões universitárias no Grande ABC. A 49ª turma promoveu mutirões de saúde preventiva que atenderam milhares de pessoas.",
+          galeria: [
+            "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?w=400&q=80",
+            "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400&q=80"
+          ],
+          depoimentos: [
+            { texto: '"A união e a garra da nossa turma fizeram toda a diferença no internato."', autor: 'Dr. Fernando Santos' }
+          ],
+          formandos: [
+            'Dr. João Pedro', 'Dra. Karen Souza', 'Dr. Lucas Ferreira', 
+            'Dra. Mariana Costa', 'Dr. Nicolas Pereira', 'Dra. Patricia Ramos'
+          ]
+        },
+        {
+          id: "turma-101",
+          curso: "Medicina",
+          titulo: "Turma IV - Medicina",
+          ano: "1977",
+          qtdFormandos: "98",
+          cardDesc: "Turma atuante na estruturação do Pronto Socorro Central de Santo André e expansão da infraestrutura clínica da faculdade.",
+          img: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Prof. Dr. Antoninho Sanfins",
+          patrono: "Prof. Dr. Euriclides Zerbini",
+          historia: "Turma fundadora que estruturou o atendimento emergencial de saúde em Santo André.",
+          galeria: ["https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=800&q=80"],
+          depoimentos: [
+            { texto: "Abrimos os caminhos para o atendimento de urgência e emergência na região do ABC.", autor: "Dr. Roberto (Turma IV)" }
+          ],
+          formandos: ["Dr. Roberto", "Dr. Antoninho", "Dra. Maria"]
+        },
+        {
+          id: "turma-102",
+          curso: "Enfermagem",
+          titulo: "Turma I - Enfermagem",
+          ano: "1982",
+          qtdFormandos: "40",
+          cardDesc: "Primeira turma formada do curso de Enfermagem da FMABC, abrindo portas para a gestão em saúde pública no ABC.",
+          img: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Profª. Dra. Maria José",
+          patrono: "Enfª. Clara Bispo",
+          historia: "A turma pioneira na humanização e enfermagem da faculdade.",
+          galeria: [],
+          depoimentos: [
+            { texto: "Fomos a primeira turma e deixamos um legado de dedicação e humanização.", autor: "Enfª. Regina" }
+          ],
+          formandos: ["Enfª. Regina", "Enfª. Clara"]
+        },
+        {
+          id: "turma-103",
+          curso: "Medicina",
+          titulo: "Turma XV - Medicina",
+          ano: "1988",
+          qtdFormandos: "108",
+          cardDesc: "Turma marcante pela organização dos primeiros simpósios científicos estudantis da FMABC.",
+          img: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Prof. Dr. Milton de Arruda",
+          patrono: "Prof. Dr. Cantídio de Moura Campos",
+          historia: "Organizadores dos primeiros encontros científicos interuniversitários.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        },
+        {
+          id: "turma-104",
+          curso: "Farmácia",
+          titulo: "Turma III - Farmácia",
+          ano: "1995",
+          qtdFormandos: "45",
+          cardDesc: "Turma responsável pela implantação da Farmácia Universitária de atendimento comunitário.",
+          img: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Profª. Dra. Luciana Viana",
+          patrono: "Dr. Alberto Santos",
+          historia: "Implantaram serviços farmacêuticos essenciais na comunidade local.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        },
+        {
+          id: "turma-105",
+          curso: "Medicina",
+          titulo: "Turma XXVII - Medicina",
+          ano: "1999",
+          qtdFormandos: "115",
+          cardDesc: "Marcou a transição de milênio participando da inauguração de novos leitos de UTI na rede de ensino.",
+          img: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Prof. Dr. David Uip",
+          patrono: "Prof. Dr. Luiz Ferraz de Sampaio",
+          historia: "Turma da virada do milênio com grande destaque clínico.",
+          galeria: [],
+          depoimentos: [
+            { texto: "Formar no final do milênio nos deu a garra para abraçar a tecnologia na medicina.", autor: "Dra. Patrícia" }
+          ],
+          formandos: []
+        },
+        {
+          id: "turma-106",
+          curso: "Fisioterapia",
+          titulo: "Turma III - Fisioterapia",
+          ano: "2004",
+          qtdFormandos: "50",
+          cardDesc: "Pioneiros na reabilitação desportiva e tratamento neurológico integrado nas clínicas-escola.",
+          img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Profª. Dra. Beatriz Lima",
+          patrono: "Prof. Dr. Marcos Antonio",
+          historia: "Atuação destacada em clínicas neurológicas e reabilitação física.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        },
+        {
+          id: "turma-107",
+          curso: "Nutrição",
+          titulo: "Turma V - Nutrição",
+          ano: "2008",
+          qtdFormandos: "48",
+          cardDesc: "Atuação destacada em projetos sociais e avaliação nutricional nas escolas municipais da região.",
+          img: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Prof. Dr. Claudio Mendonça",
+          patrono: "Profª. Dra. Renata Ferraz",
+          historia: "Desenvolveram importantes projetos de segurança alimentar.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        },
+        {
+          id: "turma-108",
+          curso: "Biomedicina",
+          titulo: "Turma I - Biomedicina",
+          ano: "2012",
+          qtdFormandos: "30",
+          cardDesc: "Turma pioneira do curso de Biomedicina, com alta taxa de publicação de artigos no primeiro ano pós-formatura.",
+          img: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Profª. Dra. Camila Alencar",
+          patrono: "Prof. Dr. Gustavo Ribeiro",
+          historia: "Primeiros biomédicos graduados pela FMABC.",
+          galeria: [],
+          depoimentos: [
+            { texto: "Abrir o curso de Biomedicina na FMABC foi um desafio inesquecível!", autor: "Dr. Lucas (Biomedicina)" }
+          ],
+          formandos: []
+        },
+        {
+          id: "turma-109",
+          curso: "Medicina",
+          titulo: "Turma XLIII - Medicina",
+          ano: "2016",
+          qtdFormandos: "120",
+          cardDesc: "Consolidou o uso de inteligência médica e pesquisa translacional no Congresso Universitário (COMUABC).",
+          img: "https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Prof. Dr. Eric Wroclawski",
+          patrono: "Prof. Dr. Fernando Fonseca",
+          historia: "Destaque acadêmico no congresso COMUABC.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        },
+        {
+          id: "turma-110",
+          curso: "Enfermagem",
+          titulo: "Turma XVIII - Enfermagem",
+          ano: "2021",
+          qtdFormandos: "52",
+          cardDesc: "Turma que atuou na linha de frente dos serviços de saúde durante o período crítico pandêmico.",
+          img: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Profª. Dra. Roseli Sarni",
+          patrono: "Profª. Dra. Lucila Nascimento",
+          historia: "Heróis e heroínas da saúde que atuaram bravamente durante a pandemia.",
+          galeria: [],
+          depoimentos: [
+            { texto: "Nossa formação foi provada na prática com coragem, ciência e empatia.", autor: "Enfª. Juliana" }
+          ],
+          formandos: []
+        },
+        {
+          id: "turma-111",
+          curso: "Fisioterapia",
+          titulo: "Turma XIV - Fisioterapia",
+          ano: "2023",
+          qtdFormandos: "45",
+          cardDesc: "Especialistas em reabilitação cardiorrespiratória e tecnologias assistivas avançadas.",
+          img: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Profª. Dra. Juliana Freitas",
+          patrono: "Prof. Dr. Carlos Alberto",
+          historia: "Inovação tecnológica aplicada à fisioterapia clínica.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        },
+        {
+          id: "turma-112",
+          curso: "Farmácia",
+          titulo: "Turma XX - Farmácia",
+          ano: "2024",
+          qtdFormandos: "40",
+          cardDesc: "Pioneiros em biotecnologia farmacêutica, vacinas de RNA e atenção farmacêutica clínica.",
+          img: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80",
+          paraninfo: "Prof. Dr. Marcelo de Carvalho",
+          patrono: "Profª. Dra. Vania D'Almeida",
+          historia: "Formação focada em nanotecnologia e fármacos do futuro.",
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        }
+      ]
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderApp();
+      setupEventListeners();
+    });
+
+    function renderApp() {
+      renderHero();
+      renderCourseFilters();
+      renderCards();
+      populateDepoimentoTurmasSelect();
+      populateAdminSelects();
+    }
+
+    function renderHero() {
+      document.getElementById('publicHeroBadge').textContent = appState.home.badge;
+      document.getElementById('publicHeroTitle').textContent = appState.home.title;
+      document.getElementById('publicHeroSubtitle').textContent = appState.home.subtitle;
+    }
+
+    function renderCourseFilters() {
+      const container = document.getElementById('courseFilterContainer');
+      container.innerHTML = '';
+
+      appState.cursos.forEach(curso => {
+        const btn = document.createElement('button');
+        btn.className = `filter-pill ${appState.cursoAtivo === curso ? 'active' : ''}`;
+        btn.textContent = curso === 'Todos' ? 'Todas as Turmas' : curso;
+        btn.onclick = () => {
+          appState.cursoAtivo = curso;
+          appState.paginaAtual = 1;
+          renderCourseFilters();
+          renderCards();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function filtrarPorDecada(decada, event) {
+      appState.decadaAtiva = decada;
+      appState.paginaAtual = 1;
+
+      const botoes = document.querySelectorAll('.btn-decada');
+      botoes.forEach(btn => btn.classList.remove('active'));
+      if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+      }
+
+      renderCards();
+    }
+
+    function obterTurmasFiltradas() {
+      return appState.turmas.filter(turma => {
+        const atendeCurso = appState.cursoAtivo === 'Todos' || turma.curso === appState.cursoAtivo;
+        
+        let atendeDecada = true;
+        if (appState.decadaAtiva !== 'Todas') {
+          const anoNum = parseInt(turma.ano, 10);
+          const decadaStart = parseInt(appState.decadaAtiva, 10);
+          if (appState.decadaAtiva === '1970') {
+            atendeDecada = anoNum >= 1969 && anoNum <= 1979;
+          } else {
+            atendeDecada = anoNum >= decadaStart && anoNum <= decadaStart + 9;
+          }
+        }
+
+        const termo = appState.termoBusca.toLowerCase();
+        const atendeBusca = !termo || 
+          (turma.titulo && turma.titulo.toLowerCase().includes(termo)) ||
+          (turma.ano && turma.ano.toString().toLowerCase().includes(termo)) ||
+          (turma.cardDesc && turma.cardDesc.toLowerCase().includes(termo));
+
+        return atendeCurso && atendeDecada && atendeBusca;
+      });
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('cardsGridContainer');
+      grid.innerHTML = '';
+
+      const turmasFiltradas = obterTurmasFiltradas();
+      const totalTurmas = turmasFiltradas.length;
+      const totalPaginas = Math.ceil(totalTurmas / appState.itensPorPagina) || 1;
+
+      if (appState.paginaAtual > totalPaginas) {
+        appState.paginaAtual = totalPaginas;
+      }
+
+      if (totalTurmas === 0) {
+        grid.innerHTML = '<p style="color: var(--slate-muted); font-size: 1rem; grid-column: 1/-1; text-align: center; padding: 40px 0;">Nenhuma turma encontrada para o filtro selecionado.</p>';
+        renderControlesPaginacao(0, 1);
+        return;
+      }
+
+      const inicio = (appState.paginaAtual - 1) * appState.itensPorPagina;
+      const fim = inicio + appState.itensPorPagina;
+      const turmasPagina = turmasFiltradas.slice(inicio, fim);
+
+      turmasPagina.forEach(turma => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.onclick = () => abrirModalTurma(turma);
+
+        card.innerHTML = `
+          <div class="card-img-area">
+            <div class="card-img-bg" style="background-image: url('${turma.img}');"></div>
+            <div class="card-img-overlay"></div>
+            <div class="card-img-header">
+              <span class="card-badge">${turma.curso} FMABC</span>
+            </div>
+            <div class="card-title-row">
+              <h2>${turma.titulo}</h2>
+              <span class="ano">${turma.ano}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="card-desc">${turma.cardDesc}</p>
+            <div class="card-footer">
+              <div class="formandos-count">${turma.qtdFormandos} Formandos</div>
+              <span class="btn-acervo">Ver Acervo →</span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      renderControlesPaginacao(totalTurmas, totalPaginas);
+    }
+
+    function renderControlesPaginacao(totalItens, totalPaginas) {
+      const btnAnt = document.getElementById('btnPagAnterior');
+      const btnProx = document.getElementById('btnPagProxima');
+      const textoInfo = document.getElementById('paginacaoTexto');
+
+      if (totalItens === 0) {
+        btnAnt.disabled = true;
+        btnProx.disabled = true;
+        textoInfo.textContent = '0 turmas encontradas';
+        return;
+      }
+
+      btnAnt.disabled = appState.paginaAtual <= 1;
+      btnProx.disabled = appState.paginaAtual >= totalPaginas;
+      textoInfo.textContent = `Página ${appState.paginaAtual} de ${totalPaginas} (${totalItens} turmas)`;
+    }
+
+    function mudarPagina(delta) {
+      appState.paginaAtual += delta;
+      renderCards();
+      document.getElementById('cardsGridContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function populateDepoimentoTurmasSelect() {
+      const select = document.getElementById('depoimentoTurmaSelect');
+      if (!select) return;
+      select.innerHTML = '<option value="">Selecione sua turma...</option>';
+
+      appState.turmas.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = `${t.titulo} (${t.curso} - ${t.ano})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function atualizarContadorCaracteres() {
+      const textarea = document.getElementById('depoimentoTexto');
+      const contador = document.getElementById('contadorCaracteres');
+      contador.textContent = `${textarea.value.length} / 300 caracteres`;
+    }
+
+    function enviarDepoimentoExAluno(e) {
+      e.preventDefault();
+      const nome = document.getElementById('depoimentoNome').value.trim();
+      const turmaId = document.getElementById('depoimentoTurmaSelect').value;
+      const texto = document.getElementById('depoimentoTexto').value.trim();
+
+      const turma = appState.turmas.find(t => t.id === turmaId);
+      if (!turma) {
+        showToast('Por favor, selecione uma turma válida.');
+        return;
+      }
+
+      if (!turma.depoimentos) {
+        turma.depoimentos = [];
+      }
+
+      turma.depoimentos.push({
+        autor: nome,
+        texto: `"${texto}"`
+      });
+
+      e.target.reset();
+      atualizarContadorCaracteres();
+      showToast('Obrigado! Seu depoimento foi enviado e incorporado ao acervo!');
+    }
+
+    function abrirModalTurma(turma) {
+      document.getElementById('modalCursoBadge').textContent = `${turma.curso} FMABC`;
+      document.getElementById('modalTurmaTitle').textContent = turma.titulo;
+      document.getElementById('modalCardDesc').textContent = turma.cardDesc;
+      document.getElementById('modalAnoFormatura').textContent = turma.ano;
+      document.getElementById('modalQtdFormandos').textContent = turma.qtdFormandos;
+      document.getElementById('modalParaninfo').textContent = turma.paraninfo || '-';
+      document.getElementById('modalHistoriaText').textContent = turma.historia || 'Trajetória em breve...';
+
+      const galeria = document.getElementById('modalGaleria');
+      galeria.innerHTML = '';
+      (turma.galeria || []).forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        galeria.appendChild(img);
+      });
+
+      const depoimentos = document.getElementById('modalDepoimentos');
+      depoimentos.innerHTML = '';
+      if (!turma.depoimentos || turma.depoimentos.length === 0) {
+        depoimentos.innerHTML = '<p style="color: var(--slate-muted); font-size: 0.9rem;">Nenhum depoimento cadastrado para esta turma ainda.</p>';
+      } else {
+        turma.depoimentos.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'depoimento-card';
+          div.innerHTML = `
+            <p class="depoimento-texto">${item.texto}</p>
+            <div class="depoimento-autor">${item.autor}</div>
+          `;
+          depoimentos.appendChild(div);
+        });
+      }
+
+      const lista = document.getElementById('modalListaFormandos');
+      lista.innerHTML = '';
+      (turma.formandos || []).forEach(nome => {
+        const li = document.createElement('li');
+        li.textContent = nome;
+        lista.appendChild(li);
+      });
+
+      document.getElementById('modalAcervo').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function setupEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        appState.termoBusca = e.target.value;
+        appState.paginaAtual = 1;
+        renderCards();
+      });
+
+      document.getElementById('closeModal').onclick = () => {
+        document.getElementById('modalAcervo').classList.remove('active');
+        document.body.style.overflow = '';
+      };
+
+      document.getElementById('btnOpenAdmin').onclick = () => {
+        document.getElementById('adminModalOverlay').classList.add('active');
+      };
+    }
+
+    function fecharAdminModal() {
+      document.getElementById('adminModalOverlay').classList.remove('active');
+    }
+
+    function autenticarAdmin(e) {
+      e.preventDefault();
+      const u = document.getElementById('adminUser').value;
+      const p = document.getElementById('adminPass').value;
+
+      if (u === 'admin' && p === '1234') {
+        document.getElementById('adminLoginBox').style.display = 'none';
+        document.getElementById('adminDashboardBox').style.display = 'flex';
+        preencherCamposAdmin();
+      } else {
+        showToast('Usuário ou senha incorretos.');
+      }
+    }
+
+    function fazerLogoutAdmin() {
+      document.getElementById('adminDashboardBox').style.display = 'none';
+      document.getElementById('adminLoginBox').style.display = 'block';
+    }
+
+    function switchAdminTab(e, tabId) {
+      document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
+
+      e.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function preencherCamposAdmin() {
+      document.getElementById('inputHomeBadge').value = appState.home.badge;
+      document.getElementById('inputHomeTitle').value = appState.home.title;
+      document.getElementById('inputHomeSubtitle').value = appState.home.subtitle;
+    }
+
+    function salvarHomeContent(e) {
+      e.preventDefault();
+      appState.home.badge = document.getElementById('inputHomeBadge').value;
+      appState.home.title = document.getElementById('inputHomeTitle').value;
+      appState.home.subtitle = document.getElementById('inputHomeSubtitle').value;
+
+      renderHero();
+      showToast('Página Inicial atualizada com sucesso!');
+    }
+
+    function cadastrarNovoCurso(e) {
+      e.preventDefault();
+      const nome = document.getElementById('inputNovoCursoNome').value.trim();
+
+      if (nome && !appState.cursos.includes(nome)) {
+        appState.cursos.push(nome);
+        document.getElementById('inputNovoCursoNome').value = '';
+        document.getElementById('inputNovoCursoDesc').value = '';
+        
+        renderCourseFilters();
+        populateAdminSelects();
+        showToast(`Curso "${nome}" cadastrado!`);
+      }
+    }
+
+    function processarUploadImagem(event) {
+      const input = event.target;
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('novoImagemBase64').value = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function cadastrarNovaTurma(e) {
+      e.preventDefault();
+
+      const imagemFormatada = document.getElementById('novoImagemBase64').value;
+
+      const novaTurma = {
+        id: 'turma-' + Date.now(),
+        curso: document.getElementById('selectTurmaCurso').value,
+        titulo: document.getElementById('inputTurmaNome').value,
+        ano: document.getElementById('inputTurmaAno').value,
+        qtdFormandos: document.getElementById('inputTurmaQtd').value,
+        img: imagemFormatada,
+        cardDesc: document.getElementById('inputTurmaDescCard').value,
+        historia: '',
+        galeria: [],
+        depoimentos: [],
+        formandos: []
+      };
+
+      appState.turmas.unshift(novaTurma);
+      appState.paginaAtual = 1;
+      renderCards();
+      populateDepoimentoTurmasSelect();
+      populateAdminSelects();
+
+      e.target.reset();
+      document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
+
+      showToast("Nova turma cadastrada com sucesso!");
+    }
+
+    function populateAdminSelects() {
+      const selectCurso = document.getElementById('selectTurmaCurso');
+      selectCurso.innerHTML = '';
+      appState.cursos.filter(c => c !== 'Todos').forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        selectCurso.appendChild(opt);
+      });
+
+      const selectTurmaEdit = document.getElementById('selectTurmaParaEditar');
+      selectTurmaEdit.innerHTML = '<option value="">Selecione uma turma...</option>';
+      appState.turmas.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = `${t.titulo} (${t.curso} - ${t.ano})`;
+        selectTurmaEdit.appendChild(opt);
+      });
+    }
+
+    let galeriaEdicaoAtual = [];
+    let depoimentosEdicaoAtual = [];
+
+    function carregarDadosTurmaParaEdicao() {
+      const id = document.getElementById('selectTurmaParaEditar').value;
+      const turma = appState.turmas.find(t => t.id === id);
+
+      if (turma) {
+        document.getElementById('editModalParaninfo').value = turma.paraninfo || '';
+        document.getElementById('editModalPatrono').value = turma.patrono || '';
+        document.getElementById('editModalHistoria').value = turma.historia || '';
+        
+        galeriaEdicaoAtual = [...(turma.galeria || [])];
+        document.getElementById('editModalGaleriaUrls').value = '';
+        renderPreviewGaleria();
+
+        depoimentosEdicaoAtual = JSON.parse(JSON.stringify(turma.depoimentos || []));
+        renderPreviewDepoimentos();
+
+        document.getElementById('editModalFormandos').value = (turma.formandos || []).join(', ');
+      } else {
+        galeriaEdicaoAtual = [];
+        renderPreviewGaleria();
+        depoimentosEdicaoAtual = [];
+        renderPreviewDepoimentos();
+      }
+    }
+
+    function renderPreviewGaleria() {
+      const container = document.getElementById('previewGaleriaContainer');
+      const countSpan = document.getElementById('countFotosGaleria');
+      
+      if (!container || !countSpan) return;
+
+      countSpan.textContent = galeriaEdicaoAtual.length;
+      container.innerHTML = '';
+
+      if (galeriaEdicaoAtual.length === 0) {
+        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); width: 100%; margin: 0;">Nenhuma foto adicionada nesta galeria ainda.</p>';
+        return;
+      }
+
+      galeriaEdicaoAtual.forEach((url, idx) => {
+        const item = document.createElement('div');
+        item.style.position = 'relative';
+        item.style.width = '75px';
+        item.style.height = '75px';
+
+        item.innerHTML = `
+          <img src="${url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" alt="Foto ${idx + 1}">
+          <button type="button" onclick="removerFotoGaleria(${idx})" title="Remover foto" style="position: absolute; top: -6px; right: -6px; background: #DC2626; color: white; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.25);">✕</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function processarUploadGaleria(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      let carregadas = 0;
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          galeriaEdicaoAtual.push(e.target.result);
+          carregadas++;
+          if (carregadas === files.length) {
+            renderPreviewGaleria();
+            event.target.value = '';
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function adicionarUrlsExternasGaleria() {
+      const textarea = document.getElementById('editModalGaleriaUrls');
+      const urlsText = textarea.value.trim();
+      if (!urlsText) return;
+
+      const urls = urlsText.split('\n').map(u => u.trim()).filter(u => u);
+      urls.forEach(url => {
+        if (!galeriaEdicaoAtual.includes(url)) {
+          galeriaEdicaoAtual.push(url);
+        }
+      });
+
+      textarea.value = '';
+      renderPreviewGaleria();
+    }
+
+    function removerFotoGaleria(idx) {
+      galeriaEdicaoAtual.splice(idx, 1);
+      renderPreviewGaleria();
+    }
+
+    function renderPreviewDepoimentos() {
+      const container = document.getElementById('previewDepoimentosContainer');
+      const countSpan = document.getElementById('countDepoimentos');
+
+      if (!container || !countSpan) return;
+
+      countSpan.textContent = depoimentosEdicaoAtual.length;
+      container.innerHTML = '';
+
+      if (depoimentosEdicaoAtual.length === 0) {
+        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenhum depoimento cadastrado nesta turma ainda.</p>';
+        return;
+      }
+
+      depoimentosEdicaoAtual.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; gap: 12px;';
+
+        div.innerHTML = `
+          <div style="flex: 1; min-width: 0;">
+            <strong style="font-size: 0.85rem; color: var(--verde-escuro); display: block;">${item.autor || 'Anônimo'}</strong>
+            <p style="font-size: 0.82rem; color: var(--navy-dark); font-style: italic; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.texto}</p>
+          </div>
+          <button type="button" onclick="removerDepoimentoEdicao(${idx})" title="Excluir Depoimento" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">Excluir</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function adicionarDepoimentoEdicao() {
+      const autorInput = document.getElementById('inputNovoDepoimentoAutor');
+      const textoInput = document.getElementById('inputNovoDepoimentoTexto');
+
+      const autor = autorInput.value.trim();
+      const texto = textoInput.value.trim();
+
+      if (!texto) {
+        showToast('Por favor, digite o texto do depoimento.');
+        return;
+      }
+
+      depoimentosEdicaoAtual.push({
+        autor: autor || 'Formando(a)',
+        texto: `"${texto}"`
+      });
+
+      autorInput.value = '';
+      textoInput.value = '';
+      renderPreviewDepoimentos();
+    }
+
+    function removerDepoimentoEdicao(idx) {
+      depoimentosEdicaoAtual.splice(idx, 1);
+      renderPreviewDepoimentos();
+    }
+
+    function salvarAlteracoesModalTurma(e) {
+      e.preventDefault();
+      const id = document.getElementById('selectTurmaParaEditar').value;
+      const turma = appState.turmas.find(t => t.id === id);
+
+      if (!id || !turma) {
+        showToast('Por favor, selecione uma turma antes de salvar.');
+        return;
+      }
+
+      turma.paraninfo = document.getElementById('editModalParaninfo').value;
+      turma.patrono = document.getElementById('editModalPatrono').value;
+      turma.historia = document.getElementById('editModalHistoria').value;
+      
+      adicionarUrlsExternasGaleria();
+      turma.galeria = [...galeriaEdicaoAtual];
+      turma.depoimentos = [...depoimentosEdicaoAtual];
+
+      const formandosText = document.getElementById('editModalFormandos').value;
+      turma.formandos = formandosText.split(',').map(f => f.trim()).filter(f => f);
+
+      showToast(`Informações e galeria da ${turma.titulo} atualizadas!`);
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
