@@ -1454,6 +1454,39 @@
         console.error('Erro ao carregar cursos do Supabase:', err.message);
     }
 }
+    async function adicionarNovoCurso(nomeDoCurso) {
+    try {
+        // 1. Salva diretamente na tabela 'cursos' do Supabase
+        const { data, error } = await supabase
+            .from('cursos')
+            .insert([{ nome: nomeDoCurso }])
+            .select();
+
+        if (error) throw error;
+
+        // 2. Recarrega as categorias do banco para atualizar a tela
+        await carregarCursosDoSupabase();
+    } catch (err) {
+        console.error('Erro ao salvar novo curso:', err.message);
+    }
+}
+    async function carregarCursosDoSupabase() {
+    const { data, error } = await supabase
+        .from('cursos')
+        .select('nome')
+        .order('nome', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao buscar cursos:', error);
+        return;
+    }
+
+    if (data) {
+        // Converte o array de objetos em um array simples de nomes
+        appState.cursos = data.map(item => item.nome);
+        renderCourseFilters();
+    }
+}
   </script>
 </body>
 </html>
