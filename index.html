@@ -438,8 +438,8 @@
         <nav class="admin-sidebar">
           <button class="admin-nav-item active" onclick="switchAdminTab(event, 'tabHome')">Página Inicial</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabCursos')">Inclusão de Cursos</button>
-          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Inclusão de Turmas</button>
-          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Turmas</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Gestão de Turmas</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Detalhes</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
         </nav>
 
@@ -483,27 +483,34 @@
             <div id="listaCursos" style="margin-top: 12px;"></div>
           </section>
 
+          <!-- TAB TURMAS COM SUPORTE A EDIÇÃO/CADASTRO E MAPPING DOS IDS SOLICITADOS -->
           <section id="tabTurmas" class="admin-tab-pane">
-            <h3 class="admin-section-title">Inclusão de Novas Turmas</h3>
-            <form onsubmit="cadastrarNovaTurma(event)">
+            <h3 class="admin-section-title">Inclusão e Edição de Turmas</h3>
+
+            <form id="formTurma" onsubmit="salvarTurma(event)">
+              <!-- Campo oculto para identificar se é edição -->
+              <input type="hidden" id="turmaId" value="">
+
               <div class="grid-2">
                 <div class="form-group">
                   <label>Curso Relacionado</label>
-                  <select id="selectTurmaCurso" class="form-control" required></select>
+                  <select id="curso" class="form-control" required>
+                    <option value="Medicina">Medicina</option>
+                  </select>
                 </div>
                 <div class="form-group">
                   <label>Nome / Identificação da Turma</label>
-                  <input type="text" id="inputTurmaNome" class="form-control" placeholder="Ex: Turma LI (51)" required>
+                  <input type="text" id="nomeTurma" class="form-control" placeholder="Ex: Turma LI (51)" required>
                 </div>
               </div>
               <div class="grid-2">
                 <div class="form-group">
                   <label>Ano de Formatura</label>
-                  <input type="number" id="inputTurmaAno" class="form-control" placeholder="2020" required>
+                  <input type="number" id="anoFormatura" class="form-control" placeholder="2020" required>
                 </div>
                 <div class="form-group">
                   <label>Quantidade de Formandos</label>
-                  <input type="number" id="inputTurmaQtd" class="form-control" placeholder="120" required>
+                  <input type="number" id="qtdFormandos" class="form-control" placeholder="120" required>
                 </div>
               </div>
               <div class="form-group">
@@ -514,12 +521,15 @@
               </div>
               <div class="form-group">
                 <label>Resumo para o Card Inicial</label>
-                <textarea id="inputTurmaDescCard" class="form-control" placeholder="Resumo das conquistas da turma..." required></textarea>
+                <textarea id="resumoCard" class="form-control" placeholder="Resumo das conquistas da turma..." required></textarea>
               </div>
-              <button type="submit" class="btn-save">Cadastrar Turma</button>
+
+              <div style="display: flex; gap: 10px;">
+                <button type="submit" id="btnSubmit" class="btn-save">Cadastrar Turma</button>
+                <button type="button" id="btnCancelar" class="btn-save" style="display:none; background-color: #64748b;" onclick="limparFormulario()">Cancelar Edição</button>
+              </div>
             </form>
 
-            <!-- NOVO COMPONENTE: LISTA DE TURMAS CADASTRADAS -->
             <h4 style="margin-top: 28px; color: var(--azul-institucional); font-size: 1.1rem; font-weight: bold;">Turmas Cadastradas</h4>
             <div style="overflow-x: auto; margin-top: 12px;">
               <table class="admin-table">
@@ -832,22 +842,22 @@
     // 3. LÓGICA DO PORTAL
     const turmasIniciaisPadrao = [
       {
-        id: 'turma-50-med',
+        id: '101',
         curso: 'Medicina',
-        titulo: 'Turma L (50ª)',
-        ano: '2018',
-        qtdFormandos: '120',
-        cardDesc: 'Turma marco das comemorações de 50 anos do curso de Medicina da FMABC.',
+        titulo: 'Turma XXXI',
+        ano: '2004',
+        qtdFormandos: '95',
+        cardDesc: 'Turma marco das comemorações do curso de Medicina da FMABC.',
         img: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80',
         paraninfo: 'Dr. Roberto Silva',
         patrono: 'Dra. Maria Oliveira',
-        historia: 'Uma trajetória marcada por inovação e dedicação à saúde comunitária durante o cinquentenário da instituição.',
+        historia: 'Uma trajetória marcada por inovação e dedicação à saúde comunitária.',
         galeria: ['https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'],
         depoimentos: [{ autor: 'Dr. Carlos Medeiros', texto: '"Anos inesquecíveis de aprendizado na FMABC."' }],
         formandos: ['Dr. Carlos Medeiros', 'Dra. Ana Paula Santos', 'Dr. Lucas Andrade']
       },
       {
-        id: 'turma-45-enfer',
+        id: '102',
         curso: 'Enfermagem',
         titulo: 'Turma XLV (45ª)',
         ano: '2021',
@@ -982,7 +992,12 @@
         }
 
         if (data && data.length > 0) {
-          appState.turmas = data;
+          appState.turmas = data.map(t => ({
+            ...t,
+            titulo: t.titulo || t.nome,
+            qtdFormandos: t.qtdFormandos || t.formandos,
+            cardDesc: t.cardDesc || t.resumo
+          }));
         } else {
           for (const turma of turmasIniciaisPadrao) {
             await _supabase.from('turmas').upsert(turma, { onConflict: 'id' });
@@ -1031,10 +1046,13 @@
         const atendeCurso = appState.cursoAtivo === 'Todos' || turma.curso === appState.cursoAtivo;
 
         const termo = appState.termoBusca.toLowerCase();
+        const tituloOuNome = turma.titulo || turma.nome || '';
+        const descOuResumo = turma.cardDesc || turma.resumo || '';
+
         const atendeBusca = !termo || 
-          (turma.titulo && turma.titulo.toLowerCase().includes(termo)) ||
+          tituloOuNome.toLowerCase().includes(termo) ||
           (turma.ano && turma.ano.toString().toLowerCase().includes(termo)) ||
-          (turma.cardDesc && turma.cardDesc.toLowerCase().includes(termo));
+          descOuResumo.toLowerCase().includes(termo);
 
         return atendeCurso && atendeBusca;
       });
@@ -1070,20 +1088,20 @@
 
         card.innerHTML = `
           <div class="card-img-area">
-            <div class="card-img-bg" style="background-image: url('${turma.img}');"></div>
+            <div class="card-img-bg" style="background-image: url('${turma.img || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'}');"></div>
             <div class="card-img-overlay"></div>
             <div class="card-img-header">
               <span class="card-badge">${turma.curso} FMABC</span>
             </div>
             <div class="card-title-row">
-              <h2>${turma.titulo}</h2>
+              <h2>${turma.titulo || turma.nome}</h2>
               <span class="ano">${turma.ano}</span>
             </div>
           </div>
           <div class="card-body">
-            <p class="card-desc">${turma.cardDesc}</p>
+            <p class="card-desc">${turma.cardDesc || turma.resumo || ''}</p>
             <div class="card-footer">
-              <div class="formandos-count">${turma.qtdFormandos} Formandos</div>
+              <div class="formandos-count">${turma.qtdFormandos || turma.formandos || 0} Formandos</div>
               <span class="btn-acervo">Ver Acervo →</span>
             </div>
           </div>
@@ -1127,7 +1145,7 @@
       appState.turmas.forEach(t => {
         const opt = document.createElement('option');
         opt.value = t.id;
-        opt.textContent = `${t.titulo} (${t.curso} - ${t.ano})`;
+        opt.textContent = `${t.titulo || t.nome} (${t.curso} - ${t.ano})`;
         select.appendChild(opt);
       });
     }
@@ -1174,10 +1192,10 @@
 
     async function abrirModalTurma(turma) {
       document.getElementById('modalCursoBadge').textContent = `${turma.curso} FMABC`;
-      document.getElementById('modalTurmaTitle').textContent = turma.titulo;
-      document.getElementById('modalCardDesc').textContent = turma.cardDesc;
+      document.getElementById('modalTurmaTitle').textContent = turma.titulo || turma.nome;
+      document.getElementById('modalCardDesc').textContent = turma.cardDesc || turma.resumo || '';
       document.getElementById('modalAnoFormatura').textContent = turma.ano;
-      document.getElementById('modalQtdFormandos').textContent = turma.qtdFormandos;
+      document.getElementById('modalQtdFormandos').textContent = turma.qtdFormandos || turma.formandos || '';
       document.getElementById('modalParaninfo').textContent = turma.paraninfo || '-';
       document.getElementById('modalHistoriaText').textContent = turma.historia || 'Trajetória em breve...';
 
@@ -1211,7 +1229,7 @@
       }
 
       if (depoimentosTotais.length === 0) {
-        depoimentos.innerHTML = '<p style="color: var(--slate-muted); font-size: 0.9rem;">Nenum depoimento cadastrado para esta turma ainda.</p>';
+        depoimentos.innerHTML = '<p style="color: var(--slate-muted); font-size: 0.9rem;">Nenhum depoimento cadastrado para esta turma ainda.</p>';
       } else {
         depoimentosTotais.forEach(item => {
           const div = document.createElement('div');
@@ -1288,39 +1306,102 @@
       }
     }
 
-    async function cadastrarNovaTurma(e) {
+    // --- FUNÇÕES DE GESTÃO DO FORMULÁRIO DE TURMAS (CADASTRO / EDIÇÃO / LIMPEZA) ---
+
+    // Função para carregar os dados no formulário superior
+    function carregarParaEdicao(turma) {
+      document.getElementById('turmaId').value = turma.id;
+      document.getElementById('curso').value = turma.curso;
+      document.getElementById('nomeTurma').value = turma.nome || turma.titulo || '';
+      document.getElementById('anoFormatura').value = turma.ano;
+      document.getElementById('qtdFormandos').value = turma.formandos || turma.qtdFormandos || '';
+      document.getElementById('resumoCard').value = turma.resumo || turma.cardDesc || '';
+
+      // Altera a interface para o modo de edição
+      document.getElementById('btnSubmit').innerText = 'Salvar Alterações';
+      document.getElementById('btnCancelar').style.display = 'inline-block';
+
+      // Rola até o topo onde está o formulário
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Função para resetar o formulário ao modo cadastro
+    function limparFormulario() {
+      document.getElementById('turmaId').value = '';
+      document.getElementById('formTurma').reset();
+      document.getElementById('btnSubmit').innerText = 'Cadastrar Turma';
+      document.getElementById('btnCancelar').style.display = 'none';
+      document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
+    }
+
+    // Função para salvar turma (Verifica se é Edição ou Criação)
+    async function salvarTurma(e) {
       e.preventDefault();
 
-      const imagemFormatada = document.getElementById('novoImagemBase64').value;
+      const id = document.getElementById('turmaId').value;
+      const curso = document.getElementById('curso').value;
+      const nome = document.getElementById('nomeTurma').value;
+      const ano = document.getElementById('anoFormatura').value;
+      const formandos = document.getElementById('qtdFormandos').value;
+      const resumo = document.getElementById('resumoCard').value;
+      const img = document.getElementById('novoImagemBase64').value;
 
-      const novaTurma = {
-        id: 'turma-' + Date.now(),
-        curso: document.getElementById('selectTurmaCurso').value,
-        titulo: document.getElementById('inputTurmaNome').value,
-        ano: document.getElementById('inputTurmaAno').value,
-        qtdFormandos: document.getElementById('inputTurmaQtd').value,
-        img: imagemFormatada,
-        cardDesc: document.getElementById('inputTurmaDescCard').value,
-        historia: '',
-        galeria: [],
-        depoimentos: [],
-        formandos: []
-      };
+      if (id) {
+        // EDIÇÃO (PUT / UPDATE)
+        const turmaExistente = appState.turmas.find(t => String(t.id) === String(id));
+        const turmaAtualizada = {
+          ...turmaExistente,
+          id: id,
+          curso: curso,
+          titulo: nome,
+          nome: nome,
+          ano: ano,
+          qtdFormandos: formandos,
+          formandosCount: formandos,
+          cardDesc: resumo,
+          resumo: resumo,
+          img: img || (turmaExistente ? turmaExistente.img : '')
+        };
 
-      appState.turmas.unshift(novaTurma);
-      await salvarTurmaNoBanco(novaTurma);
+        const index = appState.turmas.findIndex(t => String(t.id) === String(id));
+        if (index !== -1) {
+          appState.turmas[index] = turmaAtualizada;
+        }
 
+        await salvarTurmaNoBanco(turmaAtualizada);
+        showToast('✅ Turma atualizada com sucesso!');
+      } else {
+        // CRIAÇÃO (POST DE NOVO REGISTRO)
+        const novaTurma = {
+          id: 'turma-' + Date.now(),
+          curso: curso,
+          titulo: nome,
+          nome: nome,
+          ano: ano,
+          qtdFormandos: formandos,
+          img: img,
+          cardDesc: resumo,
+          resumo: resumo,
+          historia: '',
+          galeria: [],
+          depoimentos: [],
+          formandos: []
+        };
+
+        appState.turmas.unshift(novaTurma);
+        await salvarTurmaNoBanco(novaTurma);
+        showToast('✅ Nova turma cadastrada!');
+      }
+
+      limparFormulario();
       appState.paginaAtual = 1;
       renderCards();
       populateDepoimentoTurmasSelect();
       populateAdminSelects();
       renderListaTurmasAdmin();
-
-      e.target.reset();
-      document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
     }
 
-    // NOVA FUNÇÃO: RENDERIZAR LISTA DE TURMAS NO PAINEL ADMIN
+    // RENDERIZAR LISTA DE TURMAS NO PAINEL ADMIN COM BOTÃO "EDITAR"
     function renderListaTurmasAdmin() {
       const tbody = document.getElementById('tabelaTurmasAdminBody');
       if (!tbody) return;
@@ -1333,13 +1414,26 @@
 
       appState.turmas.forEach(turma => {
         const tr = document.createElement('tr');
+        
+        // Criando o objeto no formato esperado pela função carregarParaEdicao
+        const turmaData = {
+          id: turma.id,
+          curso: turma.curso,
+          nome: turma.titulo || turma.nome || '',
+          ano: turma.ano,
+          formandos: turma.qtdFormandos || turma.formandos || '',
+          resumo: turma.cardDesc || turma.resumo || ''
+        };
+
+        const jsonStr = JSON.stringify(turmaData).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
+
         tr.innerHTML = `
           <td>${turma.curso || '-'}</td>
-          <td><strong>${turma.titulo || '-'}</strong></td>
+          <td><strong>${turma.titulo || turma.nome || '-'}</strong></td>
           <td>${turma.ano || '-'}</td>
-          <td>${turma.qtdFormandos || '-'}</td>
+          <td>${turma.qtdFormandos || turma.formandos || '-'}</td>
           <td style="text-align: center; display: flex; gap: 6px; justify-content: center;">
-            <button type="button" onclick="editarTurmaAdmin('${turma.id}')" style="background: var(--verde-pastel-medio); color: var(--verde-escuro); border: 1px solid var(--verde-principal); padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Editar</button>
+            <button type="button" class="btn-editar" onclick='carregarParaEdicao(${jsonStr})' style="background: var(--verde-pastel-medio); color: var(--verde-escuro); border: 1px solid var(--verde-principal); padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Editar</button>
             <button type="button" onclick="excluirTurmaAdmin('${turma.id}')" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Excluir</button>
           </td>
         `;
@@ -1347,23 +1441,7 @@
       });
     }
 
-    // NOVA FUNÇÃO: REDIRECIONAR PARA A ABA DE EDIÇÃO DA TURMA
-    function editarTurmaAdmin(id) {
-      const navItems = document.querySelectorAll('.admin-nav-item');
-      navItems.forEach(item => {
-        if (item.getAttribute('onclick') && item.getAttribute('onclick').includes('tabModalEdicao')) {
-          item.click();
-        }
-      });
-
-      const select = document.getElementById('selectTurmaParaEditar');
-      if (select) {
-        select.value = id;
-        carregarDadosTurmaParaEdicao();
-      }
-    }
-
-    // NOVA FUNÇÃO: EXCLUIR TURMA
+    // EXCLUIR TURMA
     async function excluirTurmaAdmin(id) {
       if (!confirm('Tem certeza que deseja excluir esta turma?')) return;
 
@@ -1378,7 +1456,7 @@
           return;
         }
 
-        appState.turmas = appState.turmas.filter(t => t.id !== id);
+        appState.turmas = appState.turmas.filter(t => String(t.id) !== String(id));
 
         renderListaTurmasAdmin();
         renderCards();
@@ -1393,7 +1471,7 @@
     }
 
     function populateAdminSelects() {
-      const selectCurso = document.getElementById('selectTurmaCurso');
+      const selectCurso = document.getElementById('curso');
       if (selectCurso) {
         selectCurso.innerHTML = '';
         appState.cursos.filter(c => c !== 'Todos').forEach(c => {
@@ -1410,7 +1488,7 @@
         appState.turmas.forEach(t => {
           const opt = document.createElement('option');
           opt.value = t.id;
-          opt.textContent = `${t.titulo} (${t.curso} - ${t.ano})`;
+          opt.textContent = `${t.titulo || t.nome} (${t.curso} - ${t.ano})`;
           selectTurmaEdit.appendChild(opt);
         });
       }
@@ -1421,7 +1499,7 @@
 
     async function carregarDadosTurmaParaEdicao() {
       const turmaIdSelecionada = document.getElementById('selectTurmaParaEditar').value;
-      const turma = appState.turmas.find(t => t.id === turmaIdSelecionada);
+      const turma = appState.turmas.find(t => String(t.id) === String(turmaIdSelecionada));
 
       if (turma) {
         document.getElementById('editModalParaninfo').value = turma.paraninfo || '';
@@ -1633,7 +1711,7 @@
     async function salvarAlteracoesModalTurma(e) {
       e.preventDefault();
       const id = document.getElementById('selectTurmaParaEditar').value;
-      const turma = appState.turmas.find(t => t.id === id);
+      const turma = appState.turmas.find(t => String(t.id) === String(id));
 
       if (!id || !turma) {
         showToast('Por favor, selecione uma turma antes de salvar.');
