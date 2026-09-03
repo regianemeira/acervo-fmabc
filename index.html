@@ -518,6 +518,23 @@
               </div>
               <button type="submit" class="btn-save">Cadastrar Turma</button>
             </form>
+
+            <!-- NOVO COMPONENTE: LISTA DE TURMAS CADASTRADAS -->
+            <h4 style="margin-top: 28px; color: var(--azul-institucional); font-size: 1.1rem; font-weight: bold;">Turmas Cadastradas</h4>
+            <div style="overflow-x: auto; margin-top: 12px;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Curso</th>
+                    <th>Nome / Turma</th>
+                    <th>Ano</th>
+                    <th>Formandos</th>
+                    <th style="width: 160px; text-align: center;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tabelaTurmasAdminBody"></tbody>
+              </table>
+            </div>
           </section>
 
           <section id="tabModalEdicao" class="admin-tab-pane">
@@ -975,6 +992,7 @@
         renderCards();
         populateDepoimentoTurmasSelect();
         populateAdminSelects();
+        renderListaTurmasAdmin();
       } catch (err) {
         console.error('Falha de conexão com o banco:', err);
       }
@@ -1296,9 +1314,82 @@
       renderCards();
       populateDepoimentoTurmasSelect();
       populateAdminSelects();
+      renderListaTurmasAdmin();
 
       e.target.reset();
       document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
+    }
+
+    // NOVA FUNÇÃO: RENDERIZAR LISTA DE TURMAS NO PAINEL ADMIN
+    function renderListaTurmasAdmin() {
+      const tbody = document.getElementById('tabelaTurmasAdminBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      if (!appState.turmas || appState.turmas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--slate-muted);">Nenhuma turma cadastrada.</td></tr>';
+        return;
+      }
+
+      appState.turmas.forEach(turma => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${turma.curso || '-'}</td>
+          <td><strong>${turma.titulo || '-'}</strong></td>
+          <td>${turma.ano || '-'}</td>
+          <td>${turma.qtdFormandos || '-'}</td>
+          <td style="text-align: center; display: flex; gap: 6px; justify-content: center;">
+            <button type="button" onclick="editarTurmaAdmin('${turma.id}')" style="background: var(--verde-pastel-medio); color: var(--verde-escuro); border: 1px solid var(--verde-principal); padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Editar</button>
+            <button type="button" onclick="excluirTurmaAdmin('${turma.id}')" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // NOVA FUNÇÃO: REDIRECIONAR PARA A ABA DE EDIÇÃO DA TURMA
+    function editarTurmaAdmin(id) {
+      const navItems = document.querySelectorAll('.admin-nav-item');
+      navItems.forEach(item => {
+        if (item.getAttribute('onclick') && item.getAttribute('onclick').includes('tabModalEdicao')) {
+          item.click();
+        }
+      });
+
+      const select = document.getElementById('selectTurmaParaEditar');
+      if (select) {
+        select.value = id;
+        carregarDadosTurmaParaEdicao();
+      }
+    }
+
+    // NOVA FUNÇÃO: EXCLUIR TURMA
+    async function excluirTurmaAdmin(id) {
+      if (!confirm('Tem certeza que deseja excluir esta turma?')) return;
+
+      try {
+        const { error } = await _supabase
+          .from('turmas')
+          .delete()
+          .eq('id', id);
+
+        if (error) {
+          alert('Erro ao excluir turma do banco de dados: ' + error.message);
+          return;
+        }
+
+        appState.turmas = appState.turmas.filter(t => t.id !== id);
+
+        renderListaTurmasAdmin();
+        renderCards();
+        populateDepoimentoTurmasSelect();
+        populateAdminSelects();
+
+        showToast('✅ Turma excluída com sucesso!');
+      } catch (err) {
+        console.error('Erro ao excluir turma:', err);
+        alert('Ocorreu um erro ao excluir a turma.');
+      }
     }
 
     function populateAdminSelects() {
@@ -1561,6 +1652,7 @@
       turma.formandos = formandosText.split(',').map(f => f.trim()).filter(f => f);
 
       await salvarTurmaNoBanco(turma);
+      renderListaTurmasAdmin();
     }
 
     function showToast(msg) {
