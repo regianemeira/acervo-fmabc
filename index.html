@@ -312,6 +312,7 @@
           <input type="text" id="searchInput" placeholder="Buscar por ano, número da turma ou palavras-chave...">
           <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         </div>
+        <!-- Container limpo para receber os botões gerados dinamicamente via JS -->
         <div class="filter-pills" id="courseFilterContainer"></div>
       </div>
     </section>
@@ -490,7 +491,6 @@
           <section id="tabCursos" class="admin-tab-pane">
             <h3 class="admin-section-title">Inclusão de Novos Cursos</h3>
             
-            <!-- Formulário com IDs ajustados para o código do Supabase -->
             <form onsubmit="cadastrarCurso(event)">
               <div class="form-group">
                 <label>Nome do Curso</label>
@@ -504,7 +504,6 @@
             </form>
 
             <h4 style="margin-top: 24px; color: var(--azul-institucional);">Cursos Cadastrados no Banco</h4>
-            <!-- Container onde a listagem dos cursos do Supabase é renderizada -->
             <div id="listaCursos" style="margin-top: 12px;"></div>
           </section>
 
@@ -553,7 +552,6 @@
               <select id="selectTurmaParaEditar" class="form-control" onchange="carregarDadosTurmaParaEdicao()"></select>
             </div>
 
-            <!-- Seção de Aprovação de Depoimentos do Supabase -->
             <div class="form-group" style="background: var(--slate-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 20px;">
               <label style="font-weight: bold; color: var(--azul-institucional); font-size: 0.95rem;">
                 Depoimentos Pendentes de Aprovação (Supabase) (<span id="countDepoimentosPendentes">0</span>)
@@ -631,10 +629,10 @@
     const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhobXR5YW1zYnh4cGtibGxheWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzODAzOTQsImV4cCI6MjEwMzk1NjM5NH0.9l6lJSbLgfGa4eDFxlsIkz6LWQTdz92u2sGG8AVSuCI';
     
-    // 2. CONEXÃO COM O BANCO (Uso do window.supabase para evitar conflito com o SDK)
+    // 2. CONEXÃO COM O BANCO
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Turmas iniciais padrão (para a página nunca ficar em branco)
+    // Turmas iniciais padrão (fallback caso o banco esteja limpo)
     const turmasIniciaisPadrao = [
       {
         id: 'turma-50-med',
@@ -674,7 +672,7 @@
         title: "Galeria de Turmas Formadas",
         subtitle: "Explore a história, memórias e conquistas das turmas de graduação que fizeram e fazem história no Centro Universitário FMABC."
       },
-      cursos: ["Todos", "Medicina", "Enfermagem", "Farmácia", "Fisioterapia", "Nutrição", "Biomedicina"],
+      cursos: ["Todos"],
       cursoAtivo: "Todos",
       decadaAtiva: "Todas",
       termoBusca: "",
@@ -683,14 +681,91 @@
       turmas: [...turmasIniciaisPadrao]
     };
 
-    // Cadastrar novo curso no Supabase
+    // EXECUÇÃO INICIAL UNIFICADA
+    document.addEventListener('DOMContentLoaded', async () => {
+      renderHero();
+      setupEventListeners();
+      await carregarCursosDoSupabase();
+      await carregarTurmasDoBanco();
+    });
+
+    // 1. FUNÇÃO CORRIGIDA PARA BUSCAR E ATUALIZAR OS CURSOS DIRETO DO SUPABASE
+    async function carregarCursosDoSupabase() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('cursos')
+          .select('*')
+          .order('nome', { ascending: true });
+
+        if (error) throw error;
+
+        if (data) {
+          // Garante 'Todos' no início e insere os nomes dos cursos do banco
+          const nomesCursosBanco = data.map(c => typeof c === 'object' ? c.nome : c);
+          appState.cursos = Array.from(new Set(['Todos', ...nomesCursosBanco]));
+
+          // <--- OBRIGATÓRIO: Atualiza a renderização imediata na tela
+          renderCourseFilters();
+          populateAdminSelects();
+          renderListaCursosAdmin(data);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar cursos do Supabase:', err.message);
+      }
+    }
+
+    // Renderiza a lista de cursos dentro da aba do Painel Admin
+    function renderListaCursosAdmin(cursos) {
+      const container = document.getElementById('listaCursos');
+      if (!container) return;
+      container.innerHTML = '';
+
+      cursos.forEach(curso => {
+        container.innerHTML += `
+          <div class="card-curso">
+            <h3>${curso.nome}</h3>
+            <p>${curso.descricao || 'Sem descrição informada.'}</p>
+          </div>
+        `;
+      });
+    }
+
+    // 2. FUNÇÃO CORRIGIDA DE GERAR OS BOTÕES DE FILTRO BASEADOS EM appState.cursos
+    function renderCourseFilters() {
+      const container = document.getElementById('courseFilterContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      appState.cursos.forEach(curso => {
+        const nomeCurso = typeof curso === 'object' ? curso.nome : curso;
+        const btn = document.createElement('button');
+        
+        btn.className = `filter-pill ${appState.cursoAtivo === nomeCurso ? 'active' : ''}`;
+        btn.textContent = nomeCurso === 'Todos' ? 'Todas as Turmas' : nomeCurso;
+        btn.onclick = () => {
+          appState.cursoAtivo = nomeCurso;
+          appState.paginaAtual = 1;
+          renderCourseFilters();
+          renderCards();
+        };
+        
+        container.appendChild(btn);
+      });
+    }
+
+    // CADASTRO DE NOVO CURSO NO SUPABASE
     async function cadastrarCurso(event) {
       event.preventDefault();
 
-      const nome = document.getElementById('inputNomeCurso').value;
-      const descricao = document.getElementById('inputDescricao').value;
+      const nomeInput = document.getElementById('inputNomeCurso');
+      const descInput = document.getElementById('inputDescricao');
+      const nome = nomeInput.value.trim();
+      const descricao = descInput.value.trim();
 
-      const { data, error } = await supabaseClient
+      if (!nome) return;
+
+      const { error } = await supabaseClient
         .from('cursos')
         .insert([{ nome: nome, descricao: descricao }]);
 
@@ -699,59 +774,13 @@
         return;
       }
 
-      alert('Curso cadastrado com sucesso!');
-      
-      document.getElementById('inputNomeCurso').value = '';
-      document.getElementById('inputDescricao').value = '';
+      showToast('✅ Curso cadastrado com sucesso!');
+      nomeInput.value = '';
+      descInput.value = '';
 
-      if (nome && !appState.cursos.includes(nome)) {
-        appState.cursos.push(nome);
-        renderCourseFilters();
-        populateAdminSelects();
-      }
-
-      carregarCursos();
+      // Atualiza o banco e re-renderiza a tela em tempo real
+      await carregarCursosDoSupabase();
     }
-
-    // Buscar os cursos do banco
-    async function carregarCursos() {
-      const { data: cursos, error } = await supabaseClient
-        .from('cursos')
-        .select('*');
-
-      if (error) {
-        console.error('Erro ao carregar cursos:', error.message);
-        return;
-      }
-
-      const container = document.getElementById('listaCursos');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (cursos) {
-        cursos.forEach(curso => {
-          container.innerHTML += `
-            <div class="card-curso">
-              <h3>${curso.nome}</h3>
-              <p>${curso.descricao || 'Sem descrição informada.'}</p>
-            </div>
-          `;
-        });
-      }
-    }
-
-    // Executa automaticamente ao carregar o site
-    document.addEventListener('DOMContentLoaded', () => {
-      renderApp();
-      setupEventListeners();
-      carregarTurmasDoBanco();
-      carregarCursos();
-    });
-
-    document.addEventListener('DOMContentLoaded', async () => {
-    await carregarCursosDoSupabase(); // Busca as categorias atualizadas
-    await carregarTurmasDoSupabase();  // Busca os cards das turmas
-});
 
     async function carregarTurmasDoBanco() {
       try {
@@ -782,28 +811,20 @@
 
     async function salvarTurmaNoBanco(turma) {
       try {
-        const { data, error } = await supabaseClient
+        const { error } = await supabaseClient
           .from('turmas')
           .upsert(turma, { onConflict: 'id' });
 
         if (error) {
           console.error('Erro detalhado do Supabase:', error);
-          showToast('⚠️ Falha ao gravar no banco em tempo real: ' + error.message);
+          showToast('⚠️ Falha ao gravar no banco: ' + error.message);
         } else {
           showToast('✅ Salvo no banco com sucesso!');
         }
       } catch (err) {
         console.error('Erro de rede/conexão:', err);
-        showToast('❌ Erro de conexão em tempo real: ' + (err.message || 'Falha de rede ao tentar salvar.'));
+        showToast('❌ Erro de conexão em tempo real.');
       }
-    }
-
-    function renderApp() {
-      renderHero();
-      renderCourseFilters();
-      renderCards();
-      populateDepoimentoTurmasSelect();
-      populateAdminSelects();
     }
 
     function renderHero() {
@@ -814,24 +835,6 @@
       if (badge) badge.textContent = appState.home.badge;
       if (title) title.textContent = appState.home.title;
       if (subtitle) subtitle.textContent = appState.home.subtitle;
-    }
-
-    function renderCourseFilters() {
-      const container = document.getElementById('courseFilterContainer');
-      container.innerHTML = '';
-
-      appState.cursos.forEach(curso => {
-        const btn = document.createElement('button');
-        btn.className = `filter-pill ${appState.cursoAtivo === curso ? 'active' : ''}`;
-        btn.textContent = curso === 'Todos' ? 'Todas as Turmas' : curso;
-        btn.onclick = () => {
-          appState.cursoAtivo = curso;
-          appState.paginaAtual = 1;
-          renderCourseFilters();
-          renderCards();
-        };
-        container.appendChild(btn);
-      });
     }
 
     function filtrarPorDecada(decada, event) {
@@ -874,6 +877,7 @@
 
     function renderCards() {
       const grid = document.getElementById('cardsGridContainer');
+      if (!grid) return;
       grid.innerHTML = '';
 
       const turmasFiltradas = obterTurmasFiltradas();
@@ -930,6 +934,8 @@
       const btnProx = document.getElementById('btnPagProxima');
       const textoInfo = document.getElementById('paginacaoTexto');
 
+      if (!btnAnt || !btnProx || !textoInfo) return;
+
       if (totalItens === 0) {
         btnAnt.disabled = true;
         btnProx.disabled = true;
@@ -964,7 +970,9 @@
     function atualizarContadorCaracteres() {
       const textarea = document.getElementById('depoimentoTexto');
       const contador = document.getElementById('contadorCaracteres');
-      contador.textContent = `${textarea.value.length} / 300 caracteres`;
+      if (textarea && contador) {
+        contador.textContent = `${textarea.value.length} / 300 caracteres`;
+      }
     }
 
     async function enviarDepoimentoExAluno(e) {
@@ -978,7 +986,7 @@
         return;
       }
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from('depoimentos')
         .insert([
           {
@@ -1171,22 +1179,26 @@
 
     function populateAdminSelects() {
       const selectCurso = document.getElementById('selectTurmaCurso');
-      selectCurso.innerHTML = '';
-      appState.cursos.filter(c => c !== 'Todos').forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        selectCurso.appendChild(opt);
-      });
+      if (selectCurso) {
+        selectCurso.innerHTML = '';
+        appState.cursos.filter(c => c !== 'Todos').forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          selectCurso.appendChild(opt);
+        });
+      }
 
       const selectTurmaEdit = document.getElementById('selectTurmaParaEditar');
-      selectTurmaEdit.innerHTML = '<option value="">Selecione uma turma...</option>';
-      appState.turmas.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.id;
-        opt.textContent = `${t.titulo} (${t.curso} - ${t.ano})`;
-        selectTurmaEdit.appendChild(opt);
-      });
+      if (selectTurmaEdit) {
+        selectTurmaEdit.innerHTML = '<option value="">Selecione uma turma...</option>';
+        appState.turmas.forEach(t => {
+          const opt = document.createElement('option');
+          opt.value = t.id;
+          opt.textContent = `${t.titulo} (${t.curso} - ${t.ano})`;
+          selectTurmaEdit.appendChild(opt);
+        });
+      }
     }
 
     let galeriaEdicaoAtual = [];
@@ -1429,64 +1441,13 @@
 
     function showToast(msg) {
       const toast = document.getElementById('toastNotification');
+      if (!toast) return;
       toast.textContent = msg;
       toast.style.display = 'block';
       setTimeout(() => {
         toast.style.display = 'none';
       }, 3000);
     }
-    async function carregarCursosDoSupabase() {
-    try {
-        const { data, error } = await supabase
-            .from('cursos')
-            .select('*')
-            .order('nome', { ascending: true });
-
-        if (error) throw error;
-
-        if (data && data.length > 0) {
-            // Atualiza a lista em memória com os dados vindos do banco
-            appState.cursos = data;
-            // Re-renderiza os botões de filtro na interface
-            renderCourseFilters();
-        }
-    } catch (err) {
-        console.error('Erro ao carregar cursos do Supabase:', err.message);
-    }
-}
-    async function adicionarNovoCurso(nomeDoCurso) {
-    try {
-        // 1. Salva diretamente na tabela 'cursos' do Supabase
-        const { data, error } = await supabase
-            .from('cursos')
-            .insert([{ nome: nomeDoCurso }])
-            .select();
-
-        if (error) throw error;
-
-        // 2. Recarrega as categorias do banco para atualizar a tela
-        await carregarCursosDoSupabase();
-    } catch (err) {
-        console.error('Erro ao salvar novo curso:', err.message);
-    }
-}
-    async function carregarCursosDoSupabase() {
-    const { data, error } = await supabase
-        .from('cursos')
-        .select('nome')
-        .order('nome', { ascending: true });
-
-    if (error) {
-        console.error('Erro ao buscar cursos:', error);
-        return;
-    }
-
-    if (data) {
-        // Converte o array de objetos em um array simples de nomes
-        appState.cursos = data.map(item => item.nome);
-        renderCourseFilters();
-    }
-}
   </script>
 </body>
 </html>
