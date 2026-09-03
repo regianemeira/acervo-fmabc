@@ -631,10 +631,8 @@
     const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhobXR5YW1zYnh4cGtibGxheWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzODAzOTQsImV4cCI6MjEwMzk1MjM5NH0.9l6lJSbLgfGa4eDFxlsIkz6LWQTdz92u2sGG8AVSuCI';
     
-    // 2. CONEXÃO COM O BANCO
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    // Alias para suportar as chamadas usando 'supabase'
-    const supabase = supabaseClient;
+    // 2. CONEXÃO COM O BANCO (Uso do window.supabase para evitar conflito com o SDK)
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Turmas iniciais padrão (para a página nunca ficar em branco)
     const turmasIniciaisPadrao = [
@@ -685,19 +683,14 @@
       turmas: [...turmasIniciaisPadrao]
     };
 
-    // ----------------------------------------------------
-    // FUNÇÕES DO SUPABASE INTEGRADAS (SOLICITADAS)
-    // ----------------------------------------------------
-
-    // Enviar o novo curso para o Supabase ao submeter o formulário
+    // Cadastrar novo curso no Supabase
     async function cadastrarCurso(event) {
       event.preventDefault();
 
       const nome = document.getElementById('inputNomeCurso').value;
       const descricao = document.getElementById('inputDescricao').value;
 
-      // Insere os dados na tabela 'cursos'
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('cursos')
         .insert([{ nome: nome, descricao: descricao }]);
 
@@ -708,23 +701,21 @@
 
       alert('Curso cadastrado com sucesso!');
       
-      // Limpa os campos do formulário
       document.getElementById('inputNomeCurso').value = '';
       document.getElementById('inputDescricao').value = '';
 
-      // Atualiza também os filtros de cursos do app, caso o curso ainda não conste na lista local
       if (nome && !appState.cursos.includes(nome)) {
         appState.cursos.push(nome);
         renderCourseFilters();
         populateAdminSelects();
       }
 
-      carregarCursos(); // Recarrega a listagem na tela
+      carregarCursos();
     }
 
-    // Buscar os cursos do banco ao abrir a página
+    // Buscar os cursos do banco
     async function carregarCursos() {
-      const { data: cursos, error } = await supabase
+      const { data: cursos, error } = await supabaseClient
         .from('cursos')
         .select('*');
 
@@ -737,14 +728,16 @@
       if (!container) return;
       container.innerHTML = '';
 
-      cursos.forEach(curso => {
-        container.innerHTML += `
-          <div class="card-curso">
-            <h3>${curso.nome}</h3>
-            <p>${curso.descricao || 'Sem descrição informada.'}</p>
-          </div>
-        `;
-      });
+      if (cursos) {
+        cursos.forEach(curso => {
+          container.innerHTML += `
+            <div class="card-curso">
+              <h3>${curso.nome}</h3>
+              <p>${curso.descricao || 'Sem descrição informada.'}</p>
+            </div>
+          `;
+        });
+      }
     }
 
     // Executa automaticamente ao carregar o site
@@ -754,10 +747,6 @@
       carregarTurmasDoBanco();
       carregarCursos();
     });
-
-    // ----------------------------------------------------
-    // RESTANTE DAS FUNÇÕES DO APLICATIVO
-    // ----------------------------------------------------
 
     async function carregarTurmasDoBanco() {
       try {
