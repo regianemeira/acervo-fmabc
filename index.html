@@ -527,6 +527,16 @@
               <select id="selectTurmaParaEditar" class="form-control" onchange="carregarDadosTurmaParaEdicao()"></select>
             </div>
 
+            <!-- Seção de Aprovação de Depoimentos do Supabase -->
+            <div class="form-group" style="background: var(--slate-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+              <label style="font-weight: bold; color: var(--azul-institucional); font-size: 0.95rem;">
+                Depoimentos Pendentes de Aprovação (Supabase) (<span id="countDepoimentosPendentes">0</span>)
+              </label>
+              <div id="previewDepoimentosPendentesContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; margin-top: 10px;">
+                <p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Selecione uma turma para buscar os depoimentos pendentes.</p>
+              </div>
+            </div>
+
             <form onsubmit="salvarAlteracoesModalTurma(event)">
               <div class="grid-2">
                 <div class="form-group">
@@ -558,7 +568,7 @@
               </div>
 
               <div class="form-group">
-                <label style="font-weight: bold; color: var(--azul-institucional);">Depoimentos de Formandos (<span id="countDepoimentos">0</span>)</label>
+                <label style="font-weight: bold; color: var(--azul-institucional);">Depoimentos Locais de Formandos (<span id="countDepoimentos">0</span>)</label>
                 <div style="background: var(--slate-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-top: 6px; margin-bottom: 10px;">
                   <div class="grid-2" style="margin-bottom: 10px;">
                     <div>
@@ -593,7 +603,8 @@
   <script>
     // 1. CREDENCIAIS DO SUPABASE
     const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; 
-    const SUPABASE_ANON_KEY = 'sb_publishable_YEKwd9ffjv5rJTNd0WcZSQ_XD6ekkT4';
+    const SUPABASE_ANON_KEY = 'sb_secret_4t55EJ1ugpZ03RneSCAV2A_lmbcw7nr'; 
+
     // 2. CONEXÃO COM O BANCO
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -864,34 +875,40 @@
       contador.textContent = `${textarea.value.length} / 300 caracteres`;
     }
 
+    // ENVIO DE DEPOIMENTO NO FRONT-END
     async function enviarDepoimentoExAluno(e) {
       e.preventDefault();
-      const nome = document.getElementById('depoimentoNome').value.trim();
-      const turmaId = document.getElementById('depoimentoTurmaSelect').value;
-      const texto = document.getElementById('depoimentoTexto').value.trim();
+      const nomeDoAluno = document.getElementById('depoimentoNome').value.trim();
+      const turmaIdSelecionada = document.getElementById('depoimentoTurmaSelect').value;
+      const mensagemDepoimento = document.getElementById('depoimentoTexto').value.trim();
 
-      const turma = appState.turmas.find(t => t.id === turmaId);
-      if (!turma) {
+      if (!turmaIdSelecionada) {
         showToast('Por favor, selecione uma turma válida.');
         return;
       }
 
-      if (!turma.depoimentos) {
-        turma.depoimentos = [];
+      const { data, error } = await supabaseClient
+        .from('depoimentos')
+        .insert([
+          {
+            turma_id: turmaIdSelecionada,
+            autor: nomeDoAluno,
+            texto: mensagemDepoimento,
+            aprovado: false
+          }
+        ]);
+
+      if (error) {
+        console.error('Erro ao enviar depoimento:', error);
+        showToast('❌ Erro ao enviar depoimento: ' + error.message);
+      } else {
+        showToast('✅ Depoimento enviado para aprovação!');
+        e.target.reset();
+        atualizarContadorCaracteres();
       }
-
-      turma.depoimentos.push({
-        autor: nome,
-        texto: `"${texto}"`
-      });
-
-      await salvarTurmaNoBanco(turma);
-
-      e.target.reset();
-      atualizarContadorCaracteres();
     }
 
-    function abrirModalTurma(turma) {
+    async function abrirModalTurma(turma) {
       document.getElementById('modalCursoBadge').textContent = `${turma.curso} FMABC`;
       document.getElementById('modalTurmaTitle').textContent = turma.titulo;
       document.getElementById('modalCardDesc').textContent = turma.cardDesc;
@@ -910,10 +927,30 @@
 
       const depoimentos = document.getElementById('modalDepoimentos');
       depoimentos.innerHTML = '';
-      if (!turma.depoimentos || turma.depoimentos.length === 0) {
+
+      let depoimentosTotais = [...(turma.depoimentos || [])];
+
+      // Busca depoimentos aprovados no Supabase
+      try {
+        const { data: aprovados, error } = await supabaseClient
+          .from('depoimentos')
+          .select('*')
+          .eq('turma_id', turma.id)
+          .eq('aprovado', true);
+
+        if (!error && aprovados) {
+          aprovados.forEach(d => {
+            depoimentosTotais.push({ autor: d.autor, texto: `"${d.texto}"` });
+          });
+        }
+      } catch (err) {
+        console.error('Erro ao buscar depoimentos aprovados:', err);
+      }
+
+      if (depoimentosTotais.length === 0) {
         depoimentos.innerHTML = '<p style="color: var(--slate-muted); font-size: 0.9rem;">Nenhum depoimento cadastrado para esta turma ainda.</p>';
       } else {
-        turma.depoimentos.forEach(item => {
+        depoimentosTotais.forEach(item => {
           const div = document.createElement('div');
           div.className = 'depoimento-card';
           div.innerHTML = `
@@ -1080,9 +1117,9 @@
     let galeriaEdicaoAtual = [];
     let depoimentosEdicaoAtual = [];
 
-    function carregarDadosTurmaParaEdicao() {
-      const id = document.getElementById('selectTurmaParaEditar').value;
-      const turma = appState.turmas.find(t => t.id === id);
+    async function carregarDadosTurmaParaEdicao() {
+      const turmaIdSelecionada = document.getElementById('selectTurmaParaEditar').value;
+      const turma = appState.turmas.find(t => t.id === turmaIdSelecionada);
 
       if (turma) {
         document.getElementById('editModalParaninfo').value = turma.paraninfo || '';
@@ -1097,11 +1134,79 @@
         renderPreviewDepoimentos();
 
         document.getElementById('editModalFormandos').value = (turma.formandos || []).join(', ');
+
+        // Carrega depoimentos pendentes do Supabase
+        await carregarDepoimentosPendentes(turmaIdSelecionada);
       } else {
         galeriaEdicaoAtual = [];
         renderPreviewGaleria();
         depoimentosEdicaoAtual = [];
         renderPreviewDepoimentos();
+        renderPreviewDepoimentosPendentes([]);
+      }
+    }
+
+    // BUSCA DE DEPOIMENTOS PENDENTES NA ÁREA ADMIN
+    async function carregarDepoimentosPendentes(turmaIdSelecionada) {
+      if (!turmaIdSelecionada) return;
+
+      const { data: pendentes, error } = await supabaseClient
+        .from('depoimentos')
+        .select('*')
+        .eq('turma_id', turmaIdSelecionada)
+        .eq('aprovado', false);
+
+      if (error) {
+        console.error('Erro ao buscar depoimentos pendentes:', error);
+        return;
+      }
+
+      renderPreviewDepoimentosPendentes(pendentes || []);
+    }
+
+    function renderPreviewDepoimentosPendentes(pendentes) {
+      const container = document.getElementById('previewDepoimentosPendentesContainer');
+      const countSpan = document.getElementById('countDepoimentosPendentes');
+
+      if (!container || !countSpan) return;
+
+      countSpan.textContent = pendentes.length;
+      container.innerHTML = '';
+
+      if (pendentes.length === 0) {
+        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenhum depoimento pendente para esta turma.</p>';
+        return;
+      }
+
+      pendentes.forEach(item => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; gap: 12px;';
+
+        div.innerHTML = `
+          <div style="flex: 1; min-width: 0;">
+            <strong style="font-size: 0.85rem; color: var(--azul-institucional); display: block;">${item.autor || 'Anônimo'}</strong>
+            <p style="font-size: 0.82rem; color: var(--navy-dark); font-style: italic; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.texto}</p>
+          </div>
+          <button type="button" onclick="aprovarDepoimento('${item.id}')" title="Aprovar Depoimento" style="background: #DCFCE7; color: #15803D; border: 1px solid #86EFAC; border-radius: 6px; padding: 6px 12px; font-size: 0.78rem; font-weight: bold; cursor: pointer;">Aprovar</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // APROVAÇÃO DE DEPOIMENTO
+    async function aprovarDepoimento(depoimentoId) {
+      const { error } = await supabaseClient
+        .from('depoimentos')
+        .update({ aprovado: true })
+        .eq('id', depoimentoId);
+
+      if (error) {
+        console.error('Erro ao aprovar depoimento:', error);
+        showToast('❌ Erro ao aprovar depoimento: ' + error.message);
+      } else {
+        showToast('✅ Depoimento aprovado com sucesso!');
+        const turmaIdSelecionada = document.getElementById('selectTurmaParaEditar').value;
+        await carregarDepoimentosPendentes(turmaIdSelecionada);
       }
     }
 
@@ -1180,7 +1285,7 @@
       container.innerHTML = '';
 
       if (depoimentosEdicaoAtual.length === 0) {
-        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenum depoimento cadastrado nesta turma ainda.</p>';
+        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenhum depoimento cadastrado nesta turma ainda.</p>';
         return;
       }
 
