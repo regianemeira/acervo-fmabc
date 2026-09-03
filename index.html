@@ -46,17 +46,20 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-main); }
     
+    html {
+      background-color: var(--bg-main); /* Cor de fundo movida para o HTML */
+    }
+
     body {
       position: relative;
       min-height: 100vh;
-      background-color: var(--bg-main);
       color: var(--navy-dark);
       line-height: 1.6;
       padding-bottom: 60px;
       overflow-x: hidden;
     }
 
-    /* Cria uma camada de fundo independente */
+    /* Camada de fundo independente */
     body::before {
       content: "";
       position: fixed;
@@ -64,13 +67,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('/caminho/para/imagem.jpg'); /* Substitua pelo caminho do arquivo */
+      background-image: var(--bg-image, url('SUA_IMAGEM_AQUI.jpg')); /* Variável dinâmica com fallback */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 0.08; /* Ajuste entre 0.05 e 0.15 para controlar a transparência */
-      z-index: -1; /* Mantém a imagem sempre atrás do conteúdo */
-      pointer-events: none; /* Evita bloquear cliques na tela */
+      opacity: var(--bg-opacity, 0.15); /* Variável dinâmica de opacidade */
+      z-index: -1;
+      pointer-events: none;
     }
 
     .top-nav {
@@ -463,6 +466,7 @@
       <div class="admin-body">
         <nav class="admin-sidebar">
           <button class="admin-nav-item active" onclick="switchAdminTab(event, 'tabHome')">Página Inicial</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabPlanoDeFundo')">Plano de Fundo</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabCursos')">Inclusão de Cursos</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Gestão de Turmas</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Detalhes</button>
@@ -487,6 +491,36 @@
                 <textarea id="inputHomeSubtitle" class="form-control" required></textarea>
               </div>
               <button type="submit" class="btn-save">Atualizar Página Inicial</button>
+            </form>
+          </section>
+
+          <!-- NOVA ABA DE PLANO DE FUNDO -->
+          <section id="tabPlanoDeFundo" class="admin-tab-pane">
+            <h3 class="admin-section-title">Alterar Imagem de Fundo da Página</h3>
+            <form onsubmit="salvarPlanoDeFundo(event)">
+              <div class="form-group">
+                <label>Carregar Imagem de Fundo (Upload)</label>
+                <input type="file" id="inputBgImageFile" class="form-control" accept="image/*" onchange="processarUploadBgImage(event)">
+                <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">Selecione um arquivo de imagem (JPG, PNG, WEBP, etc.).</small>
+              </div>
+              <div class="form-group">
+                <label>Ou informe a URL da Imagem</label>
+                <input type="text" id="inputBgImageUrl" class="form-control" placeholder="https://exemplo.com/imagem-de-fundo.jpg">
+              </div>
+              <div class="form-group">
+                <label>Transparência / Opacidade (<span id="opacityValue">0.15</span>)</label>
+                <input type="range" id="inputBgOpacity" min="0.01" max="1" step="0.01" value="0.15" class="form-control" oninput="document.getElementById('opacityValue').textContent = this.value">
+              </div>
+              
+              <div id="previewBgContainer" style="display: none; margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: var(--slate-light);">
+                <label style="font-weight: bold; display: block; margin-bottom: 6px;">Pré-visualização:</label>
+                <img id="previewBgImg" src="" style="max-height: 180px; width: auto; max-width: 100%; border-radius: 6px; display: block;">
+              </div>
+
+              <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn-save">Salvar Plano de Fundo</button>
+                <button type="button" class="btn-save" style="background-color: #DC2626;" onclick="removerPlanoDeFundo()">Restaurar Padrão</button>
+              </div>
             </form>
           </section>
 
@@ -701,6 +735,7 @@
     // ESTADO DE SESSÃO DO ADMINISTRADOR
     let isAdminLoggedIn = false;
     let currentUserName = '';
+    let tempBgBase64 = '';
 
     function atualizarNavegacaoAdmin() {
       const container = document.getElementById('adminNavActions');
@@ -815,8 +850,10 @@
       });
     }
 
-    // Listener para cadastrar novo usuário
+    // Listener de inicialização da página
     document.addEventListener('DOMContentLoaded', () => {
+      carregarPlanoDeFundoSalvo();
+
       if (sessionStorage.getItem('fmabc_admin_logged') === 'true') {
         isAdminLoggedIn = true;
         currentUserName = sessionStorage.getItem('fmabc_admin_name') || 'Administrador';
@@ -847,6 +884,76 @@
         });
       }
     });
+
+    // --- FUNÇÕES DE GERENCIAMENTO DO PLANO DE FUNDO ---
+    function processarUploadBgImage(event) {
+      const input = event.target;
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          tempBgBase64 = e.target.result;
+          document.getElementById('inputBgImageUrl').value = '';
+          
+          const prevImg = document.getElementById('previewBgImg');
+          prevImg.src = tempBgBase64;
+          document.getElementById('previewBgContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function salvarPlanoDeFundo(e) {
+      e.preventDefault();
+      const urlInput = document.getElementById('inputBgImageUrl').value.trim();
+      const opacityInput = document.getElementById('inputBgOpacity').value;
+
+      let bgFinal = tempBgBase64 || urlInput;
+
+      if (bgFinal) {
+        document.documentElement.style.setProperty('--bg-image', `url('${bgFinal}')`);
+        localStorage.setItem('fmabc_custom_bg', bgFinal);
+      }
+
+      document.documentElement.style.setProperty('--bg-opacity', opacityInput);
+      localStorage.setItem('fmabc_custom_bg_opacity', opacityInput);
+
+      showToast('✅ Plano de fundo atualizado!');
+    }
+
+    function removerPlanoDeFundo() {
+      tempBgBase64 = '';
+      document.getElementById('inputBgImageUrl').value = '';
+      document.getElementById('inputBgImageFile').value = '';
+      document.getElementById('previewBgContainer').style.display = 'none';
+
+      document.documentElement.style.removeProperty('--bg-image');
+      localStorage.removeItem('fmabc_custom_bg');
+
+      showToast('Plano de fundo restaurado para o padrão.');
+    }
+
+    function carregarPlanoDeFundoSalvo() {
+      const bgSalvo = localStorage.getItem('fmabc_custom_bg');
+      const opacitySalva = localStorage.getItem('fmabc_custom_bg_opacity');
+
+      if (bgSalvo) {
+        document.documentElement.style.setProperty('--bg-image', `url('${bgSalvo}')`);
+        const prevImg = document.getElementById('previewBgImg');
+        const prevContainer = document.getElementById('previewBgContainer');
+        if (prevImg && prevContainer) {
+          prevImg.src = bgSalvo;
+          prevContainer.style.display = 'block';
+        }
+      }
+
+      if (opacitySalva) {
+        document.documentElement.style.setProperty('--bg-opacity', opacitySalva);
+        const opacitySlider = document.getElementById('inputBgOpacity');
+        const opacitySpan = document.getElementById('opacityValue');
+        if (opacitySlider) opacitySlider.value = opacitySalva;
+        if (opacitySpan) opacitySpan.textContent = opacitySalva;
+      }
+    }
 
     // Excluir usuário por ID
     async function excluirUsuario(id) {
@@ -1336,9 +1443,8 @@
       }
     }
 
-    // --- FUNÇÕES DE GESTÃO DO FORMULÁRIO DE TURMAS (CADASTRO / EDIÇÃO / LIMPEZA) ---
+    // --- FUNÇÕES DE GESTÃO DO FORMULÁRIO DE TURMAS ---
 
-    // Função para carregar os dados no formulário superior
     function carregarParaEdicao(turma) {
       document.getElementById('turmaId').value = turma.id;
       document.getElementById('curso').value = turma.curso;
@@ -1347,15 +1453,12 @@
       document.getElementById('qtdFormandos').value = turma.formandos || turma.qtdFormandos || '';
       document.getElementById('resumoCard').value = turma.resumo || turma.cardDesc || '';
 
-      // Altera a interface para o modo de edição
       document.getElementById('btnSubmit').innerText = 'Salvar Alterações';
       document.getElementById('btnCancelar').style.display = 'inline-block';
 
-      // Rola até o topo onde está o formulário
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Função para resetar o formulário ao modo cadastro
     function limparFormulario() {
       document.getElementById('turmaId').value = '';
       document.getElementById('formTurma').reset();
@@ -1375,7 +1478,6 @@
       const resumo = document.getElementById('resumoCard').value;
       const img = document.getElementById('novoImagemBase64').value;
 
-      // Monta o payload garantindo compatibilidade com o banco
       const turmaPayload = {
         curso: curso,
         nome: nome,
@@ -1387,21 +1489,18 @@
         img: img
       };
 
-      // Só inclui a propriedade 'id' se for uma edição
       if (idExistente) {
         turmaPayload.id = idExistente;
       }
 
-      // Tenta salvar no Supabase PRIMEIRO
       const salvo = await salvarTurmaNoBanco(turmaPayload);
 
       if (salvo) {
-        await carregarTurmasDoBanco(); // Recarrega os dados do banco atualizados
+        await carregarTurmasDoBanco();
         limparFormulario();
       }
     }
 
-    // RENDERIZAR LISTA DE TURMAS NO PAINEL ADMIN COM BOTÃO "EDITAR"
     function renderListaTurmasAdmin() {
       const tbody = document.getElementById('tabelaTurmasAdminBody');
       if (!tbody) return;
@@ -1415,7 +1514,6 @@
       appState.turmas.forEach(turma => {
         const tr = document.createElement('tr');
         
-        // Criando o objeto no formato esperado pela função carregarParaEdicao
         const turmaData = {
           id: turma.id,
           curso: turma.curso,
@@ -1441,7 +1539,6 @@
       });
     }
 
-    // EXCLUIR TURMA
     async function excluirTurmaAdmin(id) {
       if (!confirm('Tem certeza que deseja excluir esta turma?')) return;
 
