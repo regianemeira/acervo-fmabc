@@ -161,7 +161,6 @@
     .formandos-count { font-size: 0.85rem; color: var(--navy-dark); font-weight: bold; }
     .btn-acervo { color: var(--verde-principal); font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 6px; }
 
-    /* Estilo dos Cards de Cursos Cadastrados */
     .card-curso {
       background-color: var(--slate-light);
       border: 1px solid var(--border-color);
@@ -170,16 +169,8 @@
       margin-top: 12px;
       transition: var(--transition-fast);
     }
-    .card-curso h3 {
-      font-size: 1.05rem;
-      color: var(--azul-institucional);
-      margin-bottom: 4px;
-    }
-    .card-curso p {
-      font-size: 0.88rem;
-      color: var(--slate-muted);
-      margin: 0;
-    }
+    .card-curso h3 { font-size: 1.05rem; color: var(--azul-institucional); margin-bottom: 4px; }
+    .card-curso p { font-size: 0.88rem; color: var(--slate-muted); margin: 0; }
 
     .paginacao-wrapper { display: flex; justify-content: center; align-items: center; margin-top: 2.5rem; padding: 1rem 0; }
     .paginacao-controles { display: flex; align-items: center; gap: 1rem; background: #ffffff; padding: 0.75rem 1.5rem; border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid var(--border-color); }
@@ -275,6 +266,11 @@
     .btn-save { background-color: var(--verde-principal); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; cursor: pointer; transition: var(--transition-fast); }
     .btn-save:hover { background-color: var(--verde-escuro); }
 
+    /* Estilo da Tabela de Usuários Admin */
+    .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--border-color); }
+    .admin-table th, .admin-table td { padding: 12px; border: 1px solid var(--border-color); text-align: left; }
+    .admin-table th { background-color: var(--slate-light); color: var(--azul-institucional); font-weight: bold; }
+
     .toast-msg { position: fixed; bottom: 24px; right: 24px; background-color: var(--verde-escuro); color: white; padding: 14px 24px; border-radius: 10px; font-weight: bold; font-size: 0.9rem; box-shadow: var(--shadow-lg); display: none; z-index: 3000; animation: fadeIn 0.3s ease; }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -312,7 +308,6 @@
           <input type="text" id="searchInput" placeholder="Buscar por ano, número da turma ou palavras-chave...">
           <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         </div>
-        <!-- Container limpo para receber os botões gerados dinamicamente via JS -->
         <div class="filter-pills" id="courseFilterContainer"></div>
       </div>
     </section>
@@ -432,25 +427,25 @@
 
   <div class="admin-modal-overlay" id="adminModalOverlay">
     
-    <div class="login-box" id="adminLoginBox">
+    <!-- LOGIN (Valores pré-preenchidos removidos) -->
+    <div class="login-box" id="modal-login">
       <button class="modal-close" onclick="fecharAdminModal()" style="top: 14px; right: 14px;">&times;</button>
       <h2>Painel Administrativo</h2>
       <p>Acesso restrito para gestão de conteúdo da FMABC</p>
       
-      <form onsubmit="autenticarAdmin(event)">
-        <div class="form-group">
-          <label>Usuário de Acesso</label>
-          <input type="text" id="adminUser" class="form-control" value="admin" required>
-        </div>
-        <div class="form-group">
-          <label>Senha</label>
-          <input type="password" id="adminPass" class="form-control" value="1234" required>
-        </div>
-        <button type="submit" class="btn-save" style="width: 100%;">Entrar no Painel</button>
-      </form>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="login-email" class="form-control" placeholder="E-mail" required>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-senha" class="form-control" placeholder="Senha" required>
+      </div>
+      <button onclick="autenticarAdmin()" class="btn-save" style="width: 100%;">Entrar</button>
     </div>
 
-    <div class="admin-panel-container" id="adminDashboardBox" style="display: none;">
+    <!-- PAINEL ADMINISTRATIVO -->
+    <div class="admin-panel-container" id="painel-admin" style="display: none;">
       <div class="admin-header">
         <h3>FMABC | Painel de Gestão de Conteúdo</h3>
         <div>
@@ -465,6 +460,7 @@
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabCursos')">Inclusão de Cursos</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Inclusão de Turmas</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Turmas</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
         </nav>
 
         <main class="admin-content">
@@ -617,6 +613,45 @@
             </form>
           </section>
 
+          <!-- TAB: Gerenciamento de Usuários Administradores -->
+          <section id="tabUsuariosAdmin" class="admin-tab-pane">
+            <h3 class="admin-section-title">Gerenciar Usuários Administradores</h3>
+            
+            <!-- Formulário de Criação -->
+            <form id="form-usuario" style="margin-bottom: 30px;">
+              <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="usr-nome" class="form-control" placeholder="Nome Completo" required>
+              </div>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label>E-mail</label>
+                  <input type="email" id="usr-email" class="form-control" placeholder="E-mail" required>
+                </div>
+                <div class="form-group">
+                  <label>Senha</label>
+                  <input type="password" id="usr-senha" class="form-control" placeholder="Senha" required>
+                </div>
+              </div>
+              <button type="submit" class="btn-save">Adicionar Novo Usuário</button>
+            </form>
+
+            <!-- Lista de Usuários Existentes -->
+            <h4 style="color: var(--azul-institucional); margin-bottom: 12px;">Usuários Cadastrados</h4>
+            <div style="overflow-x: auto;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th style="width: 100px; text-align: center;">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="tabela-usuarios-body"></tbody>
+              </table>
+            </div>
+          </section>
+
         </main>
       </div>
     </div>
@@ -625,14 +660,108 @@
   <div class="toast-msg" id="toastNotification">Alterações salvas com sucesso!</div>
 
   <script>
-    // 1. CREDENCIAIS DO SUPABASE
+    // 1. CREDENCIAIS E CLIENTE DO SUPABASE
     const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhobXR5YW1zYnh4cGtibGxheWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzODAzOTQsImV4cCI6MjEwMzk1NjM5NH0.9l6lJSbLgfGa4eDFxlsIkz6LWQTdz92u2sGG8AVSuCI';
     
-    // 2. CONEXÃO COM O BANCO
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const _supabase = supabaseClient;
 
-    // Turmas iniciais padrão (fallback caso o banco esteja limpo)
+    // 2. FUNÇÕES SOLICITADAS DO BANCO DE DADOS
+
+    // 2.1 Validar login no banco de dados
+    async function autenticarAdmin() {
+      const email = document.getElementById('login-email').value;
+      const senha = document.getElementById('login-senha').value;
+
+      const { data, error } = await _supabase
+        .from('usuarios_admin')
+        .select('*')
+        .eq('email', email)
+        .eq('senha', senha)
+        .maybeSingle();
+
+      if (error || !data) {
+        alert('Usuário ou senha incorretos.');
+        return;
+      }
+
+      document.getElementById('modal-login').style.display = 'none';
+      document.getElementById('painel-admin').style.display = 'flex';
+      carregarUsuarios();
+      preencherCamposAdmin();
+    }
+
+    // 2.2 Listar usuários cadastrados
+    async function carregarUsuarios() {
+      const { data: usuarios, error } = await _supabase
+        .from('usuarios_admin')
+        .select('id, nome, email')
+        .order('created_at', { ascending: false });
+
+      if (error) return alert('Erro ao carregar lista: ' + error.message);
+
+      const tbody = document.getElementById('tabela-usuarios-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      usuarios.forEach(usr => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${usr.nome}</td>
+          <td>${usr.email}</td>
+          <td style="text-align: center;">
+            <button onclick="excluirUsuario('${usr.id}')" style="color: #DC2626; background: #FEE2E2; border: 1px solid #FCA5A5; padding: 4px 10px; border-radius: 6px; font-weight: bold; cursor: pointer;">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 2.3 Listener para cadastrar novo usuário
+    document.addEventListener('DOMContentLoaded', () => {
+      const formUsuario = document.getElementById('form-usuario');
+      if (formUsuario) {
+        formUsuario.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const nome = document.getElementById('usr-nome').value;
+          const email = document.getElementById('usr-email').value;
+          const senha = document.getElementById('usr-senha').value;
+
+          const { error } = await _supabase
+            .from('usuarios_admin')
+            .insert([{ nome, email, senha }]);
+
+          if (error) {
+            alert('Erro ao criar usuário: ' + error.message);
+            return;
+          }
+
+          document.getElementById('form-usuario').reset();
+          carregarUsuarios();
+        });
+      }
+    });
+
+    // 2.4 Excluir usuário por ID
+    async function excluirUsuario(id) {
+      if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+
+      const { error } = await _supabase
+        .from('usuarios_admin')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('Erro ao excluir: ' + error.message);
+        return;
+      }
+
+      carregarUsuarios();
+    }
+
+    // 3. LÓGICA EXISTENTE DO PORTAL
     const turmasIniciaisPadrao = [
       {
         id: 'turma-50-med',
@@ -681,7 +810,6 @@
       turmas: [...turmasIniciaisPadrao]
     };
 
-    // EXECUÇÃO INICIAL UNIFICADA
     document.addEventListener('DOMContentLoaded', async () => {
       renderHero();
       setupEventListeners();
@@ -689,10 +817,9 @@
       await carregarTurmasDoBanco();
     });
 
-    // 1. FUNÇÃO CORRIGIDA PARA BUSCAR E ATUALIZAR OS CURSOS DIRETO DO SUPABASE
     async function carregarCursosDoSupabase() {
       try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await _supabase
           .from('cursos')
           .select('*')
           .order('nome', { ascending: true });
@@ -700,11 +827,9 @@
         if (error) throw error;
 
         if (data) {
-          // Garante 'Todos' no início e insere os nomes dos cursos do banco
           const nomesCursosBanco = data.map(c => typeof c === 'object' ? c.nome : c);
           appState.cursos = Array.from(new Set(['Todos', ...nomesCursosBanco]));
 
-          // <--- OBRIGATÓRIO: Atualiza a renderização imediata na tela
           renderCourseFilters();
           populateAdminSelects();
           renderListaCursosAdmin(data);
@@ -714,7 +839,6 @@
       }
     }
 
-    // Renderiza a lista de cursos dentro da aba do Painel Admin
     function renderListaCursosAdmin(cursos) {
       const container = document.getElementById('listaCursos');
       if (!container) return;
@@ -730,7 +854,6 @@
       });
     }
 
-    // 2. FUNÇÃO CORRIGIDA DE GERAR OS BOTÕES DE FILTRO BASEADOS EM appState.cursos
     function renderCourseFilters() {
       const container = document.getElementById('courseFilterContainer');
       if (!container) return;
@@ -754,7 +877,6 @@
       });
     }
 
-    // CADASTRO DE NOVO CURSO NO SUPABASE
     async function cadastrarCurso(event) {
       event.preventDefault();
 
@@ -765,7 +887,7 @@
 
       if (!nome) return;
 
-      const { error } = await supabaseClient
+      const { error } = await _supabase
         .from('cursos')
         .insert([{ nome: nome, descricao: descricao }]);
 
@@ -778,13 +900,12 @@
       nomeInput.value = '';
       descInput.value = '';
 
-      // Atualiza o banco e re-renderiza a tela em tempo real
       await carregarCursosDoSupabase();
     }
 
     async function carregarTurmasDoBanco() {
       try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await _supabase
           .from('turmas')
           .select('*');
 
@@ -797,7 +918,7 @@
           appState.turmas = data;
         } else {
           for (const turma of turmasIniciaisPadrao) {
-            await supabaseClient.from('turmas').upsert(turma, { onConflict: 'id' });
+            await _supabase.from('turmas').upsert(turma, { onConflict: 'id' });
           }
         }
 
@@ -811,7 +932,7 @@
 
     async function salvarTurmaNoBanco(turma) {
       try {
-        const { error } = await supabaseClient
+        const { error } = await _supabase
           .from('turmas')
           .upsert(turma, { onConflict: 'id' });
 
@@ -986,7 +1107,7 @@
         return;
       }
 
-      const { error } = await supabaseClient
+      const { error } = await _supabase
         .from('depoimentos')
         .insert([
           {
@@ -1030,7 +1151,7 @@
       let depoimentosTotais = [...(turma.depoimentos || [])];
 
       try {
-        const { data: aprovados, error } = await supabaseClient
+        const { data: aprovados, error } = await _supabase
           .from('depoimentos')
           .select('*')
           .eq('turma_id', turma.id)
@@ -1092,23 +1213,11 @@
       document.getElementById('adminModalOverlay').classList.remove('active');
     }
 
-    function autenticarAdmin(e) {
-      e.preventDefault();
-      const u = document.getElementById('adminUser').value;
-      const p = document.getElementById('adminPass').value;
-
-      if (u === 'admin' && p === '1234') {
-        document.getElementById('adminLoginBox').style.display = 'none';
-        document.getElementById('adminDashboardBox').style.display = 'flex';
-        preencherCamposAdmin();
-      } else {
-        showToast('Usuário ou senha incorretos.');
-      }
-    }
-
     function fazerLogoutAdmin() {
-      document.getElementById('adminDashboardBox').style.display = 'none';
-      document.getElementById('adminLoginBox').style.display = 'block';
+      document.getElementById('painel-admin').style.display = 'none';
+      document.getElementById('modal-login').style.display = 'block';
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-senha').value = '';
     }
 
     function switchAdminTab(e, tabId) {
@@ -1235,7 +1344,7 @@
     async function carregarDepoimentosPendentes(turmaIdSelecionada) {
       if (!turmaIdSelecionada) return;
 
-      const { data: pendentes, error } = await supabaseClient
+      const { data: pendentes, error } = await _supabase
         .from('depoimentos')
         .select('*')
         .eq('turma_id', turmaIdSelecionada)
@@ -1279,7 +1388,7 @@
     }
 
     async function aprovarDepoimento(depoimentoId) {
-      const { error } = await supabaseClient
+      const { error } = await _supabase
         .from('depoimentos')
         .update({ aprovado: true })
         .eq('id', depoimentoId);
