@@ -748,6 +748,11 @@
       carregarCursos();
     });
 
+    document.addEventListener('DOMContentLoaded', async () => {
+    await carregarCursosDoSupabase(); // Busca as categorias atualizadas
+    await carregarTurmasDoSupabase();  // Busca os cards das turmas
+});
+
     async function carregarTurmasDoBanco() {
       try {
         const { data, error } = await supabaseClient
@@ -1430,6 +1435,25 @@
         toast.style.display = 'none';
       }, 3000);
     }
+    async function carregarCursosDoSupabase() {
+    try {
+        const { data, error } = await supabase
+            .from('cursos')
+            .select('*')
+            .order('nome', { ascending: true });
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+            // Atualiza a lista em memória com os dados vindos do banco
+            appState.cursos = data;
+            // Re-renderiza os botões de filtro na interface
+            renderCourseFilters();
+        }
+    } catch (err) {
+        console.error('Erro ao carregar cursos do Supabase:', err.message);
+    }
+}
   </script>
 </body>
 </html>
