@@ -1015,19 +1015,23 @@
 
     async function salvarTurmaNoBanco(turma) {
       try {
-        const { error } = await _supabase
+        const { data, error } = await _supabase
           .from('turmas')
-          .upsert(turma, { onConflict: 'id' });
+          .upsert([turma], { onConflict: 'id' })
+          .select();
 
         if (error) {
-          console.error('Erro detalhado do Supabase:', error);
-          showToast('⚠️ Falha ao gravar no banco: ' + error.message);
-        } else {
-          showToast('✅ Salvo no banco com sucesso!');
+          console.error('Erro retornado pelo Supabase:', error.message, error.details);
+          showToast('⚠️ Erro ao salvar: ' + error.message);
+          return false;
         }
+
+        showToast('✅ Salvo no banco com sucesso!');
+        return true;
       } catch (err) {
-        console.error('Erro de rede/conexão:', err);
-        showToast('❌ Erro de conexão em tempo real.');
+        console.error('Erro de conexão:', err);
+        showToast('❌ Falha na conexão com o Supabase.');
+        return false;
       }
     }
 
@@ -1334,71 +1338,41 @@
       document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
     }
 
-    // Função para salvar turma (Verifica se é Edição ou Criação)
     async function salvarTurma(e) {
       e.preventDefault();
 
-      const id = document.getElementById('turmaId').value;
+      const idExistente = document.getElementById('turmaId').value;
       const curso = document.getElementById('curso').value;
       const nome = document.getElementById('nomeTurma').value;
-      const ano = document.getElementById('anoFormatura').value;
-      const formandos = document.getElementById('qtdFormandos').value;
+      const ano = parseInt(document.getElementById('anoFormatura').value, 10);
+      const formandos = parseInt(document.getElementById('qtdFormandos').value, 10);
       const resumo = document.getElementById('resumoCard').value;
       const img = document.getElementById('novoImagemBase64').value;
 
-      if (id) {
-        // EDIÇÃO (PUT / UPDATE)
-        const turmaExistente = appState.turmas.find(t => String(t.id) === String(id));
-        const turmaAtualizada = {
-          ...turmaExistente,
-          id: id,
-          curso: curso,
-          titulo: nome,
-          nome: nome,
-          ano: ano,
-          qtdFormandos: formandos,
-          formandosCount: formandos,
-          cardDesc: resumo,
-          resumo: resumo,
-          img: img || (turmaExistente ? turmaExistente.img : '')
-        };
+      // Monta o payload garantindo compatibilidade com o banco
+      const turmaPayload = {
+        curso: curso,
+        nome: nome,
+        titulo: nome,
+        ano: ano,
+        qtdFormandos: formandos,
+        resumo: resumo,
+        cardDesc: resumo,
+        img: img
+      };
 
-        const index = appState.turmas.findIndex(t => String(t.id) === String(id));
-        if (index !== -1) {
-          appState.turmas[index] = turmaAtualizada;
-        }
-
-        await salvarTurmaNoBanco(turmaAtualizada);
-        showToast('✅ Turma atualizada com sucesso!');
-      } else {
-        // CRIAÇÃO (POST DE NOVO REGISTRO)
-        const novaTurma = {
-          id: 'turma-' + Date.now(),
-          curso: curso,
-          titulo: nome,
-          nome: nome,
-          ano: ano,
-          qtdFormandos: formandos,
-          img: img,
-          cardDesc: resumo,
-          resumo: resumo,
-          historia: '',
-          galeria: [],
-          depoimentos: [],
-          formandos: []
-        };
-
-        appState.turmas.unshift(novaTurma);
-        await salvarTurmaNoBanco(novaTurma);
-        showToast('✅ Nova turma cadastrada!');
+      // Só inclui a propriedade 'id' se for uma edição
+      if (idExistente) {
+        turmaPayload.id = idExistente;
       }
 
-      limparFormulario();
-      appState.paginaAtual = 1;
-      renderCards();
-      populateDepoimentoTurmasSelect();
-      populateAdminSelects();
-      renderListaTurmasAdmin();
+      // Tenta salvar no Supabase PRIMEIRO
+      const salvo = await salvarTurmaNoBanco(turmaPayload);
+
+      if (salvo) {
+        await carregarTurmasDoBanco(); // Recarrega os dados do banco atualizados
+        limparFormulario();
+      }
     }
 
     // RENDERIZAR LISTA DE TURMAS NO PAINEL ADMIN COM BOTÃO "EDITAR"
