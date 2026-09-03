@@ -627,14 +627,15 @@
   <div class="toast-msg" id="toastNotification">Alterações salvas com sucesso!</div>
 
   <script>
+  <script>
     // 1. CREDENCIAIS DO SUPABASE
     const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhobXR5YW1zYnh4cGtibGxheWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzODAzOTQsImV4cCI6MjEwMzk1MjM5NH0.9l6lJSbLgfGa4eDFxlsIkz6LWQTdz92u2sGG8AVSuCI';
     
-    // 2. CONEXÃO COM O BANCO (Uso do window.supabase para evitar conflito com o SDK)
+    // 2. CONEXÃO COM O BANCO
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Turmas iniciais padrão (para a página nunca ficar em branco)
+    // Turmas iniciais padrão
     const turmasIniciaisPadrao = [
       {
         id: 'turma-50-med',
@@ -680,67 +681,29 @@
       termoBusca: "",
       paginaAtual: 1,
       itensPorPagina: 6,
-      turmas: [...turmasIniciaisPadrao]
+      turmas: []
     };
 
-    // Cadastrar novo curso no Supabase
-    async function cadastrarCurso(event) {
-      event.preventDefault();
-
-      const nome = document.getElementById('inputNomeCurso').value;
-      const descricao = document.getElementById('inputDescricao').value;
-
-      const { data, error } = await supabaseClient
-        .from('cursos')
-        .insert([{ nome: nome, descricao: descricao }]);
-
-      if (error) {
-        alert('Erro ao salvar no banco: ' + error.message);
-        return;
-      }
-
-      alert('Curso cadastrado com sucesso!');
-      
-      document.getElementById('inputNomeCurso').value = '';
-      document.getElementById('inputDescricao').value = '';
-
-      if (nome && !appState.cursos.includes(nome)) {
-        appState.cursos.push(nome);
-        renderCourseFilters();
-        populateAdminSelects();
-      }
-
-      carregarCursos();
+    // Função de normalização para evitar quebra por dados incompletos ou formatos nulos do Supabase
+    function normalizarTurma(t) {
+      return {
+        id: t.id || 'turma-' + Date.now(),
+        curso: t.curso || 'Geral',
+        titulo: t.titulo || t.nome || 'Turma sem título',
+        ano: String(t.ano || ''),
+        qtdFormandos: String(t.qtdFormandos || t.qtd_formandos || '0'),
+        cardDesc: t.cardDesc || t.card_desc || 'Sem descrição cadastrada.',
+        img: t.img || t.imagem_url || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80',
+        paraninfo: t.paraninfo || '',
+        patrono: t.patrono || '',
+        historia: t.historia || '',
+        galeria: Array.isArray(t.galeria) ? t.galeria : [],
+        depoimentos: Array.isArray(t.depoimentos) ? t.depoimentos : [],
+        formandos: Array.isArray(t.formandos) ? t.formandos : (typeof t.formandos === 'string' ? t.formandos.split(',').map(s => s.trim()).filter(Boolean) : [])
+      };
     }
 
-    // Buscar os cursos do banco
-    async function carregarCursos() {
-      const { data: cursos, error } = await supabaseClient
-        .from('cursos')
-        .select('*');
-
-      if (error) {
-        console.error('Erro ao carregar cursos:', error.message);
-        return;
-      }
-
-      const container = document.getElementById('listaCursos');
-      if (!container) return;
-      container.innerHTML = '';
-
-      if (cursos) {
-        cursos.forEach(curso => {
-          container.innerHTML += `
-            <div class="card-curso">
-              <h3>${curso.nome}</h3>
-              <p>${curso.descricao || 'Sem descrição informada.'}</p>
-            </div>
-          `;
-        });
-      }
-    }
-
-    // Executa automaticamente ao carregar o site
+    // Inicialização da página
     document.addEventListener('DOMContentLoaded', () => {
       renderApp();
       setupEventListeners();
@@ -748,48 +711,90 @@
       carregarCursos();
     });
 
-    async function carregarTurmasDoBanco() {
+    async function carregarCursos() {
       try {
-        const { data, error } = await supabaseClient
-          .from('turmas')
-          .select('*');
+        const { data: cursos, error } = await supabaseClient.from('cursos').select('*');
+        if (error) throw error;
 
-        if (error) {
-          console.error('Erro ao ler do Supabase:', error.message);
-          return;
+        if (cursos && cursos.length > 0) {
+          cursos.forEach(c => {
+            if (c.nome && !appState.cursos.includes(c.nome)) {
+              appState.cursos.push(c.nome);
+            }
+          });
+          renderCourseFilters();
+          populateAdminSelects();
         }
 
+        const container = document.getElementById('listaCursos');
+        if (container && cursos) {
+          container.innerHTML = cursos.map(c => `
+            <div class="card-curso">
+              <h3>${c.nome}</h3>
+              <p>${c.descricao || 'Sem descrição informada.'}</p>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Erro ao carregar cursos:', err.message);
+      }
+    }
+
+    async function cadastrarCurso(event) {
+      event.preventDefault();
+      const nome = document.getElementById('inputNomeCurso').value.trim();
+      const descricao = document.getElementById('inputDescricao').value.trim();
+
+      const { error } = await supabaseClient.from('cursos').insert([{ nome, descricao }]);
+
+      if (error) {
+        alert('Erro ao salvar curso: ' + error.message);
+        return;
+      }
+
+      alert('Curso cadastrado com sucesso!');
+      document.getElementById('inputNomeCurso').value = '';
+      document.getElementById('inputDescricao').value = '';
+
+      carregarCursos();
+    }
+
+    async function carregarTurmasDoBanco() {
+      try {
+        const { data, error } = await supabaseClient.from('turmas').select('*');
+        if (error) throw error;
+
         if (data && data.length > 0) {
-          appState.turmas = data;
+          appState.turmas = data.map(normalizarTurma);
         } else {
-          for (const turma of turmasIniciaisPadrao) {
+          appState.turmas = turmasIniciaisPadrao.map(normalizarTurma);
+          for (const turma of appState.turmas) {
             await supabaseClient.from('turmas').upsert(turma, { onConflict: 'id' });
           }
         }
-
+      } catch (err) {
+        console.error('Falha ao conectar com Supabase, carregando turmas padrão:', err);
+        appState.turmas = turmasIniciaisPadrao.map(normalizarTurma);
+      } finally {
         renderCards();
         populateDepoimentoTurmasSelect();
         populateAdminSelects();
-      } catch (err) {
-        console.error('Falha de conexão com o banco:', err);
       }
     }
 
     async function salvarTurmaNoBanco(turma) {
       try {
-        const { data, error } = await supabaseClient
-          .from('turmas')
-          .upsert(turma, { onConflict: 'id' });
+        const turmaNormalizada = normalizarTurma(turma);
+        const { error } = await supabaseClient.from('turmas').upsert(turmaNormalizada, { onConflict: 'id' });
 
         if (error) {
-          console.error('Erro detalhado do Supabase:', error);
-          showToast('⚠️ Falha ao gravar no banco em tempo real: ' + error.message);
+          showToast('⚠️ Falha ao gravar no banco: ' + error.message);
         } else {
           showToast('✅ Salvo no banco com sucesso!');
+          renderCards();
         }
       } catch (err) {
-        console.error('Erro de rede/conexão:', err);
-        showToast('❌ Erro de conexão em tempo real: ' + (err.message || 'Falha de rede ao tentar salvar.'));
+        showToast('❌ Erro de conexão ao salvar.');
       }
     }
 
@@ -829,8 +834,7 @@
       appState.decadaAtiva = decada;
       appState.paginaAtual = 1;
 
-      const botoes = document.querySelectorAll('.btn-decada');
-      botoes.forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.btn-decada').forEach(btn => btn.classList.remove('active'));
       if (event && event.currentTarget) {
         event.currentTarget.classList.add('active');
       }
@@ -882,8 +886,7 @@
       }
 
       const inicio = (appState.paginaAtual - 1) * appState.itensPorPagina;
-      const fim = inicio + appState.itensPorPagina;
-      const turmasPagina = turmasFiltradas.slice(inicio, fim);
+      const turmasPagina = turmasFiltradas.slice(inicio, inicio + appState.itensPorPagina);
 
       turmasPagina.forEach(turma => {
         const card = document.createElement('article');
@@ -969,19 +972,11 @@
         return;
       }
 
-      const { data, error } = await supabaseClient
-        .from('depoimentos')
-        .insert([
-          {
-            turma_id: turmaIdSelecionada,
-            autor: nomeDoAluno,
-            texto: mensagemDepoimento,
-            aprovado: false
-          }
-        ]);
+      const { error } = await supabaseClient.from('depoimentos').insert([
+        { turma_id: turmaIdSelecionada, autor: nomeDoAluno, texto: mensagemDepoimento, aprovado: false }
+      ]);
 
       if (error) {
-        console.error('Erro ao enviar depoimento:', error);
         showToast('❌ Erro ao enviar depoimento: ' + error.message);
       } else {
         showToast('✅ Depoimento enviado para aprovação!');
@@ -1013,16 +1008,14 @@
       let depoimentosTotais = [...(turma.depoimentos || [])];
 
       try {
-        const { data: aprovados, error } = await supabaseClient
+        const { data: aprovados } = await supabaseClient
           .from('depoimentos')
           .select('*')
           .eq('turma_id', turma.id)
           .eq('aprovado', true);
 
-        if (!error && aprovados) {
-          aprovados.forEach(d => {
-            depoimentosTotais.push({ autor: d.autor, texto: `"${d.texto}"` });
-          });
+        if (aprovados) {
+          aprovados.forEach(d => depoimentosTotais.push({ autor: d.autor, texto: `"${d.texto}"` }));
         }
       } catch (err) {
         console.error('Erro ao buscar depoimentos aprovados:', err);
@@ -1132,21 +1125,15 @@
     async function cadastrarNovaTurma(e) {
       e.preventDefault();
 
-      const imagemFormatada = document.getElementById('novoImagemBase64').value;
-
-      const novaTurma = {
+      const novaTurma = normalizarTurma({
         id: 'turma-' + Date.now(),
         curso: document.getElementById('selectTurmaCurso').value,
         titulo: document.getElementById('inputTurmaNome').value,
         ano: document.getElementById('inputTurmaAno').value,
         qtdFormandos: document.getElementById('inputTurmaQtd').value,
-        img: imagemFormatada,
-        cardDesc: document.getElementById('inputTurmaDescCard').value,
-        historia: '',
-        galeria: [],
-        depoimentos: [],
-        formandos: []
-      };
+        img: document.getElementById('novoImagemBase64').value,
+        cardDesc: document.getElementById('inputTurmaDescCard').value
+      });
 
       appState.turmas.unshift(novaTurma);
       await salvarTurmaNoBanco(novaTurma);
@@ -1157,7 +1144,6 @@
       populateAdminSelects();
 
       e.target.reset();
-      document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
     }
 
     function populateAdminSelects() {
@@ -1192,14 +1178,15 @@
         document.getElementById('editModalPatrono').value = turma.patrono || '';
         document.getElementById('editModalHistoria').value = turma.historia || '';
         
-        galeriaEdicaoAtual = [...(turma.galeria || [])];
+        galeriaEdicaoAtual = Array.isArray(turma.galeria) ? [...turma.galeria] : [];
         document.getElementById('editModalGaleriaUrls').value = '';
         renderPreviewGaleria();
 
-        depoimentosEdicaoAtual = JSON.parse(JSON.stringify(turma.depoimentos || []));
+        depoimentosEdicaoAtual = Array.isArray(turma.depoimentos) ? JSON.parse(JSON.stringify(turma.depoimentos)) : [];
         renderPreviewDepoimentos();
 
-        document.getElementById('editModalFormandos').value = (turma.formandos || []).join(', ');
+        const formandosArr = Array.isArray(turma.formandos) ? turma.formandos : [];
+        document.getElementById('editModalFormandos').value = formandosArr.join(', ');
 
         await carregarDepoimentosPendentes(turmaIdSelecionada);
       } else {
@@ -1214,16 +1201,11 @@
     async function carregarDepoimentosPendentes(turmaIdSelecionada) {
       if (!turmaIdSelecionada) return;
 
-      const { data: pendentes, error } = await supabaseClient
+      const { data: pendentes } = await supabaseClient
         .from('depoimentos')
         .select('*')
         .eq('turma_id', turmaIdSelecionada)
         .eq('aprovado', false);
-
-      if (error) {
-        console.error('Erro ao buscar depoimentos pendentes:', error);
-        return;
-      }
 
       renderPreviewDepoimentosPendentes(pendentes || []);
     }
@@ -1258,13 +1240,9 @@
     }
 
     async function aprovarDepoimento(depoimentoId) {
-      const { error } = await supabaseClient
-        .from('depoimentos')
-        .update({ aprovado: true })
-        .eq('id', depoimentoId);
+      const { error } = await supabaseClient.from('depoimentos').update({ aprovado: true }).eq('id', depoimentoId);
 
       if (error) {
-        console.error('Erro ao aprovar depoimento:', error);
         showToast('❌ Erro ao aprovar depoimento: ' + error.message);
       } else {
         showToast('✅ Depoimento aprovado com sucesso!');
@@ -1322,7 +1300,7 @@
       const urlsText = textarea.value.trim();
       if (!urlsText) return;
 
-      const urls = urlsText.split('\n').map(u => u.trim()).filter(u => u);
+      const urls = urlsText.split('\n').map(u => u.trim()).filter(Boolean);
       urls.forEach(url => {
         if (!galeriaEdicaoAtual.includes(url)) {
           galeriaEdicaoAtual.push(url);
@@ -1413,7 +1391,7 @@
       turma.depoimentos = [...depoimentosEdicaoAtual];
 
       const formandosText = document.getElementById('editModalFormandos').value;
-      turma.formandos = formandosText.split(',').map(f => f.trim()).filter(f => f);
+      turma.formandos = formandosText.split(',').map(f => f.trim()).filter(Boolean);
 
       await salvarTurmaNoBanco(turma);
     }
