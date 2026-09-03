@@ -80,7 +80,7 @@
     .hero-banner {
       background: linear-gradient(135deg, var(--azul-institucional) 0%, var(--verde-escuro) 100%);
       border-radius: 20px; padding: 44px; color: white; position: relative; overflow: hidden;
-      margin-bottom: 24px; box-shadow: var(--shadow-lg);
+      margin-bottom: 28px; box-shadow: var(--shadow-lg);
     }
     .hero-banner::before {
       content: ''; position: absolute; top: -40%; right: -10%; width: 480px; height: 480px;
@@ -120,22 +120,6 @@
       background-color: var(--verde-principal); color: white; border-color: var(--verde-principal);
       box-shadow: 0 4px 12px rgba(51, 156, 91, 0.35);
     }
-
-    .decadas-bar {
-      background-color: #ffffff; border: 1px solid var(--border-color); border-bottom: 2px solid var(--verde-pastel-medio);
-      border-radius: 14px; padding: 1rem 1.5rem; margin-bottom: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-    .decadas-container { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-    .decadas-label { font-weight: bold; font-size: 0.85rem; color: var(--azul-institucional); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-    .decadas-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-    .btn-decada {
-      background-color: var(--verde-pastel-suave); border: 1px solid var(--verde-pastel-medio);
-      color: var(--verde-escuro); padding: 0.45rem 0.9rem; border-radius: 20px; font-size: 0.82rem;
-      font-weight: bold; cursor: pointer; transition: all 0.2s ease;
-    }
-    .btn-decada:hover { background-color: var(--verde-pastel-medio); color: var(--azul-institucional); }
-    .btn-decada.active { background-color: var(--verde-principal); color: #ffffff; border-color: var(--verde-principal); box-shadow: 0 2px 6px rgba(51, 156, 91, 0.3); }
 
     .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
     .card {
@@ -309,21 +293,6 @@
           <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         </div>
         <div class="filter-pills" id="courseFilterContainer"></div>
-      </div>
-    </section>
-
-    <section class="decadas-bar">
-      <div class="decadas-container">
-        <span class="decadas-label">Filtrar por Década:</span>
-        <div class="decadas-pills" id="containerDecadas">
-          <button class="btn-decada active" onclick="filtrarPorDecada('Todas', event)">Todas</button>
-          <button class="btn-decada" onclick="filtrarPorDecada('2020', event)">Década de 2020</button>
-          <button class="btn-decada" onclick="filtrarPorDecada('2010', event)">2010</button>
-          <button class="btn-decada" onclick="filtrarPorDecada('2000', event)">2000</button>
-          <button class="btn-decada" onclick="filtrarPorDecada('1990', event)">Anos 90</button>
-          <button class="btn-decada" onclick="filtrarPorDecada('1980', event)">Anos 80</button>
-          <button class="btn-decada" onclick="filtrarPorDecada('1970', event)">Primeiras Turmas (Anos 70)</button>
-        </div>
       </div>
     </section>
 
@@ -803,7 +772,6 @@
       },
       cursos: ["Todos"],
       cursoAtivo: "Todos",
-      decadaAtiva: "Todas",
       termoBusca: "",
       paginaAtual: 1,
       itensPorPagina: 6,
@@ -958,33 +926,9 @@
       if (subtitle) subtitle.textContent = appState.home.subtitle;
     }
 
-    function filtrarPorDecada(decada, event) {
-      appState.decadaAtiva = decada;
-      appState.paginaAtual = 1;
-
-      const botoes = document.querySelectorAll('.btn-decada');
-      botoes.forEach(btn => btn.classList.remove('active'));
-      if (event && event.currentTarget) {
-        event.currentTarget.classList.add('active');
-      }
-
-      renderCards();
-    }
-
     function obterTurmasFiltradas() {
       return appState.turmas.filter(turma => {
         const atendeCurso = appState.cursoAtivo === 'Todos' || turma.curso === appState.cursoAtivo;
-        
-        let atendeDecada = true;
-        if (appState.decadaAtiva !== 'Todas') {
-          const anoNum = parseInt(turma.ano, 10);
-          const decadaStart = parseInt(appState.decadaAtiva, 10);
-          if (appState.decadaAtiva === '1970') {
-            atendeDecada = anoNum >= 1969 && anoNum <= 1979;
-          } else {
-            atendeDecada = anoNum >= decadaStart && anoNum <= decadaStart + 9;
-          }
-        }
 
         const termo = appState.termoBusca.toLowerCase();
         const atendeBusca = !termo || 
@@ -992,7 +936,7 @@
           (turma.ano && turma.ano.toString().toLowerCase().includes(termo)) ||
           (turma.cardDesc && turma.cardDesc.toLowerCase().includes(termo));
 
-        return atendeCurso && atendeDecada && atendeBusca;
+        return atendeCurso && atendeBusca;
       });
     }
 
