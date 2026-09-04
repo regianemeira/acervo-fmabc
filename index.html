@@ -520,9 +520,7 @@
     <!-- Banner de Redes Sociais -->
     <section class="banner-redes-sociais">
       <div class="banner-redes-img">
-        <!-- Substitua o atributo src abaixo pela imagem com o fundo transparente das estudantes. -->
-        <!-- Opcional: Se não possuir o recorte exato, você pode omitir esta div ou usar uma foto padrão. -->
-        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" alt="Alunas FMABC">
+        <img id="bannerSocialImg" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" alt="Alunas FMABC" style="transition: opacity 0.5s ease-in-out; opacity: 1;">
       </div>
       
       <div class="banner-redes-content">
@@ -531,19 +529,19 @@
         
         <div class="redes-sociais-botoes">
           <!-- Instagram -->
-          <a href="https://www.instagram.com/centrouniversitariofmabc/" target="_blank" class="btn-rede-social" aria-label="Instagram">
+          <a href="#" target="_blank" class="btn-rede-social" aria-label="Instagram">
             <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
           </a>
           <!-- Facebook -->
-          <a href="https://www.facebook.com/CentroUniversitarioFMABC/" target="_blank" class="btn-rede-social" aria-label="Facebook">
+          <a href="#" target="_blank" class="btn-rede-social" aria-label="Facebook">
             <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
           </a>
           <!-- LinkedIn -->
-          <a href="https://br.linkedin.com/school/fmabc/" target="_blank" class="btn-rede-social" aria-label="LinkedIn">
+          <a href="#" target="_blank" class="btn-rede-social" aria-label="LinkedIn">
             <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           </a>
           <!-- YouTube -->
-          <a href="https://www.youtube.com/channel/UCJ_wO9afToh1XyMoUcGY8qw" target="_blank" class="btn-rede-social" aria-label="YouTube">
+          <a href="#" target="_blank" class="btn-rede-social" aria-label="YouTube">
              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
         </div>
@@ -649,6 +647,7 @@
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
           <!-- Novo Botão do Rodapé -->
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabRodape')">Editar Rodapé</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabBannerSocial')">Banner Redes Sociais</button>
         </nav>
 
         <main class="admin-content">
@@ -911,6 +910,19 @@
             </form>
           </section>
 
+          <!-- TAB: Banner Redes Sociais -->
+          <section id="tabBannerSocial" class="admin-tab-pane">
+            <h3 class="admin-section-title">Imagens do Banner de Redes Sociais</h3>
+            <form onsubmit="salvarImagensBanner(event)">
+              <div class="form-group">
+                <label>URLs das Imagens (uma por linha)</label>
+                <textarea id="inputBannerImages" class="form-control" style="min-height: 120px;" placeholder="https://link-da-imagem-1.jpg&#10;https://link-da-imagem-2.jpg"></textarea>
+                <small style="color: var(--slate-muted);">Estas imagens serão alternadas automaticamente a cada 4 segundos no banner da página inicial.</small>
+              </div>
+              <button type="submit" class="btn-save">Salvar Imagens do Banner</button>
+            </form>
+          </section>
+
         </main>
       </div>
     </div>
@@ -930,6 +942,54 @@
     let isAdminLoggedIn = false;
     let currentUserName = '';
     let tempBgBase64 = '';
+
+    // --- LÓGICA DO BANNER DE REDES SOCIAIS ---
+    let bannerImages = JSON.parse(localStorage.getItem('fmabc_banner_images')) || [
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80"
+    ];
+    let currentBannerIndex = 0;
+
+    function iniciarAnimacaoBanner() {
+      const imgElement = document.getElementById('bannerSocialImg');
+      if (!imgElement) return;
+
+      // Carrega a primeira imagem salva
+      if (bannerImages.length > 0) {
+        imgElement.src = bannerImages[0];
+      }
+
+      // Só inicia o loop se houver mais de uma imagem
+      if (bannerImages.length > 1) {
+        setInterval(() => {
+          imgElement.style.opacity = 0; // Fade out
+          
+          setTimeout(() => {
+            currentBannerIndex = (currentBannerIndex + 1) % bannerImages.length;
+            imgElement.src = bannerImages[currentBannerIndex];
+            imgElement.style.opacity = 1; // Fade in
+          }, 500); // Aguarda a transição CSS terminar
+          
+        }, 4000); // Executa a cada 4 segundos
+      }
+    }
+
+    function salvarImagensBanner(e) {
+      e.preventDefault();
+      const textarea = document.getElementById('inputBannerImages');
+      const urls = textarea.value.split('\n').map(url => url.trim()).filter(url => url !== '');
+      
+      if (urls.length > 0) {
+        bannerImages = urls;
+        localStorage.setItem('fmabc_banner_images', JSON.stringify(bannerImages));
+        document.getElementById('bannerSocialImg').src = bannerImages[0];
+        showToast('Imagens do banner atualizadas com sucesso!');
+        
+        // Reinicia a página para aplicar a nova animação corretamente
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        alert('Insira pelo menos uma URL de imagem válida.');
+      }
+    }
 
     function atualizarNavegacaoAdmin() {
       const container = document.getElementById('adminNavActions');
@@ -969,7 +1029,6 @@
 
     // 2. FUNÇÕES DO BANCO DE DADOS
 
-    // Validar login no banco de dados
     async function autenticarAdmin() {
       const email = document.getElementById('login-email').value;
       const senha = document.getElementById('login-senha').value;
@@ -1018,7 +1077,6 @@
       showToast('Sessão encerrada com sucesso.');
     }
 
-    // Listar usuários cadastrados
     async function carregarUsuarios() {
       const { data: usuarios, error } = await _supabase
         .from('usuarios_admin')
@@ -1044,8 +1102,7 @@
       });
     }
 
-    // Listener de inicialização da página
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       carregarPlanoDeFundoSalvo();
 
       if (sessionStorage.getItem('fmabc_admin_logged') === 'true') {
@@ -1077,10 +1134,15 @@
           showToast('Novo administrador cadastrado!');
         });
       }
+
+      renderHero();
+      renderFooter();
+      setupEventListeners();
+      await carregarCursosDoSupabase();
+      await carregarTurmasDoBanco();
+      iniciarAnimacaoBanner();
     });
 
-    // --- FUNÇÕES DE GERENCIAMENTO DO PLANO DE FUNDO ---
-    // Limpa o arquivo temporário se o usuário digitar uma URL manualmente
     document.getElementById('inputBgImageUrl')?.addEventListener('input', (e) => {
       if (e.target.value.trim() !== '') {
         tempBgBase64 = '';
@@ -1159,7 +1221,6 @@
       }
     }
 
-    // Excluir usuário por ID
     async function excluirUsuario(id) {
       if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
 
@@ -1216,7 +1277,6 @@
         title: "Galeria de Turmas Formadas",
         subtitle: "Explore a história, memórias e conquistas das turmas de graduação que fizeram e fazem história no Centro Universitário FMABC."
       },
-      // NOVA CHAVE
       footer: {
         address: localStorage.getItem('fmabc_footer_address') || "Av. Príncipe de Gales, 821 - Vila Príncipe de Gales, Santo André - SP",
         email: localStorage.getItem('fmabc_footer_email') || "contato@fmabc.br"
@@ -1228,14 +1288,6 @@
       itensPorPagina: 6,
       turmas: [...turmasIniciaisPadrao]
     };
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      renderHero();
-      renderFooter(); // ADICIONADO AQUI
-      setupEventListeners();
-      await carregarCursosDoSupabase();
-      await carregarTurmasDoBanco();
-    });
 
     async function carregarCursosDoSupabase() {
       try {
@@ -1639,9 +1691,13 @@
       document.getElementById('inputHomeTitle').value = appState.home.title;
       document.getElementById('inputHomeSubtitle').value = appState.home.subtitle;
       
-      // ADICIONADO AQUI
       document.getElementById('inputFooterAddress').value = appState.footer.address;
       document.getElementById('inputFooterEmail').value = appState.footer.email;
+
+      const bannerTextarea = document.getElementById('inputBannerImages');
+      if (bannerTextarea) {
+        bannerTextarea.value = bannerImages.join('\n');
+      }
     }
 
     function salvarHomeContent(e) {
@@ -1664,8 +1720,6 @@
         reader.readAsDataURL(input.files[0]);
       }
     }
-
-    // --- FUNÇÕES DE GESTÃO DO FORMULÁRIO DE TURMAS ---
 
     function carregarParaEdicao(turma) {
       document.getElementById('turmaId').value = turma.id;
@@ -1871,7 +1925,7 @@
       container.innerHTML = '';
 
       if (pendentes.length === 0) {
-        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenum depoimento pendente para esta turma.</p>';
+        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenhum depoimento pendente para esta turma.</p>';
         return;
       }
 
@@ -1925,79 +1979,26 @@
 
         item.innerHTML = `
           <img src="${url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" alt="Foto ${idx + 1}">
-          <button type="button" onclick="removerFotoGaleria(${idx})" title="Remover foto" style="position: absolute; top: -6px; right: -6px; background: #DC2626; color: white; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.25);">✕</button>
+          <button type="button" onclick="removerFotoGaleria(${idx})" title="Remover foto" style="position: absolute; top: -6px; right: -6px; background: #DC2626; color: white; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer;">&times;</button>
         `;
         container.appendChild(item);
       });
     }
 
-    function processarUploadGaleria(event) {
-      const files = Array.from(event.target.files || []);
-      if (files.length === 0) return;
-
-      let carregadas = 0;
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          galeriaEdicaoAtual.push(e.target.result);
-          carregadas++;
-          if (carregadas === files.length) {
-            renderPreviewGaleria();
-            event.target.value = '';
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function adicionarUrlsExternasGaleria() {
-      const textarea = document.getElementById('editModalGaleriaUrls');
-      const urlsText = textarea.value.trim();
-      if (!urlsText) return;
-
-      const urls = urlsText.split('\n').map(u => u.trim()).filter(u => u);
-      urls.forEach(url => {
-        if (!galeriaEdicaoAtual.includes(url)) {
-          galeriaEdicaoAtual.push(url);
-        }
-      });
-
-      textarea.value = '';
+    function removerFotoGaleria(index) {
+      galeriaEdicaoAtual.splice(index, 1);
       renderPreviewGaleria();
     }
 
-    function removerFotoGaleria(idx) {
-      galeriaEdicaoAtual.splice(idx, 1);
-      renderPreviewGaleria();
-    }
-
-    function renderPreviewDepoimentos() {
-      const container = document.getElementById('previewDepoimentosContainer');
-      const countSpan = document.getElementById('countDepoimentos');
-      
-      if (!container || !countSpan) return;
-
-      countSpan.textContent = depoimentosEdicaoAtual.length;
-      container.innerHTML = '';
-
-      if (depoimentosEdicaoAtual.length === 0) {
-        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenhum depoimento adicionado.</p>';
-        return;
+    function showToast(mensagem) {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.textContent = mensagem;
+        toast.style.display = 'block';
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 3000);
       }
-
-      depoimentosEdicaoAtual.forEach((dep, idx) => {
-        const item = document.createElement('div');
-        item.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; gap: 10px;';
-
-        item.innerHTML = `
-          <div style="flex: 1; min-width: 0;">
-            <strong style="font-size: 0.85rem; color: var(--azul-institucional); display: block;">${dep.autor}</strong>
-            <p style="font-size: 0.82rem; color: var(--navy-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${dep.texto}</p>
-          </div>
-          <button type="button" onclick="removerDepoimentoEdicao(${idx})" title="Remover Depoimento" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">Remover</button>
-        `;
-        container.appendChild(item);
-      });
     }
   </script>
 </body>
