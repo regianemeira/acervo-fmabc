@@ -47,7 +47,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-main); }
     
     html {
-      background-color: var(--bg-main); /* Cor de fundo movida para o HTML */
+      background-color: var(--bg-main);
     }
 
     body {
@@ -57,21 +57,21 @@
       line-height: 1.6;
       padding-bottom: 60px;
       overflow-x: hidden;
+      z-index: 0; /* Define o contexto do body */
     }
 
     /* Camada de fundo independente */
     body::before {
       content: "";
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
-      background-image: var(--bg-image, url('SUA_IMAGEM_AQUI.jpg')); /* Variável dinâmica com fallback */
+      background-image: var(--bg-image);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: var(--bg-opacity, 0.15); /* Variável dinâmica de opacidade */
+      opacity: var(--bg-opacity, 0.15);
       z-index: -1;
       pointer-events: none;
     }
@@ -494,7 +494,7 @@
             </form>
           </section>
 
-          <!-- NOVA ABA DE PLANO DE FUNDO -->
+          <!-- ABA DE PLANO DE FUNDO -->
           <section id="tabPlanoDeFundo" class="admin-tab-pane">
             <h3 class="admin-section-title">Alterar Imagem de Fundo da Página</h3>
             <form onsubmit="salvarPlanoDeFundo(event)">
@@ -543,7 +543,7 @@
             <div id="listaCursos" style="margin-top: 12px;"></div>
           </section>
 
-          <!-- TAB TURMAS COM SUPORTE A EDIÇÃO/CADASTRO E MAPPING DOS IDS SOLICITADOS -->
+          <!-- TAB TURMAS COM SUPORTE A EDIÇÃO/CADASTRO -->
           <section id="tabTurmas" class="admin-tab-pane">
             <h3 class="admin-section-title">Inclusão e Edição de Turmas</h3>
 
@@ -886,6 +886,13 @@
     });
 
     // --- FUNÇÕES DE GERENCIAMENTO DO PLANO DE FUNDO ---
+    // Limpa o arquivo temporário se o usuário digitar uma URL manualmente
+    document.getElementById('inputBgImageUrl')?.addEventListener('input', (e) => {
+      if (e.target.value.trim() !== '') {
+        tempBgBase64 = '';
+      }
+    });
+
     function processarUploadBgImage(event) {
       const input = event.target;
       if (input.files && input.files[0]) {
@@ -907,11 +914,14 @@
       const urlInput = document.getElementById('inputBgImageUrl').value.trim();
       const opacityInput = document.getElementById('inputBgOpacity').value;
 
-      let bgFinal = tempBgBase64 || urlInput;
+      const bgFinal = tempBgBase64 || urlInput;
 
       if (bgFinal) {
-        document.documentElement.style.setProperty('--bg-image', `url('${bgFinal}')`);
+        document.documentElement.style.setProperty('--bg-image', `url("${bgFinal}")`);
         localStorage.setItem('fmabc_custom_bg', bgFinal);
+      } else {
+        document.documentElement.style.removeProperty('--bg-image');
+        localStorage.removeItem('fmabc_custom_bg');
       }
 
       document.documentElement.style.setProperty('--bg-opacity', opacityInput);
@@ -937,7 +947,7 @@
       const opacitySalva = localStorage.getItem('fmabc_custom_bg_opacity');
 
       if (bgSalvo) {
-        document.documentElement.style.setProperty('--bg-image', `url('${bgSalvo}')`);
+        document.documentElement.style.setProperty('--bg-image', `url("${bgSalvo}")`);
         const prevImg = document.getElementById('previewBgImg');
         const prevContainer = document.getElementById('previewBgContainer');
         if (prevImg && prevContainer) {
