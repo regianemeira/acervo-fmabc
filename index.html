@@ -57,10 +57,9 @@
       line-height: 1.6;
       padding-bottom: 60px;
       overflow-x: hidden;
-      z-index: 0; /* Define o contexto do body */
+      z-index: 0;
     }
 
-    /* Camada de fundo independente */
     body::before {
       content: "";
       position: fixed;
@@ -74,6 +73,36 @@
       opacity: var(--bg-opacity, 0.15);
       z-index: -1;
       pointer-events: none;
+    }
+
+    /* --- Regras CSS de Upload com Transição Suave --- */
+    .upload-container {
+      margin-top: 10px;
+      margin-bottom: 15px;
+    }
+
+    .image-frame {
+      width: 100%;
+      max-width: 400px;
+      height: 260px;
+      overflow: hidden;
+      border-radius: 12px;
+      background-color: #f0f0f0;
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    .image-frame img.is-changing {
+      opacity: 0;
+      transform: scale(0.97);
     }
 
     .top-nav {
@@ -288,7 +317,6 @@
     .btn-save { background-color: var(--verde-principal); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 0.92rem; cursor: pointer; transition: var(--transition-fast); }
     .btn-save:hover { background-color: var(--verde-escuro); }
 
-    /* Estilo da Tabela de Usuários Admin */
     .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--border-color); }
     .admin-table th, .admin-table td { padding: 12px; border: 1px solid var(--border-color); text-align: left; }
     .admin-table th { background-color: var(--slate-light); color: var(--azul-institucional); font-weight: bold; }
@@ -303,7 +331,6 @@
       .grid-2 { grid-template-columns: 1fr; }
     }
     
-    /* --- Estilos do Rodapé --- */
     .site-footer {
       background-color: var(--azul-institucional);
       color: #FFFFFF;
@@ -332,7 +359,6 @@
       font-weight: bold;
     }
 
-    /* --- Estilos do Banner de Redes Sociais --- */
     .banner-redes-sociais {
       background: linear-gradient(90deg, #009c5a 0%, #012b48 100%);
       border-radius: 20px;
@@ -346,7 +372,6 @@
       overflow: hidden;
     }
 
-    /* Elemento decorativo de fundo (simulando grafismos discretos) */
     .banner-redes-sociais::before {
       content: "";
       position: absolute;
@@ -403,7 +428,7 @@
       justify-content: center;
       width: 52px;
       height: 52px;
-      background-color: #3bb273; /* Cor dos botões da referência */
+      background-color: #3bb273;
       color: #FFFFFF;
       border-radius: 50%;
       text-decoration: none;
@@ -528,19 +553,15 @@
         <p>Acompanhe a FMABC através das redes sociais e fique por dentro de todas as novidades.</p>
         
         <div class="redes-sociais-botoes">
-          <!-- Instagram -->
           <a href="#" target="_blank" class="btn-rede-social" aria-label="Instagram">
             <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
           </a>
-          <!-- Facebook -->
           <a href="#" target="_blank" class="btn-rede-social" aria-label="Facebook">
             <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
           </a>
-          <!-- LinkedIn -->
           <a href="#" target="_blank" class="btn-rede-social" aria-label="LinkedIn">
             <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           </a>
-          <!-- YouTube -->
           <a href="#" target="_blank" class="btn-rede-social" aria-label="YouTube">
              <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
@@ -548,9 +569,8 @@
       </div>
     </section>
 
-  </div> <!-- Fim do .container -->
+  </div>
 
-  <!-- Rodapé da Página Inicial -->
   <footer class="site-footer">
     <p id="footerAddress">Endereço: Carregando...</p>
     <p id="footerEmail">Contato: Carregando...</p>
@@ -610,7 +630,6 @@
 
   <div class="admin-modal-overlay" id="adminModalOverlay">
     
-    <!-- LOGIN -->
     <div class="login-box" id="modal-login">
       <button class="modal-close" onclick="fecharAdminModal()" style="top: 14px; right: 14px;">&times;</button>
       <h2>Painel Administrativo</h2>
@@ -627,7 +646,6 @@
       <button onclick="autenticarAdmin()" class="btn-save" style="width: 100%;">Entrar</button>
     </div>
 
-    <!-- PAINEL ADMINISTRATIVO -->
     <div class="admin-panel-container" id="painel-admin" style="display: none;">
       <div class="admin-header">
         <h3>FMABC | Painel de Gestão de Conteúdo</h3>
@@ -645,7 +663,6 @@
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Gestão de Turmas</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Detalhes</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
-          <!-- Novo Botão do Rodapé -->
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabRodape')">Editar Rodapé</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabBannerSocial')">Banner Redes Sociais</button>
         </nav>
@@ -671,15 +688,25 @@
             </form>
           </section>
 
-          <!-- ABA DE PLANO DE FUNDO -->
+          <!-- ABA DE PLANO DE FUNDO COM PREVIEW E TRANSIÇÃO SUAVE -->
           <section id="tabPlanoDeFundo" class="admin-tab-pane">
             <h3 class="admin-section-title">Alterar Imagem de Fundo da Página</h3>
             <form onsubmit="salvarPlanoDeFundo(event)">
-              <div class="form-group">
-                <label>Carregar Imagem de Fundo (Upload)</label>
-                <input type="file" id="inputBgImageFile" class="form-control" accept="image/*" onchange="processarUploadBgImage(event)">
-                <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">Selecione um arquivo de imagem (JPG, PNG, WEBP, etc.).</small>
+              <div class="upload-container">
+                <div class="form-group">
+                  <label>Carregar Imagem de Fundo (Upload)</label>
+                  <input type="file" id="inputBgImageFile" class="form-control" accept="image/*" onchange="processarUploadBgImage(event)">
+                  <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">Selecione um arquivo de imagem (JPG, PNG, WEBP, etc.).</small>
+                </div>
+                
+                <div id="previewBgContainer" style="display: none; margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: var(--slate-light);">
+                  <label style="font-weight: bold; display: block; margin-bottom: 6px;">Pré-visualização:</label>
+                  <div class="image-frame">
+                    <img id="previewBgImg" src="https://via.placeholder.com/400" alt="Preview da imagem de fundo">
+                  </div>
+                </div>
               </div>
+
               <div class="form-group">
                 <label>Ou informe a URL da Imagem</label>
                 <input type="text" id="inputBgImageUrl" class="form-control" placeholder="https://exemplo.com/imagem-de-fundo.jpg">
@@ -687,11 +714,6 @@
               <div class="form-group">
                 <label>Transparência / Opacidade (<span id="opacityValue">0.15</span>)</label>
                 <input type="range" id="inputBgOpacity" min="0.01" max="1" step="0.01" value="0.15" class="form-control" oninput="document.getElementById('opacityValue').textContent = this.value">
-              </div>
-              
-              <div id="previewBgContainer" style="display: none; margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: var(--slate-light);">
-                <label style="font-weight: bold; display: block; margin-bottom: 6px;">Pré-visualização:</label>
-                <img id="previewBgImg" src="" style="max-height: 180px; width: auto; max-width: 100%; border-radius: 6px; display: block;">
               </div>
 
               <div style="display: flex; gap: 10px;">
@@ -720,12 +742,11 @@
             <div id="listaCursos" style="margin-top: 12px;"></div>
           </section>
 
-          <!-- TAB TURMAS COM SUPORTE A EDIÇÃO/CADASTRO -->
+          <!-- TAB TURMAS COM PREVIEW E TRANSIÇÃO SUAVE -->
           <section id="tabTurmas" class="admin-tab-pane">
             <h3 class="admin-section-title">Inclusão e Edição de Turmas</h3>
 
             <form id="formTurma" onsubmit="salvarTurma(event)">
-              <!-- Campo oculto para identificar se é edição -->
               <input type="hidden" id="turmaId" value="">
 
               <div class="grid-2">
@@ -750,12 +771,20 @@
                   <input type="number" id="qtdFormandos" class="form-control" placeholder="120" required>
                 </div>
               </div>
-              <div class="form-group">
-                <label>Capa da Turma (Upload de Imagem)</label>
-                <input type="file" id="novoImagemArquivo" class="form-control" accept="image/*" onchange="processarUploadImagem(event)">
-                <input type="hidden" id="novoImagemBase64" value="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80">
-                <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">Selecione um arquivo de imagem (PNG, JPG, JPEG).</small>
+
+              <div class="upload-container">
+                <div class="form-group">
+                  <label>Capa da Turma (Upload de Imagem)</label>
+                  <input type="file" id="novoImagemArquivo" class="form-control" accept="image/*" onchange="processarUploadImagem(event)">
+                  <input type="hidden" id="novoImagemBase64" value="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80">
+                  <small style="color: #666; font-size: 0.75rem; margin-top: 4px; display: block;">Selecione um arquivo de imagem (PNG, JPG, JPEG).</small>
+                  
+                  <div class="image-frame" style="max-width: 300px; height: 180px;">
+                    <img id="previewTurmaImg" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80" alt="Preview Capa da Turma">
+                  </div>
+                </div>
               </div>
+
               <div class="form-group">
                 <label>Resumo para o Card Inicial</label>
                 <textarea id="resumoCard" class="form-control" placeholder="Resumo das conquistas da turma..." required></textarea>
@@ -857,7 +886,6 @@
             </form>
           </section>
 
-          <!-- TAB: Gerenciamento de Usuários Administradores -->
           <section id="tabUsuariosAdmin" class="admin-tab-pane">
             <h3 class="admin-section-title">Gerenciar Usuários Administradores</h3>
             
@@ -894,7 +922,6 @@
             </div>
           </section>
 
-          <!-- TAB: Edição do Rodapé -->
           <section id="tabRodape" class="admin-tab-pane">
             <h3 class="admin-section-title">Editar Informações do Rodapé</h3>
             <form onsubmit="salvarRodape(event)">
@@ -910,7 +937,6 @@
             </form>
           </section>
 
-          <!-- TAB: Banner Redes Sociais -->
           <section id="tabBannerSocial" class="admin-tab-pane">
             <h3 class="admin-section-title">Imagens do Banner de Redes Sociais</h3>
             <form onsubmit="salvarImagensBanner(event)">
@@ -931,19 +957,16 @@
   <div class="toast-msg" id="toastNotification">Alterações salvas com sucesso!</div>
 
   <script>
-    // 1. CREDENCIAIS E CLIENTE DO SUPABASE
     const SUPABASE_URL = 'https://xhmtyamsbxxpkbllaykx.supabase.co'; 
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhobXR5YW1zYnh4cGtibGxheWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzODAzOTQsImV4cCI6MjEwMzk1NjM5NH0.9l6lJSbLgfGa4eDFxlsIkz6LWQTdz92u2sGG8AVSuCI';
     
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const _supabase = supabaseClient;
 
-    // ESTADO DE SESSÃO DO ADMINISTRADOR
     let isAdminLoggedIn = false;
     let currentUserName = '';
     let tempBgBase64 = '';
 
-    // --- LÓGICA DO BANNER DE REDES SOCIAIS ---
     let bannerImages = JSON.parse(localStorage.getItem('fmabc_banner_images')) || [
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80"
     ];
@@ -953,23 +976,21 @@
       const imgElement = document.getElementById('bannerSocialImg');
       if (!imgElement) return;
 
-      // Carrega a primeira imagem salva
       if (bannerImages.length > 0) {
         imgElement.src = bannerImages[0];
       }
 
-      // Só inicia o loop se houver mais de uma imagem
       if (bannerImages.length > 1) {
         setInterval(() => {
-          imgElement.style.opacity = 0; // Fade out
+          imgElement.style.opacity = 0;
           
           setTimeout(() => {
             currentBannerIndex = (currentBannerIndex + 1) % bannerImages.length;
             imgElement.src = bannerImages[currentBannerIndex];
-            imgElement.style.opacity = 1; // Fade in
-          }, 500); // Aguarda a transição CSS terminar
+            imgElement.style.opacity = 1;
+          }, 500);
           
-        }, 4000); // Executa a cada 4 segundos
+        }, 4000);
       }
     }
 
@@ -983,8 +1004,6 @@
         localStorage.setItem('fmabc_banner_images', JSON.stringify(bannerImages));
         document.getElementById('bannerSocialImg').src = bannerImages[0];
         showToast('Imagens do banner atualizadas com sucesso!');
-        
-        // Reinicia a página para aplicar a nova animação corretamente
         setTimeout(() => window.location.reload(), 1500);
       } else {
         alert('Insira pelo menos uma URL de imagem válida.');
@@ -1026,8 +1045,6 @@
         document.getElementById('painel-admin').style.display = 'none';
       }
     }
-
-    // 2. FUNÇÕES DO BANCO DE DADOS
 
     async function autenticarAdmin() {
       const email = document.getElementById('login-email').value;
@@ -1149,20 +1166,68 @@
       }
     });
 
+    /* --- Lógica de Upload com Transição Suave (FileReader + Opacidade via CSS) --- */
     function processarUploadBgImage(event) {
-      const input = event.target;
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          tempBgBase64 = e.target.result;
-          document.getElementById('inputBgImageUrl').value = '';
-          
-          const prevImg = document.getElementById('previewBgImg');
-          prevImg.src = tempBgBase64;
-          document.getElementById('previewBgContainer').style.display = 'block';
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        tempBgBase64 = e.target.result;
+        document.getElementById('inputBgImageUrl').value = '';
+        
+        const previewBgContainer = document.getElementById('previewBgContainer');
+        const previewImage = document.getElementById('previewBgImg');
+
+        if (previewBgContainer) previewBgContainer.style.display = 'block';
+
+        if (previewImage) {
+          // 1. Inicia o fade-out da imagem atual
+          previewImage.classList.add('is-changing');
+
+          // 2. Aguarda a transição de saída antes de trocar a fonte da imagem
+          setTimeout(() => {
+            previewImage.src = e.target.result;
+
+            // 3. Aguarda o carregamento da nova imagem para executar o fade-in
+            previewImage.onload = () => {
+              previewImage.classList.remove('is-changing');
+            };
+          }, 500); // Deve coincidir com os 0.5s do CSS
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function processarUploadImagem(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        document.getElementById('novoImagemBase64').value = e.target.result;
+        const previewImage = document.getElementById('previewTurmaImg');
+
+        if (previewImage) {
+          // 1. Inicia o fade-out da imagem atual
+          previewImage.classList.add('is-changing');
+
+          // 2. Aguarda a transição de saída antes de trocar a fonte da imagem
+          setTimeout(() => {
+            previewImage.src = e.target.result;
+
+            // 3. Aguarda o carregamento da nova imagem para executar o fade-in
+            previewImage.onload = () => {
+              previewImage.classList.remove('is-changing');
+            };
+          }, 500); // Deve coincidir com os 0.5s do CSS
+        }
+      };
+
+      reader.readAsDataURL(file);
     }
 
     function salvarPlanoDeFundo(e) {
@@ -1237,7 +1302,6 @@
       carregarUsuarios();
     }
 
-    // 3. LÓGICA DO PORTAL
     const turmasIniciaisPadrao = [
       {
         id: '101',
@@ -1710,17 +1774,6 @@
       showToast('Página Inicial atualizada com sucesso!');
     }
 
-    function processarUploadImagem(event) {
-      const input = event.target;
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById('novoImagemBase64').value = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
     function carregarParaEdicao(turma) {
       document.getElementById('turmaId').value = turma.id;
       document.getElementById('curso').value = turma.curso;
@@ -1728,6 +1781,10 @@
       document.getElementById('anoFormatura').value = turma.ano;
       document.getElementById('qtdFormandos').value = turma.formandos || turma.qtdFormandos || '';
       document.getElementById('resumoCard').value = turma.resumo || turma.cardDesc || '';
+
+      const imgCapa = turma.img || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
+      document.getElementById('novoImagemBase64').value = imgCapa;
+      document.getElementById('previewTurmaImg').src = imgCapa;
 
       document.getElementById('btnSubmit').innerText = 'Salvar Alterações';
       document.getElementById('btnCancelar').style.display = 'inline-block';
@@ -1740,7 +1797,9 @@
       document.getElementById('formTurma').reset();
       document.getElementById('btnSubmit').innerText = 'Cadastrar Turma';
       document.getElementById('btnCancelar').style.display = 'none';
-      document.getElementById('novoImagemBase64').value = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
+      const defaultImg = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80";
+      document.getElementById('novoImagemBase64').value = defaultImg;
+      document.getElementById('previewTurmaImg').src = defaultImg;
     }
 
     async function salvarTurma(e) {
@@ -1796,7 +1855,8 @@
           nome: turma.titulo || turma.nome || '',
           ano: turma.ano,
           formandos: turma.qtdFormandos || turma.formandos || '',
-          resumo: turma.cardDesc || turma.resumo || ''
+          resumo: turma.cardDesc || turma.resumo || '',
+          img: turma.img || ''
         };
 
         const jsonStr = JSON.stringify(turmaData).replace(/'/g, "&apos;").replace(/"/g, '&quot;');
@@ -1974,12 +2034,12 @@
       galeriaEdicaoAtual.forEach((url, idx) => {
         const item = document.createElement('div');
         item.style.position = 'relative';
-        item.style.width = '75px';
-        item.style.height = '75px';
+        item.style.width = '80px';
+        item.style.height = '60px';
 
         item.innerHTML = `
-          <img src="${url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);" alt="Foto ${idx + 1}">
-          <button type="button" onclick="removerFotoGaleria(${idx})" title="Remover foto" style="position: absolute; top: -6px; right: -6px; background: #DC2626; color: white; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer;">&times;</button>
+          <img src="${url}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
+          <button type="button" onclick="removerFotoGaleria(${idx})" style="position: absolute; top: -6px; right: -6px; background: #DC2626; color: white; border: none; width: 18px; height: 18px; border-radius: 50%; font-size: 0.7rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
         `;
         container.appendChild(item);
       });
@@ -1990,15 +2050,143 @@
       renderPreviewGaleria();
     }
 
+    function processarUploadGaleria(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          galeriaEdicaoAtual.push(e.target.result);
+          renderPreviewGaleria();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      event.target.value = '';
+    }
+
+    function adicionarUrlsExternasGaleria() {
+      const textarea = document.getElementById('editModalGaleriaUrls');
+      const urls = textarea.value.split('\n').map(u => u.trim()).filter(u => u !== '');
+
+      if (urls.length > 0) {
+        galeriaEdicaoAtual.push(...urls);
+        textarea.value = '';
+        renderPreviewGaleria();
+      }
+    }
+
+    function renderPreviewDepoimentos() {
+      const container = document.getElementById('previewDepoimentosContainer');
+      const countSpan = document.getElementById('countDepoimentos');
+
+      if (!container || !countSpan) return;
+
+      countSpan.textContent = depoimentosEdicaoAtual.length;
+      container.innerHTML = '';
+
+      if (depoimentosEdicaoAtual.length === 0) {
+        container.innerHTML = '<p style="font-size: 0.82rem; color: var(--slate-muted); margin: 0;">Nenhum depoimento salvo localmente para esta turma.</p>';
+        return;
+      }
+
+      depoimentosEdicaoAtual.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.style.cssText = 'display: flex; justify-content: space-between; align-items: center; background: white; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; gap: 10px;';
+
+        div.innerHTML = `
+          <div style="flex: 1; min-width: 0;">
+            <strong style="font-size: 0.82rem; color: var(--azul-institucional); display: block;">${item.autor}</strong>
+            <p style="font-size: 0.8rem; color: var(--slate-muted); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.texto}</p>
+          </div>
+          <button type="button" onclick="removerDepoimentoEdicao(${idx})" style="background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">Excluir</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function adicionarDepoimentoEdicao() {
+      const autorInput = document.getElementById('inputNovoDepoimentoAutor');
+      const textoInput = document.getElementById('inputNovoDepoimentoTexto');
+
+      const autor = autorInput.value.trim();
+      const texto = textoInput.value.trim();
+
+      if (!autor || !texto) {
+        alert('Preencha o autor e o texto do depoimento.');
+        return;
+      }
+
+      depoimentosEdicaoAtual.push({ autor, texto: `"${texto.replace(/^"+|"+$/g, '')}"` });
+      autorInput.value = '';
+      textoInput.value = '';
+
+      renderPreviewDepoimentos();
+    }
+
+    function removerDepoimentoEdicao(index) {
+      depoimentosEdicaoAtual.splice(index, 1);
+      renderPreviewDepoimentos();
+    }
+
+    async function salvarAlteracoesModalTurma(e) {
+      e.preventDefault();
+
+      const turmaIdSelecionada = document.getElementById('selectTurmaParaEditar').value;
+      if (!turmaIdSelecionada) {
+        alert('Selecione uma turma para editar.');
+        return;
+      }
+
+      const paraninfo = document.getElementById('editModalParaninfo').value.trim();
+      const patrono = document.getElementById('editModalPatrono').value.trim();
+      const historia = document.getElementById('editModalHistoria').value.trim();
+      
+      const formandosRaw = document.getElementById('editModalFormandos').value;
+      const formandos = formandosRaw.split(',').map(f => f.trim()).filter(f => f !== '');
+
+      const payloadModal = {
+        id: turmaIdSelecionada,
+        paraninfo: paraninfo,
+        patrono: patrono,
+        historia: historia,
+        galeria: galeriaEdicaoAtual,
+        depoimentos: depoimentosEdicaoAtual,
+        formandos: formandos
+      };
+
+      const salvo = await salvarTurmaNoBanco(payloadModal);
+
+      if (salvo) {
+        await carregarTurmasDoBanco();
+        showToast('✅ Detalhes da turma atualizados no banco!');
+      }
+    }
+
+    function salvarRodape(e) {
+      e.preventDefault();
+      const address = document.getElementById('inputFooterAddress').value.trim();
+      const email = document.getElementById('inputFooterEmail').value.trim();
+
+      appState.footer.address = address;
+      appState.footer.email = email;
+
+      localStorage.setItem('fmabc_footer_address', address);
+      localStorage.setItem('fmabc_footer_email', email);
+
+      renderFooter();
+      showToast('Informações do rodapé salvas!');
+    }
+
     function showToast(mensagem) {
       const toast = document.getElementById('toastNotification');
-      if (toast) {
-        toast.textContent = mensagem;
-        toast.style.display = 'block';
-        setTimeout(() => {
-          toast.style.display = 'none';
-        }, 3000);
-      }
+      if (!toast) return;
+      toast.textContent = mensagem;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
     }
   </script>
 </body>
