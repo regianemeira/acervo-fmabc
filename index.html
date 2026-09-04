@@ -302,6 +302,35 @@
       .admin-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
       .grid-2 { grid-template-columns: 1fr; }
     }
+    
+    /* --- Estilos do Rodapé --- */
+    .site-footer {
+      background-color: var(--azul-institucional);
+      color: #FFFFFF;
+      padding: 2.5rem 2rem;
+      margin-top: 4rem;
+      border-top: 4px solid var(--verde-principal);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .site-footer p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--slate-light);
+    }
+
+    .site-footer .developer-credit {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--verde-pastel-medio);
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -381,7 +410,14 @@
       </form>
     </section>
 
-  </div>
+  </div> <!-- Fim do .container -->
+
+  <!-- Rodapé da Página Inicial -->
+  <footer class="site-footer">
+    <p id="footerAddress">Endereço: Carregando...</p>
+    <p id="footerEmail">Contato: Carregando...</p>
+    <div class="developer-credit">Desenvolvido por Regiane Meira</div>
+  </footer>
 
   <div class="modal-overlay" id="modalAcervo">
     <div class="modal-content">
@@ -471,6 +507,8 @@
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabTurmas')">Gestão de Turmas</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Detalhes</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
+          <!-- Novo Botão do Rodapé -->
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabRodape')">Editar Rodapé</button>
         </nav>
 
         <main class="admin-content">
@@ -715,6 +753,22 @@
                 <tbody id="tabela-usuarios-body"></tbody>
               </table>
             </div>
+          </section>
+
+          <!-- TAB: Edição do Rodapé -->
+          <section id="tabRodape" class="admin-tab-pane">
+            <h3 class="admin-section-title">Editar Informações do Rodapé</h3>
+            <form onsubmit="salvarRodape(event)">
+              <div class="form-group">
+                <label>Endereço da Instituição</label>
+                <input type="text" id="inputFooterAddress" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label>E-mail de Contato</label>
+                <input type="email" id="inputFooterEmail" class="form-control" required>
+              </div>
+              <button type="submit" class="btn-save">Salvar Rodapé</button>
+            </form>
           </section>
 
         </main>
@@ -1022,6 +1076,11 @@
         title: "Galeria de Turmas Formadas",
         subtitle: "Explore a história, memórias e conquistas das turmas de graduação que fizeram e fazem história no Centro Universitário FMABC."
       },
+      // NOVA CHAVE
+      footer: {
+        address: localStorage.getItem('fmabc_footer_address') || "Av. Príncipe de Gales, 821 - Vila Príncipe de Gales, Santo André - SP",
+        email: localStorage.getItem('fmabc_footer_email') || "contato@fmabc.br"
+      },
       cursos: ["Todos"],
       cursoAtivo: "Todos",
       termoBusca: "",
@@ -1032,6 +1091,7 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       renderHero();
+      renderFooter(); // ADICIONADO AQUI
       setupEventListeners();
       await carregarCursosDoSupabase();
       await carregarTurmasDoBanco();
@@ -1186,6 +1246,14 @@
       if (badge) badge.textContent = appState.home.badge;
       if (title) title.textContent = appState.home.title;
       if (subtitle) subtitle.textContent = appState.home.subtitle;
+    }
+
+    function renderFooter() {
+      const footerAddress = document.getElementById('footerAddress');
+      const footerEmail = document.getElementById('footerEmail');
+
+      if (footerAddress) footerAddress.textContent = `Endereço: ${appState.footer.address}`;
+      if (footerEmail) footerEmail.textContent = `Contato via e-mail: ${appState.footer.email}`;
     }
 
     function obterTurmasFiltradas() {
@@ -1430,6 +1498,10 @@
       document.getElementById('inputHomeBadge').value = appState.home.badge;
       document.getElementById('inputHomeTitle').value = appState.home.title;
       document.getElementById('inputHomeSubtitle').value = appState.home.subtitle;
+      
+      // ADICIONADO AQUI
+      document.getElementById('inputFooterAddress').value = appState.footer.address;
+      document.getElementById('inputFooterEmail').value = appState.footer.email;
     }
 
     function salvarHomeContent(e) {
@@ -1848,6 +1920,23 @@
       setTimeout(() => {
         toast.style.display = 'none';
       }, 3000);
+    }
+
+    function salvarRodape(e) {
+      e.preventDefault();
+      
+      const address = document.getElementById('inputFooterAddress').value;
+      const email = document.getElementById('inputFooterEmail').value;
+      
+      appState.footer.address = address;
+      appState.footer.email = email;
+      
+      // Salva no LocalStorage (mesmo padrão usado no Plano de Fundo)
+      localStorage.setItem('fmabc_footer_address', address);
+      localStorage.setItem('fmabc_footer_email', email);
+      
+      renderFooter();
+      showToast('✅ Rodapé atualizado com sucesso!');
     }
   </script>
 </body>
