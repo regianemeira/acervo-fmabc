@@ -499,7 +499,33 @@
     .modal-header-hero h2 { font-size: 2rem; font-weight: bold; margin-bottom: 12px; }
     .modal-card-desc-box { background: rgba(255, 255, 255, 0.12); border-left: 4px solid var(--verde-pastel-medio); padding: 14px 18px; border-radius: 8px; font-size: 0.95rem; color: var(--verde-pastel-suave); line-height: 1.5; }
 
-    .modal-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 20px; }
+    .modal-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .modal-stats-grid-homenagens {
+      margin-top: 10px;
+    }
+
+    .modal-stats-grid-homenagens .stat-card {
+      background: rgba(59, 178, 115, 0.12);
+      border-color: rgba(59, 178, 115, 0.32);
+    }
+
+    @media (max-width: 620px) {
+      .modal-stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .modal-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
     .stat-card { background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; padding: 12px; text-align: center; }
     .stat-card .label { font-size: 0.7rem; color: #D3D8E2; font-weight: bold; text-transform: uppercase; letter-spacing: 0.8px; }
     .stat-card .value { font-size: 1.25rem; font-weight: bold; color: white; margin-top: 2px; }
@@ -964,7 +990,7 @@
         <h2 id="modalTurmaTitle">Turma L (50)</h2>
         <div class="modal-card-desc-box" id="modalCardDesc"></div>
 
-        <div class="modal-stats-grid">
+        <div class="modal-stats-grid modal-stats-grid-principal">
           <div class="stat-card">
             <div class="label">Ano de Formatura</div>
             <div class="value" id="modalAnoFormatura">2018</div>
@@ -973,9 +999,16 @@
             <div class="label">Total Formandos</div>
             <div class="value" id="modalQtdFormandos">120</div>
           </div>
+        </div>
+
+        <div class="modal-stats-grid modal-stats-grid-homenagens">
           <div class="stat-card">
             <div class="label">Paraninfo</div>
             <div class="value" id="modalParaninfo">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Patrono</div>
+            <div class="value" id="modalPatrono">-</div>
           </div>
         </div>
       </div>
@@ -2748,6 +2781,7 @@
       document.getElementById('modalAnoFormatura').textContent = turma.ano;
       document.getElementById('modalQtdFormandos').textContent = turma.qtdFormandos || turma.formandos || '';
       document.getElementById('modalParaninfo').textContent = turma.paraninfo || '-';
+      document.getElementById('modalPatrono').textContent = turma.patrono || '-';
       document.getElementById('modalHistoriaText').textContent = turma.historia || 'Trajetória em breve...';
 
       const galeria = document.getElementById('modalGaleria');
