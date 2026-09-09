@@ -105,24 +105,6 @@
       transform: scale(0.97);
     }
 
-
-    .ex-alunos-label {
-      align-self: center;
-      color: var(--azul-institucional);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0.65px;
-      line-height: 1;
-      white-space: nowrap;
-      margin-left: -2px;
-    }
-
-    @media (max-width: 620px) {
-      .ex-alunos-label {
-        font-size: 0.7rem;
-        letter-spacing: 0.45px;
-      }
-    }
     .top-nav {
       background-color: var(--azul-institucional);
       padding: 0.8rem 2.5rem;
@@ -206,85 +188,6 @@
       box-shadow: 0 4px 12px rgba(51, 156, 91, 0.35);
     }
 
-
-
-    .hero-admin-control-box {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:20px;
-      padding:15px 16px;
-      margin-bottom:18px;
-      background:var(--slate-light);
-      border:1px solid var(--border-color);
-      border-radius:12px;
-    }
-
-    .hero-admin-control-box strong {
-      display:block;
-      color:var(--azul-institucional);
-      font-size:.92rem;
-      margin-bottom:4px;
-    }
-
-    .hero-admin-control-box span#heroRotativoStatusTexto {
-      display:inline-block;
-      color:var(--verde-principal);
-      font-size:.78rem;
-      font-weight:800;
-      margin-bottom:3px;
-    }
-
-    .hero-admin-control-box p {
-      margin:2px 0 0;
-      color:var(--slate-muted);
-      font-size:.78rem;
-      line-height:1.4;
-    }
-
-    .switch-control {
-      position:relative;
-      width:52px;
-      height:30px;
-      flex:0 0 auto;
-    }
-
-    .switch-control input {
-      opacity:0;
-      width:0;
-      height:0;
-      position:absolute;
-    }
-
-    .switch-slider {
-      position:absolute;
-      inset:0;
-      cursor:pointer;
-      background:#94a3b8;
-      border-radius:999px;
-      transition:.25s ease;
-    }
-
-    .switch-slider:before {
-      content:"";
-      position:absolute;
-      width:22px;
-      height:22px;
-      left:4px;
-      top:4px;
-      border-radius:50%;
-      background:#fff;
-      box-shadow:0 2px 5px rgba(0,0,0,.16);
-      transition:.25s ease;
-    }
-
-    .switch-control input:checked + .switch-slider {
-      background:var(--verde-principal);
-    }
-
-    .switch-control input:checked + .switch-slider:before {
-      transform:translateX(22px);
-    }
 
     .hero-memory {
       position: relative; min-height: 520px; border-radius: 24px; overflow: hidden;
@@ -948,7 +851,6 @@
     <a href="#" class="brand-logo">
       <img src="https://www.fmabc.br/img/logo-fmabc.81be2f48.png" alt="Logotipo FMABC Centro Universitário" class="logo-img">
     </a>
-      <div class="ex-alunos-label" id="exAlunosLabel">Ex-Alunos FMABC</div>
     <div class="admin-nav-actions" id="adminNavActions">
       <button class="btn-admin-access" onclick="abrirAdminModal()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8Z"/></svg>
@@ -1174,29 +1076,11 @@
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabRodape')">Editar Rodapé</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabBannerSocial')">Hero / Banners da Página Inicial</button>
-          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabExAlunos')">Texto Ex-Alunos</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabSocialConfig')">Banner Redes Sociais</button>
         </nav>
 
         <main class="admin-content">
           
-
-          <section id="tabExAlunos" class="admin-tab-pane">
-            <h3 class="admin-section-title">Texto do Cabeçalho — Ex-Alunos</h3>
-            <p style="color:var(--slate-muted);font-size:.88rem;line-height:1.5;margin-bottom:18px;">
-              Edite a frase que aparece logo abaixo do logotipo institucional.
-            </p>
-            <form onsubmit="salvarTextoExAlunos(event)">
-              <div class="form-group">
-                <label for="inputExAlunosTexto">Frase exibida</label>
-                <input type="text" id="inputExAlunosTexto" class="form-control"
-                       value="Ex-Alunos FMABC"
-                       maxlength="80" required>
-              </div>
-              <button type="submit" class="btn-save">Salvar frase</button>
-            </form>
-          </section>
-
           <section id="tabHome" class="admin-tab-pane active">
             <h3 class="admin-section-title">Editar Informações da Página Inicial</h3>
             <form onsubmit="salvarHomeContent(event)">
@@ -1467,19 +1351,6 @@
 
           <section id="tabBannerSocial" class="admin-tab-pane">
             <h3 class="admin-section-title">Hero / Banners da Página Inicial</h3>
-
-            <div class="hero-admin-control-box">
-              <div>
-                <strong>Banner rotativo</strong>
-                <span id="heroRotativoStatusTexto">Ativado</span>
-                <p>Quando desativado, o Hero exibe somente a primeira imagem cadastrada, sem troca automática.</p>
-              </div>
-              <label class="switch-control" title="Ativar ou desativar o banner rotativo">
-                <input type="checkbox" id="heroRotativoToggle" checked onchange="alterarStatusHeroRotativo()">
-                <span class="switch-slider"></span>
-              </label>
-            </div>
-
             <p style="color: var(--slate-muted); font-size: 0.88rem; margin-bottom: 18px; line-height: 1.5;">
               Gerencie as imagens exibidas no carrossel principal. Você pode usar imagens estáticas ou animadas (GIF e WebP animado). As imagens são exibidas em tela cheia dentro do Hero e alternadas automaticamente.
             </p>
@@ -1562,116 +1433,6 @@
     let currentAdminSenha = '';
 
     const HERO_STORAGE_KEY = 'fmabc_hero_images';
-
-    const EX_ALUNOS_DEFAULT_TEXT = 'Ex-Alunos FMABC';
-    const HERO_ROTATION_DEFAULT = true;
-    let heroRotativoAtivo = HERO_ROTATION_DEFAULT;
-    let exAlunosTexto = EX_ALUNOS_DEFAULT_TEXT;
-
-    async function carregarConfiguracoesInstitucionais() {
-      try {
-        const { data, error } = await _supabase
-          .from('site_config')
-          .select('id, valor')
-          .in('id', ['ex_alunos_text', 'hero_rotation_enabled']);
-
-        if (error) throw error;
-
-        (data || []).forEach(item => {
-          if (item.id === 'ex_alunos_text' && typeof item.valor?.texto === 'string') {
-            exAlunosTexto = item.valor.texto.trim() || EX_ALUNOS_DEFAULT_TEXT;
-          }
-
-          if (item.id === 'hero_rotation_enabled' && typeof item.valor?.enabled === 'boolean') {
-            heroRotativoAtivo = item.valor.enabled;
-          }
-        });
-      } catch (error) {
-        console.warn('Configurações institucionais: usando valores padrão.', error);
-      }
-
-      aplicarTextoExAlunos();
-      aplicarControleHeroRotativo();
-    }
-
-    function aplicarTextoExAlunos() {
-      const label = document.getElementById('exAlunosLabel');
-      const input = document.getElementById('inputExAlunosTexto');
-      if (label) label.textContent = exAlunosTexto || EX_ALUNOS_DEFAULT_TEXT;
-      if (input) input.value = exAlunosTexto || EX_ALUNOS_DEFAULT_TEXT;
-    }
-
-    function aplicarControleHeroRotativo() {
-      const toggle = document.getElementById('heroRotativoToggle');
-      const status = document.getElementById('heroRotativoStatusTexto');
-
-      if (toggle) toggle.checked = heroRotativoAtivo;
-      if (status) {
-        status.textContent = heroRotativoAtivo ? 'Ativado' : 'Desativado';
-        status.style.color = heroRotativoAtivo ? 'var(--verde-principal)' : '#64748b';
-      }
-    }
-
-    async function salvarConfigInstitucional(id, valor) {
-      if (!currentAdminEmail || !currentAdminSenha) {
-        showToast('Faça login como administrador para salvar esta alteração.');
-        return false;
-      }
-
-      try {
-        const { data, error } = await _supabase.rpc('salvar_site_config', {
-          p_email: currentAdminEmail,
-          p_senha: currentAdminSenha,
-          p_id: id,
-          p_valor: valor
-        });
-
-        if (error) throw error;
-        if (data === false) throw new Error('Administrador não autorizado.');
-        return true;
-      } catch (error) {
-        console.error(`Erro ao salvar ${id}:`, error);
-        showToast('❌ Não foi possível salvar: ' + (error.message || 'erro desconhecido'));
-        return false;
-      }
-    }
-
-    async function salvarTextoExAlunos(e) {
-      e.preventDefault();
-      const input = document.getElementById('inputExAlunosTexto');
-      const valor = input?.value.trim();
-
-      if (!valor) {
-        alert('Digite uma frase para o cabeçalho.');
-        return;
-      }
-
-      if (await salvarConfigInstitucional('ex_alunos_text', { texto: valor })) {
-        exAlunosTexto = valor;
-        aplicarTextoExAlunos();
-        showToast('✅ Texto "Ex-Alunos" atualizado.');
-      }
-    }
-
-    async function alterarStatusHeroRotativo() {
-      const toggle = document.getElementById('heroRotativoToggle');
-      if (!toggle) return;
-
-      const novoStatus = toggle.checked;
-      if (!(await salvarConfigInstitucional('hero_rotation_enabled', { enabled: novoStatus }))) {
-        toggle.checked = heroRotativoAtivo;
-        aplicarControleHeroRotativo();
-        return;
-      }
-
-      heroRotativoAtivo = novoStatus;
-      aplicarControleHeroRotativo();
-      if (heroRotativoAtivo) iniciarHeroAutoplay();
-      else pararHeroAutoplay();
-      renderHeroImages();
-      showToast(heroRotativoAtivo ? '✅ Banner rotativo ativado.' : '✅ Banner rotativo desativado.');
-    }
-
     const HERO_DEFAULT_IMAGES = [
       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=85",
       "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1800&q=85",
@@ -1783,16 +1544,10 @@
       if (!track) return;
 
       if (!heroImages.length) heroImages = [...HERO_DEFAULT_IMAGES];
+      if (heroSlideAtual >= heroImages.length) heroSlideAtual = 0;
 
-      if (!heroRotativoAtivo) {
-        heroSlideAtual = 0;
-      } else if (heroSlideAtual >= heroImages.length) {
-        heroSlideAtual = 0;
-      }
-
-      const imagensParaRenderizar = heroRotativoAtivo ? heroImages : [heroImages[0]];
       track.innerHTML = '';
-      imagensParaRenderizar.forEach((src, index) => {
+      heroImages.forEach((src, index) => {
         const slide = document.createElement('div');
         slide.className = `hero-slide ${index === heroSlideAtual ? 'active' : ''}`;
         slide.innerHTML = `<img src="${String(src).replace(/"/g, '&quot;')}" alt="Memória da FMABC ${index + 1}" loading="${index === 0 ? 'eager' : 'lazy'}">`;
@@ -1807,8 +1562,7 @@
       if (!container) return;
       container.innerHTML = '';
 
-      const imagensParaDots = heroRotativoAtivo ? heroImages : [heroImages[0]];
-      imagensParaDots.forEach((_, index) => {
+      heroImages.forEach((_, index) => {
         const dot = document.createElement('button');
         dot.type = 'button';
         dot.className = `hero-dot ${index === heroSlideAtual ? 'active' : ''}`;
@@ -1843,7 +1597,7 @@
 
     function iniciarHeroAutoplay() {
       pararHeroAutoplay();
-      if (!heroRotativoAtivo || heroPausado || heroImages.length <= 1) return;
+      if (heroPausado || heroImages.length <= 1) return;
       heroTimer = setInterval(() => avancarHeroSlide(1), 6000);
     }
 
@@ -2338,7 +2092,6 @@
       }
 
       await carregarHeroDoBanco();
-      await carregarConfiguracoesInstitucionais();
       renderHero();
       renderFooter();
       await carregarBannerSocial();
