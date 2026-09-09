@@ -379,17 +379,17 @@
       background-image: radial-gradient(circle at 10% 50%, rgba(255,255,255,0.06) 0%, transparent 40%);
       pointer-events: none;
     }
-
     .banner-redes-img {
-      max-width: 45%;
+      width: 45%;
+      height: 350px; /* Define o tamanho fixo da área da imagem */
       position: relative;
       z-index: 2;
     }
 
     .banner-redes-img img {
       width: 100%;
-      height: auto;
-      object-fit: contain;
+      height: 100%; /* Força a imagem a preencher o quadro fixo */
+      object-fit: cover; /* Adapta a imagem sem distorcer, preenchendo todo o espaço */
       border-radius: 12px;
     }
 
@@ -545,7 +545,7 @@
     <!-- Banner de Redes Sociais -->
     <section class="banner-redes-sociais">
       <div class="banner-redes-img">
-        <img id="bannerSocialImg" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" alt="Alunas FMABC" style="transition: opacity 0.5s ease-in-out; opacity: 1;">
+        <img id="bannerSocialImg" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" alt="Alunas FMABC" style="transition: opacity 1.5s ease-in-out; opacity: 1;">
       </div>
       
       <div class="banner-redes-content">
@@ -988,9 +988,9 @@
             currentBannerIndex = (currentBannerIndex + 1) % bannerImages.length;
             imgElement.src = bannerImages[currentBannerIndex];
             imgElement.style.opacity = 1;
-          }, 500);
+          }, 1500); // Aguarda o fim do fade out mais lento (1.5s)
           
-        }, 4000);
+        }, 6000); // Troca a imagem a cada 6 segundos em vez de 4
       }
     }
 
