@@ -839,6 +839,31 @@
       </form>
     </section>
 
+    <!-- Banner de Redes Sociais -->
+    <section class="banner-redes-sociais" aria-label="Redes sociais da FMABC">
+      <div class="banner-redes-img">
+        <img id="bannerSocialImg" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=85" alt="Alunas FMABC">
+      </div>
+      <div class="banner-redes-content">
+        <h2>Siga a FMABC nas redes sociais</h2>
+        <p>Acompanhe novidades, histórias e momentos que continuam fazendo parte da nossa comunidade.</p>
+        <div class="redes-sociais-botoes">
+          <a href="https://www.instagram.com/fmabc/" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-2.618-4.919-4.92-.058-1.28-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919C8.333.014 8.741 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM18.406 5.155a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881zM12 16a4 4 0 110-8 4 4 0 010 8z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/fmabc" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/school/fmabc/" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@fmabc" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <footer class="site-footer">
@@ -1234,6 +1259,18 @@
             </form>
           </section>
 
+          <section id="tabSocialConfig" class="admin-tab-pane">
+            <h3 class="admin-section-title">Banner de Redes Sociais</h3>
+            <p style="color: var(--slate-muted); font-size: 0.88rem; margin-bottom: 16px;">Altere a imagem exibida no banner de redes sociais da página inicial.</p>
+            <form onsubmit="salvarBannerSocial(event)">
+              <div class="form-group">
+                <label>URL da imagem</label>
+                <input type="url" id="inputSocialBannerUrl" class="form-control" placeholder="https://exemplo.com/imagem.jpg">
+              </div>
+              <button type="submit" class="btn-save">Salvar banner de redes sociais</button>
+            </form>
+          </section>
+
         </main>
       </div>
     </div>
@@ -1251,6 +1288,8 @@
     let isAdminLoggedIn = false;
     let currentUserName = '';
     let tempBgBase64 = '';
+    let currentAdminEmail = '';
+    let currentAdminSenha = '';
 
     const HERO_STORAGE_KEY = 'fmabc_hero_images';
     const HERO_DEFAULT_IMAGES = [
@@ -1259,13 +1298,97 @@
       "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1800&q=85",
       "https://images.unsplash.com/photo-1511174511562-5f7f18f87425?auto=format&fit=crop&w=1800&q=85"
     ];
-    let heroImages = JSON.parse(localStorage.getItem(HERO_STORAGE_KEY) || 'null') || [...HERO_DEFAULT_IMAGES];
+    let heroImages = [...HERO_DEFAULT_IMAGES];
     let heroSlideAtual = 0;
     let heroTimer = null;
     let heroPausado = false;
+    let heroBancoDisponivel = false;
 
-    function salvarHeroStorage() {
-      localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(heroImages));
+    function salvarHeroStorageFallback() {
+      try { localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(heroImages)); } catch (_) {}
+    }
+
+    function carregarHeroStorageFallback() {
+      try {
+        const salvo = JSON.parse(localStorage.getItem(HERO_STORAGE_KEY) || 'null');
+        return Array.isArray(salvo) && salvo.length ? salvo : [...HERO_DEFAULT_IMAGES];
+      } catch (_) {
+        return [...HERO_DEFAULT_IMAGES];
+      }
+    }
+
+    async function atualizarHeroDoServidor() {
+      try {
+        const { data, error } = await _supabase
+          .from('site_config')
+          .select('valor, updated_at')
+          .eq('id', 'hero_images')
+          .maybeSingle();
+        if (error) throw error;
+        if (data && Array.isArray(data.valor) && data.valor.length) {
+          heroImages = data.valor;
+          if (heroSlideAtual >= heroImages.length) heroSlideAtual = 0;
+          salvarHeroStorageFallback();
+          renderHeroImages();
+          iniciarHeroAutoplay();
+        }
+      } catch (error) {
+        console.warn('Falha ao atualizar o Hero pelo servidor:', error);
+      }
+    }
+
+    async function carregarHeroDoBanco() {
+      // Primeiro usa o cache local apenas como tela de segurança durante a consulta.
+      heroImages = [...HERO_DEFAULT_IMAGES];
+      try {
+        const { data, error } = await _supabase
+          .from('site_config')
+          .select('valor, updated_at')
+          .eq('id', 'hero_images')
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (data && Array.isArray(data.valor) && data.valor.length) {
+          heroImages = data.valor;
+          heroBancoDisponivel = true;
+          salvarHeroStorageFallback();
+        } else {
+          heroBancoDisponivel = true;
+          await persistirHeroNoBanco(heroImages, false);
+        }
+      } catch (error) {
+        heroBancoDisponivel = false;
+        console.warn('Não foi possível carregar o Hero do Supabase. Usando cache local.', error);
+      }
+    }
+
+    async function persistirHeroNoBanco(imagens, informar = true) {
+      if (!currentAdminEmail || !currentAdminSenha) {
+        if (informar) showToast('Faça login como administrador para salvar as imagens.');
+        return false;
+      }
+
+      try {
+        const { data, error } = await _supabase.rpc('salvar_hero_config', {
+          p_email: currentAdminEmail,
+          p_senha: currentAdminSenha,
+          p_imagens: imagens
+        });
+
+        if (error) throw error;
+        if (data === false) throw new Error('Administrador não autorizado.');
+
+        heroBancoDisponivel = true;
+        salvarHeroStorageFallback();
+        return true;
+      } catch (error) {
+        console.error('Erro ao salvar Hero no Supabase:', error);
+        if (informar) {
+          showToast('❌ Não foi possível salvar o Hero no servidor: ' + (error.message || 'erro desconhecido'));
+        }
+        return false;
+      }
     }
 
     function renderHeroImages() {
@@ -1358,7 +1481,7 @@
       });
     }
 
-    function adicionarHeroImagem() {
+    async function adicionarHeroImagem() {
       const fileInput = document.getElementById('inputHeroImagemArquivo');
       const urlInput = document.getElementById('inputHeroImagemUrl');
       const file = fileInput?.files?.[0];
@@ -1372,9 +1495,13 @@
       if (file) {
         if (!file.type.startsWith('image/')) { alert('Selecione um arquivo de imagem válido.'); return; }
         const reader = new FileReader();
-        reader.onload = () => {
-          heroImages.push(reader.result);
-          salvarHeroStorage();
+        reader.onload = async () => {
+          const imagemNova = reader.result;
+          heroImages.push(imagemNova);
+          if (!(await persistirHeroNoBanco(heroImages))) {
+            heroImages.pop();
+            return;
+          }
           renderListaHeroImagensAdmin();
           fileInput.value = '';
           if (urlInput) urlInput.value = '';
@@ -1388,7 +1515,7 @@
 
       try { new URL(url); } catch { alert('Informe uma URL válida.'); return; }
       heroImages.push(url);
-      salvarHeroStorage();
+      if (!(await persistirHeroNoBanco(heroImages))) return;
       renderListaHeroImagensAdmin();
       urlInput.value = '';
       renderHeroImages();
@@ -1396,38 +1523,76 @@
       showToast('Imagem adicionada ao Hero!');
     }
 
-    function removerHeroImagem(index) {
+    async function removerHeroImagem(index) {
       if (heroImages.length <= 1) {
         alert('Mantenha pelo menos uma imagem no Hero.');
         return;
       }
       heroImages.splice(index, 1);
       if (heroSlideAtual >= heroImages.length) heroSlideAtual = 0;
-      salvarHeroStorage();
+      if (!(await persistirHeroNoBanco(heroImages))) return;
       renderListaHeroImagensAdmin();
       renderHeroImages();
       iniciarHeroAutoplay();
       showToast('Imagem removida do Hero.');
     }
 
-    function salvarHeroImagens(e) {
+    async function salvarHeroImagens(e) {
       e.preventDefault();
-      salvarHeroStorage();
+      if (!(await persistirHeroNoBanco(heroImages))) return;
       renderListaHeroImagensAdmin();
       renderHeroImages();
       iniciarHeroAutoplay();
-      showToast('Configuração do Hero salva com sucesso!');
+      showToast('Configuração do Hero salva no servidor com sucesso!');
     }
 
-    function restaurarHeroPadrao() {
+    async function restaurarHeroPadrao() {
       if (!confirm('Restaurar as imagens padrão do Hero?')) return;
       heroImages = [...HERO_DEFAULT_IMAGES];
       heroSlideAtual = 0;
-      salvarHeroStorage();
+      if (!(await persistirHeroNoBanco(heroImages))) return;
       renderListaHeroImagensAdmin();
       renderHeroImages();
       iniciarHeroAutoplay();
       showToast('Hero restaurado para as imagens padrão.');
+    }
+
+    async function carregarBannerSocial() {
+      const img = document.getElementById('bannerSocialImg');
+      if (!img) return;
+      try {
+        const { data, error } = await _supabase.from('site_config').select('valor').eq('id', 'social_banner').maybeSingle();
+        if (error) throw error;
+        const url = data?.valor?.imagem;
+        if (url) img.src = url;
+        const input = document.getElementById('inputSocialBannerUrl');
+        if (input) input.value = url || img.src;
+      } catch (e) {
+        console.warn('Falha ao carregar banner social:', e);
+      }
+    }
+
+    async function salvarBannerSocial(e) {
+      e.preventDefault();
+      const url = document.getElementById('inputSocialBannerUrl')?.value.trim();
+      if (!url) { alert('Informe uma URL válida.'); return; }
+      if (!currentAdminEmail || !currentAdminSenha) { showToast('Faça login como administrador.'); return; }
+      try {
+        const { data, error } = await _supabase.rpc('salvar_site_config', {
+          p_email: currentAdminEmail,
+          p_senha: currentAdminSenha,
+          p_id: 'social_banner',
+          p_valor: { imagem: url }
+        });
+        if (error) throw error;
+        if (data === false) throw new Error('Administrador não autorizado.');
+        const img = document.getElementById('bannerSocialImg');
+        if (img) img.src = url;
+        showToast('✅ Banner de redes sociais atualizado.');
+      } catch (error) {
+        console.error(error);
+        showToast('❌ Não foi possível salvar o banner de redes sociais.');
+      }
     }
 
     function atualizarNavegacaoAdmin() {
@@ -1484,6 +1649,8 @@
 
       isAdminLoggedIn = true;
       currentUserName = data.nome || 'Administrador';
+      currentAdminEmail = email;
+      currentAdminSenha = senha;
 
       sessionStorage.setItem('fmabc_admin_logged', 'true');
       sessionStorage.setItem('fmabc_admin_name', currentUserName);
@@ -1500,6 +1667,8 @@
     function fazerLogoutAdmin() {
       isAdminLoggedIn = false;
       currentUserName = '';
+      currentAdminEmail = '';
+      currentAdminSenha = '';
 
       sessionStorage.removeItem('fmabc_admin_logged');
       sessionStorage.removeItem('fmabc_admin_name');
@@ -1540,11 +1709,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      carregarPlanoDeFundoSalvo();
+      await carregarPlanoDeFundoDoBanco();
 
       if (sessionStorage.getItem('fmabc_admin_logged') === 'true') {
         isAdminLoggedIn = true;
         currentUserName = sessionStorage.getItem('fmabc_admin_name') || 'Administrador';
+        // A senha não é persistida por segurança; salvar alterações exige novo login.
         atualizarNavegacaoAdmin();
       }
 
@@ -1572,10 +1742,28 @@
         });
       }
 
+      await carregarHeroDoBanco();
       renderHero();
       renderFooter();
+      await carregarBannerSocial();
       configurarHeroBanner();
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) atualizarHeroDoServidor();
+      });
+      window.addEventListener('focus', async () => {
+        await atualizarHeroDoServidor();
+        await carregarTurmasDoBanco();
+        await carregarPlanoDeFundoDoBanco();
+      });
+      document.addEventListener('visibilitychange', async () => {
+        if (!document.hidden) {
+          await atualizarHeroDoServidor();
+          await carregarTurmasDoBanco();
+          await carregarPlanoDeFundoDoBanco();
+        }
+      });
       setupEventListeners();
+      setInterval(atualizarHeroDoServidor, 60000);
       await carregarCursosDoSupabase();
       await carregarTurmasDoBanco();
     });
@@ -1650,60 +1838,121 @@
       reader.readAsDataURL(file);
     }
 
-    function salvarPlanoDeFundo(e) {
+    async function salvarPlanoDeFundoNoBanco(bgFinal, opacityInput) {
+      if (!currentAdminEmail || !currentAdminSenha) {
+        showToast('Faça login como administrador para salvar o plano de fundo.');
+        return false;
+      }
+      try {
+        const payload = { imagem: bgFinal || null, opacidade: Number(opacityInput) || 0.15 };
+        const { data, error } = await _supabase.rpc('salvar_site_config', {
+          p_email: currentAdminEmail,
+          p_senha: currentAdminSenha,
+          p_id: 'background_config',
+          p_valor: payload
+        });
+        if (error) throw error;
+        if (data === false) throw new Error('Administrador não autorizado.');
+        return true;
+      } catch (error) {
+        console.error('Erro ao salvar plano de fundo no servidor:', error);
+        showToast('❌ Não foi possível salvar o plano de fundo no servidor.');
+        return false;
+      }
+    }
+
+    async function carregarPlanoDeFundoDoBanco() {
+      try {
+        const { data, error } = await _supabase
+          .from('site_config')
+          .select('valor')
+          .eq('id', 'background_config')
+          .maybeSingle();
+        if (error) throw error;
+
+        const valor = data?.valor;
+        if (valor?.imagem) {
+          document.documentElement.style.setProperty('--bg-image', `url("${valor.imagem}")`);
+          const prevImg = document.getElementById('previewBgImg');
+          const prevContainer = document.getElementById('previewBgContainer');
+          if (prevImg && prevContainer) {
+            prevImg.src = valor.imagem;
+            prevContainer.style.display = 'block';
+          }
+        }
+        if (valor?.opacidade != null) {
+          document.documentElement.style.setProperty('--bg-opacity', String(valor.opacidade));
+          const slider = document.getElementById('inputBgOpacity');
+          const span = document.getElementById('opacityValue');
+          if (slider) slider.value = valor.opacidade;
+          if (span) span.textContent = valor.opacidade;
+        }
+      } catch (error) {
+        console.warn('Não foi possível carregar o plano de fundo do servidor:', error);
+        carregarPlanoDeFundoSalvo();
+      }
+    }
+
+    async function salvarPlanoDeFundo(e) {
       e.preventDefault();
       const urlInput = document.getElementById('inputBgImageUrl').value.trim();
       const opacityInput = document.getElementById('inputBgOpacity').value;
-
       const bgFinal = tempBgBase64 || urlInput;
 
-      if (bgFinal) {
-        document.documentElement.style.setProperty('--bg-image', `url("${bgFinal}")`);
-        localStorage.setItem('fmabc_custom_bg', bgFinal);
-      } else {
-        document.documentElement.style.removeProperty('--bg-image');
-        localStorage.removeItem('fmabc_custom_bg');
+      if (!bgFinal) {
+        alert('Selecione uma imagem ou informe uma URL.');
+        return;
       }
 
-      document.documentElement.style.setProperty('--bg-opacity', opacityInput);
-      localStorage.setItem('fmabc_custom_bg_opacity', opacityInput);
+      if (!(await salvarPlanoDeFundoNoBanco(bgFinal, opacityInput))) return;
 
-      showToast('✅ Plano de fundo atualizado!');
+      document.documentElement.style.setProperty('--bg-image', `url("${bgFinal}")`);
+      document.documentElement.style.setProperty('--bg-opacity', opacityInput);
+      salvarPlanoDeFundoSalvoLocalmente(bgFinal, opacityInput);
+
+      tempBgBase64 = '';
+      document.getElementById('inputBgImageUrl').value = '';
+      document.getElementById('inputBgImageFile').value = '';
+      showToast('✅ Plano de fundo atualizado para todos os navegadores.');
     }
 
-    function removerPlanoDeFundo() {
+    async function removerPlanoDeFundo() {
+      if (!confirm('Restaurar o plano de fundo padrão?')) return;
+      if (!(await salvarPlanoDeFundoNoBanco(null, 0.15))) return;
+
+      document.documentElement.style.removeProperty('--bg-image');
+      document.documentElement.style.setProperty('--bg-opacity', '0.15');
+      localStorage.removeItem('fmabc_custom_bg');
+      localStorage.removeItem('fmabc_custom_bg_opacity');
+
       tempBgBase64 = '';
       document.getElementById('inputBgImageUrl').value = '';
       document.getElementById('inputBgImageFile').value = '';
       document.getElementById('previewBgContainer').style.display = 'none';
+      showToast('Plano de fundo restaurado para todos os navegadores.');
+    }
 
-      document.documentElement.style.removeProperty('--bg-image');
-      localStorage.removeItem('fmabc_custom_bg');
-
-      showToast('Plano de fundo restaurado para o padrão.');
+    function salvarPlanoDeFundoSalvoLocalmente(bg, opacity) {
+      try {
+        if (bg) localStorage.setItem('fmabc_custom_bg', bg);
+        localStorage.setItem('fmabc_custom_bg_opacity', opacity);
+      } catch (_) {}
     }
 
     function carregarPlanoDeFundoSalvo() {
-      const bgSalvo = localStorage.getItem('fmabc_custom_bg');
-      const opacitySalva = localStorage.getItem('fmabc_custom_bg_opacity');
-
-      if (bgSalvo) {
-        document.documentElement.style.setProperty('--bg-image', `url("${bgSalvo}")`);
-        const prevImg = document.getElementById('previewBgImg');
-        const prevContainer = document.getElementById('previewBgContainer');
-        if (prevImg && prevContainer) {
-          prevImg.src = bgSalvo;
-          prevContainer.style.display = 'block';
+      try {
+        const bgSalvo = localStorage.getItem('fmabc_custom_bg');
+        const opacitySalva = localStorage.getItem('fmabc_custom_bg_opacity');
+        if (bgSalvo) {
+          document.documentElement.style.setProperty('--bg-image', `url("${bgSalvo}")`);
+          const prevImg = document.getElementById('previewBgImg');
+          const prevContainer = document.getElementById('previewBgContainer');
+          if (prevImg && prevContainer) { prevImg.src = bgSalvo; prevContainer.style.display = 'block'; }
         }
-      }
-
-      if (opacitySalva) {
-        document.documentElement.style.setProperty('--bg-opacity', opacitySalva);
-        const opacitySlider = document.getElementById('inputBgOpacity');
-        const opacitySpan = document.getElementById('opacityValue');
-        if (opacitySlider) opacitySlider.value = opacitySalva;
-        if (opacitySpan) opacitySpan.textContent = opacitySalva;
-      }
+        if (opacitySalva) {
+          document.documentElement.style.setProperty('--bg-opacity', opacitySalva);
+        }
+      } catch (_) {}
     }
 
     async function excluirUsuario(id) {
@@ -2262,6 +2511,7 @@
       e.currentTarget.classList.add('active');
       document.getElementById(tabId).classList.add('active');
       if (tabId === 'tabBannerSocial') renderListaHeroImagensAdmin();
+      if (tabId === 'tabSocialConfig') carregarBannerSocial();
     }
 
     function preencherCamposAdmin() {
