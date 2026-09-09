@@ -1370,10 +1370,11 @@
       }
 
       try {
-        const { data, error } = await _supabase.rpc('salvar_hero_config', {
+        const { data, error } = await _supabase.rpc('salvar_site_config', {
           p_email: currentAdminEmail,
           p_senha: currentAdminSenha,
-          p_imagens: imagens
+          p_id: 'hero_images',
+          p_valor: imagens
         });
 
         if (error) throw error;
@@ -1385,7 +1386,7 @@
       } catch (error) {
         console.error('Erro ao salvar Hero no Supabase:', error);
         if (informar) {
-          showToast('❌ Não foi possível salvar o Hero no servidor: ' + (error.message || 'erro desconhecido'));
+          showToast('❌ Erro no Supabase ao salvar o Hero: ' + (error.message || 'erro desconhecido')); 
         }
         return false;
       }
@@ -1712,10 +1713,9 @@
       await carregarPlanoDeFundoDoBanco();
 
       if (sessionStorage.getItem('fmabc_admin_logged') === 'true') {
-        isAdminLoggedIn = true;
-        currentUserName = sessionStorage.getItem('fmabc_admin_name') || 'Administrador';
-        // A senha não é persistida por segurança; salvar alterações exige novo login.
-        atualizarNavegacaoAdmin();
+        // A sessão visual não é restaurada sem as credenciais necessárias para as RPCs protegidas.
+        sessionStorage.removeItem('fmabc_admin_logged');
+        sessionStorage.removeItem('fmabc_admin_name');
       }
 
       const formUsuario = document.getElementById('form-usuario');
@@ -1856,7 +1856,7 @@
         return true;
       } catch (error) {
         console.error('Erro ao salvar plano de fundo no servidor:', error);
-        showToast('❌ Não foi possível salvar o plano de fundo no servidor.');
+        showToast('❌ Erro no Supabase ao salvar o plano de fundo. Verifique a tabela site_config e a RPC salvar_site_config.');
         return false;
       }
     }
