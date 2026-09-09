@@ -2462,10 +2462,24 @@
 
     async function salvarTurmaNoBanco(turma) {
       try {
-        const { data, error } = await _supabase
-          .from('turmas')
-          .upsert([turma], { onConflict: 'id' })
-          .select();
+        let response;
+
+        if (turma?.id) {
+          // Edição: atualiza somente o registro existente.
+          response = await _supabase
+            .from('turmas')
+            .update(turma)
+            .eq('id', turma.id)
+            .select();
+        } else {
+          // Cadastro novo.
+          response = await _supabase
+            .from('turmas')
+            .insert([turma])
+            .select();
+        }
+
+        const { data, error } = response;
 
         if (error) {
           console.error('Erro retornado pelo Supabase:', error.message, error.details);
@@ -2473,7 +2487,11 @@
           return false;
         }
 
-        showToast('✅ Salvo no banco com sucesso!');
+        if (!data || data.length === 0) {
+          showToast('⚠️ Nenhum registro foi alterado. Verifique as permissões do banco.');
+          return false;
+        }
+
         return true;
       } catch (err) {
         console.error('Erro de conexão:', err);
@@ -3222,27 +3240,55 @@
         return;
       }
 
+      const turmaExistente = appState.turmas.find(
+        turma => String(turma.id) === String(turmaIdSelecionada)
+      );
+
+      if (!turmaExistente) {
+        alert('Não foi possível localizar os dados completos da turma selecionada.');
+        return;
+      }
+
       const paraninfo = document.getElementById('editModalParaninfo').value.trim();
       const patrono = document.getElementById('editModalPatrono').value.trim();
       const historia = document.getElementById('editModalHistoria').value.trim();
-      
-      const formandosRaw = document.getElementById('editModalFormandos').value;
-      const formandos = formandosRaw.split(',').map(f => f.trim()).filter(f => f !== '');
 
+      const formandosRaw = document.getElementById('editModalFormandos').value || '';
+      const formandos = formandosRaw
+        .split(',')
+        .map(f => f.trim())
+        .filter(f => f !== '');
+
+      // Preserva os campos obrigatórios da turma e altera somente os detalhes do modal.
       const payloadModal = {
-        id: turmaIdSelecionada,
-        paraninfo: paraninfo,
-        patrono: patrono,
-        historia: historia,
-        galeria: galeriaEdicaoAtual,
-        depoimentos: depoimentosEdicaoAtual,
-        formandos: formandos
+        ...turmaExistente,
+        id: turmaExistente.id,
+        curso: turmaExistente.curso,
+        nome: turmaExistente.nome || turmaExistente.titulo || '',
+        titulo: turmaExistente.titulo || turmaExistente.nome || '',
+        ano: turmaExistente.ano,
+        qtdFormandos: turmaExistente.qtdFormandos ?? turmaExistente.formandos ?? 0,
+        resumo: turmaExistente.resumo || turmaExistente.cardDesc || '',
+        cardDesc: turmaExistente.cardDesc || turmaExistente.resumo || '',
+        img: turmaExistente.img || '',
+        paraninfo,
+        patrono,
+        historia,
+        galeria: Array.isArray(galeriaEdicaoAtual) ? galeriaEdicaoAtual : [],
+        depoimentos: Array.isArray(depoimentosEdicaoAtual) ? depoimentosEdicaoAtual : [],
+        formandos
       };
+
+      if (!payloadModal.curso) {
+        showToast('⚠️ A turma selecionada não possui um curso válido cadastrado.');
+        return;
+      }
 
       const salvo = await salvarTurmaNoBanco(payloadModal);
 
       if (salvo) {
         await carregarTurmasDoBanco();
+        await carregarDadosTurmaParaEdicao();
         showToast('✅ Detalhes da turma atualizados no banco!');
       }
     }
