@@ -188,6 +188,45 @@
       box-shadow: 0 4px 12px rgba(51, 156, 91, 0.35);
     }
 
+
+    .hero-memory {
+      position: relative; min-height: 520px; border-radius: 24px; overflow: hidden;
+      box-shadow: var(--shadow-lg); margin-bottom: 28px; isolation: isolate; background: var(--azul-institucional);
+    }
+    .hero-memory-track { position: relative; width: 100%; height: 520px; }
+    .hero-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .9s ease-in-out; }
+    .hero-slide.active { opacity: 1; visibility: visible; z-index: 1; }
+    .hero-slide-bg { position:absolute; inset:0; background-size:cover; background-position:center; transform:scale(1.04); transition:transform 6.5s ease; }
+    .hero-slide.active .hero-slide-bg { transform:scale(1); }
+    .hero-slide-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(90deg,rgba(10,28,42,.91) 0%,rgba(15,43,58,.73) 42%,rgba(15,43,58,.26) 72%,rgba(15,43,58,.08) 100%),linear-gradient(0deg,rgba(9,23,34,.58),transparent 48%);
+    }
+    .hero-slide-content { position:relative; z-index:3; width:min(720px,calc(100% - 90px)); padding:68px 54px 150px; color:#fff; }
+    .hero-memory-kicker { display:block; margin-top:22px; color:var(--verde-pastel-medio); font-size:.82rem; font-weight:800; letter-spacing:1.3px; text-transform:uppercase; }
+    .hero-slide-content h1 { margin:11px 0 16px; font-size:clamp(2.35rem,4.4vw,4.1rem); line-height:1.05; letter-spacing:-1.2px; font-weight:400; text-shadow:0 3px 18px rgba(0,0,0,.22); }
+    .hero-slide-content h1 strong { font-weight:800; color:#fff; }
+    .hero-slide-content p { max-width:610px; margin:0 0 24px; color:#eef3f1; font-size:1.05rem; line-height:1.65; }
+    .hero-cta { border:0; background:var(--verde-principal); color:#fff; border-radius:999px; padding:13px 19px 13px 22px; font-size:.92rem; font-weight:800; cursor:pointer; display:inline-flex; gap:10px; align-items:center; box-shadow:0 8px 18px rgba(0,0,0,.18); transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease; }
+    .hero-cta:hover { transform:translateY(-2px); background:var(--verde-escuro); box-shadow:0 11px 24px rgba(0,0,0,.24); }
+    .hero-nav { position:absolute; top:44%; transform:translateY(-50%); z-index:6; width:44px; height:44px; border-radius:50%; border:1px solid rgba(255,255,255,.34); background:rgba(0,0,0,.22); color:#fff; cursor:pointer; backdrop-filter:blur(5px); font-size:0; transition:transform .2s ease,background-color .2s ease; }
+    .hero-nav::before { font-size:2rem; line-height:1; }
+    .hero-nav-prev::before { content:'‹'; } .hero-nav-next::before { content:'›'; }
+    .hero-nav:hover { transform:translateY(-50%) scale(1.08); background:rgba(255,255,255,.18); }
+    .hero-nav-prev { left:18px; } .hero-nav-next { right:18px; }
+    .hero-search-panel { position:absolute; left:28px; right:28px; bottom:58px; z-index:6; }
+    .hero-search-panel .search-filter-wrapper { padding:0; justify-content:flex-start; }
+    .hero-search-panel .search-box { max-width:450px; }
+    .hero-search-panel .search-box input { background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.30); backdrop-filter:blur(5px); }
+    .hero-controls { position:absolute; left:28px; right:28px; bottom:17px; z-index:7; display:flex; align-items:center; justify-content:space-between; }
+    .hero-dots { display:flex; gap:8px; align-items:center; }
+    .hero-dot { width:9px; height:9px; border:0; border-radius:999px; background:rgba(255,255,255,.44); padding:0; cursor:pointer; transition:width .25s ease,background-color .25s ease; }
+    .hero-dot.active { width:28px; background:var(--verde-principal); }
+    .hero-autoplay { display:inline-flex; align-items:center; gap:8px; color:rgba(255,255,255,.88); font-size:.76rem; font-weight:700; background:rgba(0,0,0,.18); padding:7px 10px; border-radius:999px; backdrop-filter:blur(5px); }
+    .hero-live-dot { width:7px; height:7px; border-radius:50%; background:var(--verde-principal); animation:indicadorPulse 1.8s ease-in-out infinite; }
+    @media (max-width:900px){ .hero-memory,.hero-memory-track{height:580px;min-height:580px}.hero-slide-content{width:min(680px,calc(100% - 60px));padding:58px 30px 165px}.hero-search-panel{left:20px;right:20px;bottom:62px}.hero-controls{left:20px;right:20px} }
+    @media (max-width:620px){ .hero-memory,.hero-memory-track{height:640px;min-height:640px;border-radius:18px}.hero-slide-content{width:calc(100% - 38px);padding:42px 19px 180px}.hero-slide-content h1{font-size:2.45rem}.hero-slide-content p{font-size:.95rem}.hero-nav{width:38px;height:38px}.hero-nav-prev{left:10px}.hero-nav-next{right:10px}.hero-search-panel{left:18px;right:18px}.hero-search-panel .search-box{min-width:0;max-width:none}.hero-controls{left:18px;right:18px}.hero-autoplay{font-size:.7rem} }
+
     .cards-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; transition: opacity 0.45s ease, transform 0.45s ease; }
     .cards-grid.carrossel-saindo { opacity: 0; transform: translateY(8px); }
     @media (max-width: 1100px) { .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -661,6 +700,40 @@
         align-items: center;
       }
     }
+  
+    .hero-search-area {
+      margin: -10px 0 28px;
+      padding: 14px 18px;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 5px 16px rgba(35,39,56,.06);
+    }
+    .hero-search-area .search-filter-wrapper { justify-content: flex-start; }
+    .hero-search-area .search-box { max-width: 500px; }
+    .hero-search-area .search-box input { color: var(--navy-dark); background:#fff; border-color: var(--border-color); }
+    .hero-search-area .search-box input::placeholder { color:#8791a3; }
+
+    .hero-memory .hero-slide-bg {
+      position:absolute; inset:0; width:100%; height:100%;
+      background-size:cover; background-position:center; background-repeat:no-repeat;
+      opacity:0; visibility:hidden; transition:opacity .9s ease-in-out;
+    }
+    .hero-memory .hero-slide-bg.active { opacity:1; visibility:visible; z-index:1; }
+    .hero-memory .hero-slide-bg::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(5,21,31,.30),rgba(5,21,31,0) 55%); pointer-events:none; }
+
+    .hero-image-admin-item {
+      display:grid; grid-template-columns:88px 1fr auto; align-items:center; gap:12px;
+      padding:10px; background:#fff; border:1px solid var(--border-color); border-radius:10px;
+    }
+    .hero-image-admin-thumb { width:88px; height:58px; border-radius:8px; object-fit:cover; border:1px solid var(--border-color); background:#f4f6f7; }
+    .hero-image-admin-name { min-width:0; }
+    .hero-image-admin-name strong { display:block; color:var(--azul-institucional); font-size:.86rem; margin-bottom:3px; }
+    .hero-image-admin-name span { display:block; color:var(--slate-muted); font-size:.73rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .hero-image-admin-remove { border:0; background:#fee2e2; color:#b91c1c; width:34px; height:34px; border-radius:8px; cursor:pointer; font-weight:800; }
+    .hero-image-admin-empty { padding:20px; text-align:center; color:var(--slate-muted); border:1px dashed var(--border-color); border-radius:10px; }
+    @media(max-width:600px){ .hero-image-admin-item{grid-template-columns:64px 1fr auto}.hero-image-admin-thumb{width:64px;height:48px}.hero-search-area{padding:12px}.hero-search-area .search-box{max-width:none} }
+
   </style>
 </head>
 <body>
@@ -679,13 +752,19 @@
 
   <div class="container">
     
-    <section class="hero-banner">
-      <div class="hero-badge" id="publicHeroBadge">Acervo Acadêmico FMABC</div>
-      <h1 class="hero-title" id="publicHeroTitle">Galeria de Turmas Formadas</h1>
-      <p class="hero-subtitle" id="publicHeroSubtitle">
-        Explore a história, memórias e conquistas das turmas de graduação que fizeram e fazem história no Centro Universitário FMABC.
-      </p>
-      
+    <section class="hero-memory" id="heroMemory" aria-label="Memórias da FMABC">
+      <div class="hero-memory-track" id="heroMemoryTrack"></div>
+
+      <button class="hero-nav hero-nav-prev" type="button" id="heroPrev" aria-label="Imagem anterior"></button>
+      <button class="hero-nav hero-nav-next" type="button" id="heroNext" aria-label="Próxima imagem"></button>
+
+      <div class="hero-controls">
+        <div class="hero-dots" id="heroDots" aria-label="Selecionar imagem"></div>
+        <div class="hero-autoplay"><span class="hero-live-dot"></span><span id="heroAutoplayText">Troca automática</span></div>
+      </div>
+    </section>
+
+    <section class="hero-search-area" aria-label="Buscar turmas">
       <div class="search-filter-wrapper">
         <div class="search-box">
           <input type="text" id="searchInput" placeholder="Buscar por ano, número da turma ou palavras-chave...">
@@ -758,33 +837,6 @@
           </button>
         </div>
       </form>
-    </section>
-
-    <!-- Banner de Redes Sociais -->
-    <section class="banner-redes-sociais">
-      <div class="banner-redes-img">
-        <img id="bannerSocialImg" src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80" alt="Alunas FMABC" style="transition: opacity 1.5s ease-in-out; opacity: 1;">
-      </div>
-      
-      <div class="banner-redes-content">
-        <h2>Siga a gente nas redes sociais</h2>
-        <p>Acompanhe a FMABC através das redes sociais e fique por dentro de todas as novidades.</p>
-        
-        <div class="redes-sociais-botoes">
-          <a href="#" target="_blank" class="btn-rede-social" aria-label="Instagram">
-            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-          </a>
-          <a href="#" target="_blank" class="btn-rede-social" aria-label="Facebook">
-            <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
-          </a>
-          <a href="#" target="_blank" class="btn-rede-social" aria-label="LinkedIn">
-            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          </a>
-          <a href="#" target="_blank" class="btn-rede-social" aria-label="YouTube">
-             <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          </a>
-        </div>
-      </div>
     </section>
 
   </div>
@@ -882,7 +934,7 @@
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabModalEdicao')">Edição do Modal / Detalhes</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabUsuariosAdmin')">Gerenciar Usuários</button>
           <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabRodape')">Editar Rodapé</button>
-          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabBannerSocial')">Banner Redes Sociais</button>
+          <button class="admin-nav-item" onclick="switchAdminTab(event, 'tabBannerSocial')">Hero / Banners da Página Inicial</button>
         </nav>
 
         <main class="admin-content">
@@ -1156,14 +1208,29 @@
           </section>
 
           <section id="tabBannerSocial" class="admin-tab-pane">
-            <h3 class="admin-section-title">Imagens do Banner de Redes Sociais</h3>
-            <form onsubmit="salvarImagensBanner(event)">
-              <div class="form-group">
-                <label>URLs das Imagens (uma por linha)</label>
-                <textarea id="inputBannerImages" class="form-control" style="min-height: 120px;" placeholder="https://link-da-imagem-1.jpg&#10;https://link-da-imagem-2.jpg"></textarea>
-                <small style="color: var(--slate-muted);">Estas imagens serão alternadas automaticamente a cada 4 segundos no banner da página inicial.</small>
+            <h3 class="admin-section-title">Hero / Banners da Página Inicial</h3>
+            <p style="color: var(--slate-muted); font-size: 0.88rem; margin-bottom: 18px; line-height: 1.5;">
+              Gerencie as imagens exibidas no carrossel principal. Você pode usar imagens estáticas ou animadas (GIF e WebP animado). As imagens são exibidas em tela cheia dentro do Hero e alternadas automaticamente.
+            </p>
+
+            <form onsubmit="salvarHeroImagens(event)">
+              <div id="listaHeroImagensAdmin" style="display:flex; flex-direction:column; gap:12px; margin-bottom:18px;"></div>
+
+              <div class="form-group" style="background:var(--slate-light); border:1px solid var(--border-color); border-radius:12px; padding:16px;">
+                <label>Adicionar imagem</label>
+                <input type="file" id="inputHeroImagemArquivo" class="form-control" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif">
+                <small style="display:block; color:var(--slate-muted); margin-top:6px; line-height:1.45;">Formatos aceitos: JPG, PNG, WEBP, GIF e WEBP animado. Para GIF/WEBP animado, a animação será preservada.</small>
+
+                <div style="text-align:center; margin:14px 0; color:#94a3b8; font-size:.8rem; font-weight:700;">OU</div>
+
+                <input type="url" id="inputHeroImagemUrl" class="form-control" placeholder="https://exemplo.com/banner.jpg">
+                <button type="button" class="btn-save" style="margin-top:10px;" onclick="adicionarHeroImagem()">+ Adicionar ao carrossel</button>
               </div>
-              <button type="submit" class="btn-save">Salvar Imagens do Banner</button>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="submit" class="btn-save">Salvar alterações do Hero</button>
+                <button type="button" class="btn-save" style="background:#64748b;" onclick="restaurarHeroPadrao()">Restaurar padrão</button>
+              </div>
             </form>
           </section>
 
@@ -1185,47 +1252,182 @@
     let currentUserName = '';
     let tempBgBase64 = '';
 
-    let bannerImages = JSON.parse(localStorage.getItem('fmabc_banner_images')) || [
-      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80"
+    const HERO_STORAGE_KEY = 'fmabc_hero_images';
+    const HERO_DEFAULT_IMAGES = [
+      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1584982751601-97dcc096659c?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1800&q=85",
+      "https://images.unsplash.com/photo-1511174511562-5f7f18f87425?auto=format&fit=crop&w=1800&q=85"
     ];
-    let currentBannerIndex = 0;
+    let heroImages = JSON.parse(localStorage.getItem(HERO_STORAGE_KEY) || 'null') || [...HERO_DEFAULT_IMAGES];
+    let heroSlideAtual = 0;
+    let heroTimer = null;
+    let heroPausado = false;
 
-    function iniciarAnimacaoBanner() {
-      const imgElement = document.getElementById('bannerSocialImg');
-      if (!imgElement) return;
-
-      if (bannerImages.length > 0) {
-        imgElement.src = bannerImages[0];
-      }
-
-      if (bannerImages.length > 1) {
-        setInterval(() => {
-          imgElement.style.opacity = 0;
-          
-          setTimeout(() => {
-            currentBannerIndex = (currentBannerIndex + 1) % bannerImages.length;
-            imgElement.src = bannerImages[currentBannerIndex];
-            imgElement.style.opacity = 1;
-          }, 1500); // Aguarda o fim do fade out mais lento (1.5s)
-          
-        }, 6000); // Troca a imagem a cada 6 segundos em vez de 4
-      }
+    function salvarHeroStorage() {
+      localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(heroImages));
     }
 
-    function salvarImagensBanner(e) {
-      e.preventDefault();
-      const textarea = document.getElementById('inputBannerImages');
-      const urls = textarea.value.split('\n').map(url => url.trim()).filter(url => url !== '');
-      
-      if (urls.length > 0) {
-        bannerImages = urls;
-        localStorage.setItem('fmabc_banner_images', JSON.stringify(bannerImages));
-        document.getElementById('bannerSocialImg').src = bannerImages[0];
-        showToast('Imagens do banner atualizadas com sucesso!');
-        setTimeout(() => window.location.reload(), 1500);
-      } else {
-        alert('Insira pelo menos uma URL de imagem válida.');
+    function renderHeroImages() {
+      const track = document.getElementById('heroMemoryTrack');
+      if (!track) return;
+      track.innerHTML = '';
+
+      heroImages.forEach((src, index) => {
+        const image = document.createElement('div');
+        image.className = `hero-slide-bg ${index === heroSlideAtual ? 'active' : ''}`;
+        image.style.backgroundImage = `url("${src.replace(/"/g, '\"')}")`;
+        image.setAttribute('data-slide', index);
+        track.appendChild(image);
+      });
+
+      if (heroSlideAtual >= heroImages.length) heroSlideAtual = 0;
+      renderHeroDots();
+    }
+
+    function renderHeroDots() {
+      const container = document.getElementById('heroDots');
+      if (!container) return;
+      container.innerHTML = '';
+      heroImages.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = `hero-dot ${index === heroSlideAtual ? 'active' : ''}`;
+        dot.setAttribute('aria-label', `Ir para a imagem ${index + 1}`);
+        dot.onclick = () => { irParaHeroSlide(index); reiniciarHeroAutoplay(); };
+        container.appendChild(dot);
+      });
+    }
+
+    function irParaHeroSlide(index) {
+      if (!heroImages.length) return;
+      heroSlideAtual = (index + heroImages.length) % heroImages.length;
+      document.querySelectorAll('#heroMemoryTrack .hero-slide-bg').forEach((slide, i) => {
+        slide.classList.toggle('active', i === heroSlideAtual);
+      });
+      renderHeroDots();
+    }
+
+    function avancarHeroSlide(delta = 1) { irParaHeroSlide(heroSlideAtual + delta); }
+    function pararHeroAutoplay() { if (heroTimer) { clearInterval(heroTimer); heroTimer = null; } }
+    function iniciarHeroAutoplay() {
+      pararHeroAutoplay();
+      if (heroPausado || heroImages.length <= 1) return;
+      heroTimer = setInterval(() => avancarHeroSlide(1), 7000);
+    }
+    function reiniciarHeroAutoplay() { if (!heroPausado) iniciarHeroAutoplay(); }
+
+    function configurarHeroBanner() {
+      const hero = document.getElementById('heroMemory');
+      if (!hero) return;
+      renderHeroImages();
+
+      document.getElementById('heroPrev')?.addEventListener('click', () => { avancarHeroSlide(-1); reiniciarHeroAutoplay(); });
+      document.getElementById('heroNext')?.addEventListener('click', () => { avancarHeroSlide(1); reiniciarHeroAutoplay(); });
+
+      hero.addEventListener('mouseenter', () => {
+        heroPausado = true; pararHeroAutoplay();
+        const t = document.getElementById('heroAutoplayText');
+        if (t) t.textContent = 'Pausado ao passar o mouse';
+      });
+      hero.addEventListener('mouseleave', () => {
+        heroPausado = false; iniciarHeroAutoplay();
+        const t = document.getElementById('heroAutoplayText');
+        if (t) t.textContent = 'Troca automática';
+      });
+      iniciarHeroAutoplay();
+    }
+
+    function renderListaHeroImagensAdmin() {
+      const container = document.getElementById('listaHeroImagensAdmin');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!heroImages.length) {
+        container.innerHTML = '<div class="hero-image-admin-empty">Nenhuma imagem cadastrada. Adicione pelo menos uma imagem.</div>';
+        return;
       }
+      heroImages.forEach((src, index) => {
+        const item = document.createElement('div');
+        item.className = 'hero-image-admin-item';
+        item.innerHTML = `
+          <img class="hero-image-admin-thumb" src="${src}" alt="Prévia ${index + 1}">
+          <div class="hero-image-admin-name"><strong>Imagem ${index + 1}</strong><span>${src}</span></div>
+          <button type="button" class="hero-image-admin-remove" title="Remover imagem" aria-label="Remover imagem ${index + 1}" onclick="removerHeroImagem(${index})">×</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function adicionarHeroImagem() {
+      const fileInput = document.getElementById('inputHeroImagemArquivo');
+      const urlInput = document.getElementById('inputHeroImagemUrl');
+      const file = fileInput?.files?.[0];
+      const url = urlInput?.value.trim();
+
+      if (!file && !url) {
+        alert('Selecione uma imagem ou informe uma URL.');
+        return;
+      }
+
+      if (file) {
+        if (!file.type.startsWith('image/')) { alert('Selecione um arquivo de imagem válido.'); return; }
+        const reader = new FileReader();
+        reader.onload = () => {
+          heroImages.push(reader.result);
+          salvarHeroStorage();
+          renderListaHeroImagensAdmin();
+          fileInput.value = '';
+          if (urlInput) urlInput.value = '';
+          renderHeroImages();
+          iniciarHeroAutoplay();
+          showToast('Imagem adicionada ao Hero!');
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      try { new URL(url); } catch { alert('Informe uma URL válida.'); return; }
+      heroImages.push(url);
+      salvarHeroStorage();
+      renderListaHeroImagensAdmin();
+      urlInput.value = '';
+      renderHeroImages();
+      iniciarHeroAutoplay();
+      showToast('Imagem adicionada ao Hero!');
+    }
+
+    function removerHeroImagem(index) {
+      if (heroImages.length <= 1) {
+        alert('Mantenha pelo menos uma imagem no Hero.');
+        return;
+      }
+      heroImages.splice(index, 1);
+      if (heroSlideAtual >= heroImages.length) heroSlideAtual = 0;
+      salvarHeroStorage();
+      renderListaHeroImagensAdmin();
+      renderHeroImages();
+      iniciarHeroAutoplay();
+      showToast('Imagem removida do Hero.');
+    }
+
+    function salvarHeroImagens(e) {
+      e.preventDefault();
+      salvarHeroStorage();
+      renderListaHeroImagensAdmin();
+      renderHeroImages();
+      iniciarHeroAutoplay();
+      showToast('Configuração do Hero salva com sucesso!');
+    }
+
+    function restaurarHeroPadrao() {
+      if (!confirm('Restaurar as imagens padrão do Hero?')) return;
+      heroImages = [...HERO_DEFAULT_IMAGES];
+      heroSlideAtual = 0;
+      salvarHeroStorage();
+      renderListaHeroImagensAdmin();
+      renderHeroImages();
+      iniciarHeroAutoplay();
+      showToast('Hero restaurado para as imagens padrão.');
     }
 
     function atualizarNavegacaoAdmin() {
@@ -1372,10 +1574,10 @@
 
       renderHero();
       renderFooter();
+      configurarHeroBanner();
       setupEventListeners();
       await carregarCursosDoSupabase();
       await carregarTurmasDoBanco();
-      iniciarAnimacaoBanner();
     });
 
     document.getElementById('inputBgImageUrl')?.addEventListener('input', (e) => {
@@ -2020,6 +2222,7 @@
       document.body.style.overflow = 'hidden';
     }
 
+
     function setupEventListeners() {
       document.getElementById('searchInput')?.addEventListener('input', (e) => {
         appState.termoBusca = e.target.value;
@@ -2058,20 +2261,19 @@
 
       e.currentTarget.classList.add('active');
       document.getElementById(tabId).classList.add('active');
+      if (tabId === 'tabBannerSocial') renderListaHeroImagensAdmin();
     }
 
     function preencherCamposAdmin() {
       document.getElementById('inputHomeBadge').value = appState.home.badge;
       document.getElementById('inputHomeTitle').value = appState.home.title;
       document.getElementById('inputHomeSubtitle').value = appState.home.subtitle;
+      renderListaHeroImagensAdmin();
       
       document.getElementById('inputFooterAddress').value = appState.footer.address;
       document.getElementById('inputFooterEmail').value = appState.footer.email;
 
-      const bannerTextarea = document.getElementById('inputBannerImages');
-      if (bannerTextarea) {
-        bannerTextarea.value = bannerImages.join('\n');
-      }
+      renderListaHeroImagensAdmin();
     }
 
     function salvarHomeContent(e) {
