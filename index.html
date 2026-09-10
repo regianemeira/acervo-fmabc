@@ -1498,7 +1498,7 @@
 
     <section class="secao-depoimento-aluno">
       <div class="depoimento-header">
-        <h2>🎓 É ex-aluno(a) da FMABC? Deixe seu Depoimento!</h2>
+        <h2>🎓 É Ex-Aluno(a) da FMABC? Deixe seu Depoimento!</h2>
         <p>Compartilhe suas memórias, aprendizados e conquistas. Seu depoimento enriquecerá o acervo histórico da sua turma no portal.</p>
       </div>
 
@@ -1831,7 +1831,7 @@
             
             <div class="form-group">
               <label>Selecione a Turma que deseja editar:</label>
-              <select id="selectTurmaParaEditar" class="form-control" onchange="carregarDadosTurmaParaEdicao()"></select>
+              <select id="selectTurmaParaEditar" class="form-control" onchange="turmaEdicaoSelecionadaId = this.value; carregarDadosTurmaParaEdicao()"></select>
             </div>
 
             <div class="form-group" style="background: var(--slate-light); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 20px;">
@@ -3819,6 +3819,7 @@
     }
 
     function limparFormulario() {
+      turmaEdicaoSelecionadaId = '';
       document.getElementById('turmaId').value = '';
       document.getElementById('formTurma').reset();
       document.getElementById('btnSubmit').innerText = 'Cadastrar Turma';
@@ -3932,6 +3933,7 @@
     function populateAdminSelects() {
       const selectCurso = document.getElementById('curso');
       if (selectCurso) {
+        const cursoAnterior = selectCurso.value;
         selectCurso.innerHTML = '';
         appState.cursos.filter(c => c !== 'Todos').forEach(c => {
           const opt = document.createElement('option');
@@ -3939,26 +3941,48 @@
           opt.textContent = c;
           selectCurso.appendChild(opt);
         });
+
+        if ([...selectCurso.options].some(o => o.value === cursoAnterior)) {
+          selectCurso.value = cursoAnterior;
+        }
       }
 
       const selectTurmaEdit = document.getElementById('selectTurmaParaEditar');
       if (selectTurmaEdit) {
+        const valorAnterior = turmaEdicaoSelecionadaId || selectTurmaEdit.value;
+
         selectTurmaEdit.innerHTML = '<option value="">Selecione uma turma...</option>';
+
         appState.turmas.forEach(t => {
           const opt = document.createElement('option');
-          opt.value = t.id;
+          opt.value = String(t.id);
           opt.textContent = `${t.titulo || t.nome} (${t.curso} - ${t.ano})`;
           selectTurmaEdit.appendChild(opt);
         });
+
+        // Mantém a turma que já estava selecionada após qualquer
+        // atualização/reconsulta do Supabase.
+        if (valorAnterior && [...selectTurmaEdit.options].some(o => o.value === String(valorAnterior))) {
+          selectTurmaEdit.value = String(valorAnterior);
+          turmaEdicaoSelecionadaId = String(valorAnterior);
+        } else {
+          selectTurmaEdit.value = '';
+          turmaEdicaoSelecionadaId = '';
+        }
       }
     }
 
     let galeriaEdicaoAtual = [];
     let depoimentosEdicaoAtual = [];
+    let turmaEdicaoSelecionadaId = '';
 
     async function carregarDadosTurmaParaEdicao() {
-      const turmaIdSelecionada = document.getElementById('selectTurmaParaEditar').value;
-      const turma = appState.turmas.find(t => String(t.id) === String(turmaIdSelecionada));
+      const select = document.getElementById('selectTurmaParaEditar');
+      const turmaIdSelecionada = String(select?.value || turmaEdicaoSelecionadaId || '');
+
+      turmaEdicaoSelecionadaId = turmaIdSelecionada;
+
+      const turma = appState.turmas.find(t => String(t.id) === turmaIdSelecionada);
 
       if (turma) {
         document.getElementById('editModalParaninfo').value = turma.paraninfo || '';
@@ -4212,7 +4236,14 @@
       const salvo = await salvarTurmaNoBanco(payloadModal);
 
       if (salvo) {
+        turmaEdicaoSelecionadaId = String(turmaIdSelecionada);
         await carregarTurmasDoBanco();
+
+        const selectEdit = document.getElementById('selectTurmaParaEditar');
+        if (selectEdit) {
+          selectEdit.value = turmaEdicaoSelecionadaId;
+        }
+
         await carregarDadosTurmaParaEdicao();
         showToast('✅ Detalhes da turma atualizados no banco!');
       }
