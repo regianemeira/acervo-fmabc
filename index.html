@@ -1425,6 +1425,108 @@
       }
     }
 
+
+    .formandos-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 24px;
+      padding: 0 8px;
+      margin-left: 6px;
+      border-radius: 999px;
+      background: var(--verde-pastel-medio);
+      color: var(--verde-escuro);
+      font-size: 0.73rem;
+      font-weight: 850;
+      vertical-align: middle;
+    }
+
+
+    /* ===== Corpo de Formandos: visual mais destacado ===== */
+    .lista-formandos-container-expandida {
+      max-height: none !important;
+      overflow: visible !important;
+      height: auto !important;
+      padding: 10px !important;
+    }
+
+    .lista-formandos-destaque {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      list-style: none !important;
+    }
+
+    .lista-formandos-destaque li {
+      position: relative !important;
+      min-height: 58px !important;
+      display: flex !important;
+      align-items: center !important;
+      padding: 12px 14px 12px 18px !important;
+      margin: 0 !important;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+      border: 1px solid #dbe4ea !important;
+      border-left: 4px solid var(--verde-principal) !important;
+      border-radius: 12px !important;
+      color: var(--azul-institucional) !important;
+      font-size: 0.94rem !important;
+      font-weight: 750 !important;
+      line-height: 1.35 !important;
+      box-shadow: 0 4px 10px rgba(35,39,56,0.06) !important;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+    }
+
+    .lista-formandos-destaque li::before {
+      content: "•";
+      position: absolute;
+      left: 7px;
+      top: 50%;
+      transform: translateY(-53%);
+      color: var(--verde-principal);
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .lista-formandos-destaque li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(35,39,56,0.10) !important;
+      border-color: rgba(51,156,91,.35) !important;
+    }
+
+    /* O modal inteiro faz a rolagem; a lista não cria uma segunda barra. */
+    .modal-content {
+      max-height: 92vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      scrollbar-gutter: stable;
+    }
+
+    @media (max-width: 900px) {
+      .lista-formandos-destaque {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .lista-formandos-destaque {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      .lista-formandos-destaque li {
+        min-height: 54px !important;
+        font-size: 0.92rem !important;
+        padding: 11px 13px 11px 18px !important;
+      }
+
+      .modal-content {
+        max-height: 94vh !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -1613,9 +1715,9 @@
         </section>
 
         <section>
-          <h3 class="modal-section-title">🎓 Corpo de Formandos</h3>
-          <div class="lista-formandos-container">
-            <ul class="lista-formandos" id="modalListaFormandos"></ul>
+          <h3 class="modal-section-title">🎓 Corpo de Formandos <span id="modalQtdFormandosTitulo" class="formandos-count-badge"></span></h3>
+          <div class="lista-formandos-container lista-formandos-container-expandida">
+            <ul class="lista-formandos lista-formandos-destaque" id="modalListaFormandos"></ul>
           </div>
         </section>
       </div>
@@ -3718,8 +3820,15 @@
       }
 
       const lista = document.getElementById('modalListaFormandos');
+      const nomesFormandos = Array.isArray(turma.formandos) ? turma.formandos : [];
       lista.innerHTML = '';
-      (turma.formandos || []).forEach(nome => {
+
+      const contadorFormandos = document.getElementById('modalQtdFormandosTitulo');
+      if (contadorFormandos) {
+        contadorFormandos.textContent = nomesFormandos.length;
+      }
+
+      nomesFormandos.forEach(nome => {
         const li = document.createElement('li');
         li.textContent = nome;
         lista.appendChild(li);
