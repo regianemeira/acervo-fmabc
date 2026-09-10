@@ -1078,26 +1078,6 @@
       justify-content: flex-end;
     }
 
-    @media (max-width: 1200px) {
-      .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .hero-memory { height: clamp(400px, 44vw, 600px); }
-    }
-
-    @media (max-width: 1000px) {
-      .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-      .hero-memory { height: clamp(390px, 50vw, 540px); }
-
-      .banner-redes-sociais {
-        gap: 34px;
-      }
-
-      .banner-redes-img {
-        width: 45%;
-        height: 300px;
-      }
-
-      .banner-redes-content { width: 47%; }
-    }
 
     @media (max-width: 768px) {
       .container {
@@ -1354,7 +1334,98 @@
       max-width: 100%;
     }
 
-  </style>
+  
+    /* ===== HERO RESPONSIVO FINAL ===== */
+    .hero-memory {
+      width: 100vw !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      aspect-ratio: 1916 / 681 !important;
+      overflow: hidden !important;
+    }
+
+    .hero-memory-track {
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      aspect-ratio: 1916 / 681 !important;
+    }
+
+    .hero-memory .hero-slide {
+      width: 100% !important;
+      height: 100% !important;
+      inset: 0 !important;
+    }
+
+    .hero-memory .hero-slide img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      background: var(--azul-institucional) !important;
+    }
+
+    @media (max-width: 900px) {
+      .hero-memory {
+        aspect-ratio: 1916 / 681 !important;
+      }
+
+      .hero-memory-track {
+        aspect-ratio: 1916 / 681 !important;
+      }
+
+      .hero-search-panel {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 12px !important;
+      }
+
+      .hero-controls {
+        left: 16px !important;
+        right: 16px !important;
+        bottom: 7px !important;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .hero-memory {
+        aspect-ratio: 1916 / 681 !important;
+        margin-top: 0 !important;
+        margin-bottom: 18px !important;
+      }
+
+      .hero-memory-track {
+        aspect-ratio: 1916 / 681 !important;
+      }
+
+      .hero-search-panel {
+        position: static !important;
+        margin-top: 14px !important;
+        padding: 0 14px !important;
+      }
+
+      .hero-search-panel .search-filter-wrapper {
+        padding: 12px !important;
+      }
+
+      .hero-controls {
+        left: 14px !important;
+        right: 14px !important;
+        bottom: 8px !important;
+      }
+
+      .hero-nav {
+        top: 50% !important;
+      }
+
+      .hero-autoplay {
+        display: none !important;
+      }
+    }
+
+</style>
 </head>
 <body>
 
