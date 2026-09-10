@@ -322,7 +322,12 @@
     .hero-autoplay { display:inline-flex; align-items:center; gap:8px; color:rgba(255,255,255,.88); font-size:.76rem; font-weight:700; background:rgba(0,0,0,.18); padding:7px 10px; border-radius:999px; backdrop-filter:blur(5px); }
     .hero-live-dot { width:7px; height:7px; border-radius:50%; background:var(--verde-principal); animation:indicadorPulse 1.8s ease-in-out infinite; }
     @media (max-width:900px){ .hero-memory,.hero-memory-track{height:580px;min-height:580px}.hero-slide-content{width:min(680px,calc(100% - 60px));padding:58px 30px 165px}.hero-search-panel{left:20px;right:20px;bottom:62px}.hero-controls{left:20px;right:20px} }
-    @media (max-width:620px){ .hero-memory,.hero-memory-track{height:640px;min-height:640px;border-radius:18px}.hero-slide-content{width:calc(100% - 38px);padding:42px 19px 180px}.hero-slide-content h1{font-size:2.45rem}.hero-slide-content p{font-size:.95rem}.hero-nav{width:38px;height:38px}.hero-nav-prev{left:10px}.hero-nav-next{right:10px}.hero-search-panel{left:18px;right:18px}.hero-search-panel .search-box{min-width:0;max-width:none}.hero-controls{left:18px;right:18px}.hero-autoplay{font-size:.7rem} }
+    @media (max-width:620px){
+      .hero-memory {
+        aspect-ratio: 1916 / 681;
+        min-height: 0;
+      }
+.hero-slide-content{width:calc(100% - 38px);padding:42px 19px 180px}.hero-slide-content h1{font-size:2.45rem}.hero-slide-content p{font-size:.95rem}.hero-nav{width:38px;height:38px}.hero-nav-prev{left:10px}.hero-nav-next{right:10px}.hero-search-panel{left:18px;right:18px}.hero-search-panel .search-box{min-width:0;max-width:none}.hero-controls{left:18px;right:18px}.hero-autoplay{font-size:.7rem} }
 
     .cards-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; transition: opacity 0.45s ease, transform 0.45s ease; }
     .cards-grid.carrossel-saindo { opacity: 0; transform: translateY(8px); }
@@ -877,9 +882,14 @@
       opacity:1; visibility:visible; z-index:1;
     }
     .hero-memory .hero-slide img {
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:cover; object-position:center;
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      object-position:center;
       display:block;
+      background:var(--azul-institucional);
     }
     .hero-memory .hero-slide::after {
       content:""; position:absolute; inset:0;
@@ -963,14 +973,17 @@
       border-radius: 0;
       box-shadow: none;
       margin-bottom: 28px;
-      height: clamp(360px, 40vw, 650px);
-      min-height: 360px;
+      /* Proporção da arte recomendada: 1916 x 681 (~2,813:1). */
+      aspect-ratio: 1916 / 681;
+      height: auto;
+      min-height: 0;
+      overflow: hidden;
     }
 
     .hero-memory-track {
       width: 100%;
       height: 100%;
-      min-height: inherit;
+      aspect-ratio: 1916 / 681;
     }
 
     /* Mantém a busca, filtros e conteúdo textual dentro de uma coluna confortável. */
