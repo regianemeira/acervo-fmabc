@@ -1540,16 +1540,16 @@
         <h2>Siga a FMABC nas redes sociais</h2>
         <p>Acompanhe novidades, histórias e momentos que continuam fazendo parte da nossa comunidade.</p>
         <div class="redes-sociais-botoes">
-          <a href="https://www.instagram.com/centrouniversitariofmabc/" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="Instagram">
+          <a href="https://www.instagram.com/fmabc/" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="Instagram">
             <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-2.618-4.919-4.92-.058-1.28-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919C8.333.014 8.741 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM18.406 5.155a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881zM12 16a4 4 0 110-8 4 4 0 010 8z"/></svg>
           </a>
-          <a href="https://www.facebook.com/CentroUniversitarioFMABC" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="Facebook">
+          <a href="https://www.facebook.com/fmabc" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="Facebook">
             <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
           </a>
-          <a href="https://www.linkedin.com/school/fmabc/posts/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/school/fmabc/" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="LinkedIn">
             <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/></svg>
           </a>
-          <a href="https://www.youtube.com/@centrouniversitariofmabc" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="YouTube">
+          <a href="https://www.youtube.com/@fmabc" target="_blank" rel="noopener noreferrer" class="btn-rede-social" aria-label="YouTube">
             <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.872.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
         </div>
@@ -2098,6 +2098,7 @@
     }
 
     async function salvarConfigInstitucional(id, valor) {
+      registrarAtividadeAdmin();
       if (!currentAdminEmail || !currentAdminSenha) {
         showToast('Faça login como administrador para salvar esta alteração.');
         return false;
@@ -2237,6 +2238,7 @@
     }
 
     async function persistirHeroNoBanco(imagens, informar = true) {
+      registrarAtividadeAdmin();
       if (!currentAdminEmail || !currentAdminSenha) {
         if (informar) showToast('Faça login como administrador para salvar as imagens.');
         return false;
@@ -2551,6 +2553,7 @@
     }
 
     async function persistirBannerSocialNoBanco(imagens, informar = true) {
+      registrarAtividadeAdmin();
       if (!currentAdminEmail || !currentAdminSenha) {
         if (informar) showToast('Faça login como administrador para salvar o banner.');
         return false;
@@ -2676,6 +2679,122 @@
       showToast('Banner social restaurado.');
     }
 
+
+    const ADMIN_IDLE_LIMIT = 15 * 60 * 1000; // 15 minutos de inatividade
+    let adminIdleTimer = null;
+
+    function registrarAtividadeAdmin() {
+      if (!isAdminLoggedIn) return;
+      localStorage.setItem('fmabc_admin_last_activity', String(Date.now()));
+      iniciarTemporizadorInatividadeAdmin();
+    }
+
+    function encerrarSessaoPorInatividade() {
+      isAdminLoggedIn = false;
+      currentUserName = '';
+      currentAdminEmail = '';
+      currentAdminSenha = '';
+
+      localStorage.removeItem('fmabc_admin_logged');
+      localStorage.removeItem('fmabc_admin_name');
+      localStorage.removeItem('fmabc_admin_email');
+      localStorage.removeItem('fmabc_admin_last_activity');
+      sessionStorage.removeItem('fmabc_admin_logged');
+      sessionStorage.removeItem('fmabc_admin_name');
+      sessionStorage.removeItem('fmabc_admin_email');
+      sessionStorage.removeItem('fmabc_admin_senha');
+
+      if (adminIdleTimer) {
+        clearTimeout(adminIdleTimer);
+        adminIdleTimer = null;
+      }
+
+      atualizarNavegacaoAdmin();
+
+      const painel = document.getElementById('painel-admin');
+      const login = document.getElementById('modal-login');
+
+      if (painel) painel.style.display = 'none';
+      if (login) login.style.display = 'block';
+
+      showToast('Sessão encerrada após 15 minutos de inatividade.');
+    }
+
+    function iniciarTemporizadorInatividadeAdmin() {
+      if (adminIdleTimer) clearTimeout(adminIdleTimer);
+      if (!isAdminLoggedIn) return;
+
+      const ultima = Number(localStorage.getItem('fmabc_admin_last_activity') || 0);
+      const decorrido = Date.now() - ultima;
+      const restante = ADMIN_IDLE_LIMIT - decorrido;
+
+      if (restante <= 0) {
+        encerrarSessaoPorInatividade();
+        return;
+      }
+
+      adminIdleTimer = setTimeout(encerrarSessaoPorInatividade, restante + 50);
+    }
+
+    function restaurarSessaoAdminPersistente() {
+      const logado = localStorage.getItem('fmabc_admin_logged') === 'true';
+      const nome = localStorage.getItem('fmabc_admin_name') || 'Administrador';
+      const email = sessionStorage.getItem('fmabc_admin_email') || localStorage.getItem('fmabc_admin_email') || '';
+      const ultima = Number(localStorage.getItem('fmabc_admin_last_activity') || 0);
+
+      if (!logado || !email || !ultima) return false;
+      if (!currentAdminSenha) {
+        currentAdminSenha = sessionStorage.getItem('fmabc_admin_senha') || '';
+      }
+      if (!currentAdminSenha) return false;
+
+      if (Date.now() - ultima >= ADMIN_IDLE_LIMIT) {
+        encerrarSessaoPorInatividade();
+        return false;
+      }
+
+      isAdminLoggedIn = true;
+      currentUserName = nome;
+      currentAdminEmail = email;
+      currentAdminSenha = sessionStorage.getItem('fmabc_admin_senha') || '';
+
+      atualizarNavegacaoAdmin();
+      iniciarTemporizadorInatividadeAdmin();
+      return true;
+    }
+
+    function configurarMonitorAtividadeAdmin() {
+      const eventos = ['click', 'keydown', 'mousemove', 'scroll', 'touchstart', 'pointerdown'];
+      let ultimoRegistro = 0;
+
+      eventos.forEach(tipo => {
+        document.addEventListener(tipo, () => {
+          if (!isAdminLoggedIn) return;
+
+          const agora = Date.now();
+          if (agora - ultimoRegistro < 1500) return;
+          ultimoRegistro = agora;
+
+          registrarAtividadeAdmin();
+        }, { passive: true });
+      });
+
+      window.addEventListener('focus', () => {
+        if (!isAdminLoggedIn) return;
+
+        const ultima = Number(localStorage.getItem('fmabc_admin_last_activity') || 0);
+        if (Date.now() - ultima >= ADMIN_IDLE_LIMIT) {
+          encerrarSessaoPorInatividade();
+          return;
+        }
+
+        registrarAtividadeAdmin();
+      });
+
+      // Não atualiza a atividade apenas porque a página foi recarregada:
+      // a sessão continuará válida pelo tempo restante de inatividade.
+    }
+
     function atualizarNavegacaoAdmin() {
       const container = document.getElementById('adminNavActions');
       if (!container) return;
@@ -2702,6 +2821,7 @@
     }
 
     function abrirAdminModal() {
+      if (isAdminLoggedIn) registrarAtividadeAdmin();
       document.getElementById('adminModalOverlay').classList.add('active');
       if (isAdminLoggedIn) {
         document.getElementById('modal-login').style.display = 'none';
@@ -2732,9 +2852,16 @@
       currentUserName = data.nome || 'Administrador';
       currentAdminEmail = email;
       currentAdminSenha = senha;
-
+      localStorage.setItem('fmabc_admin_logged', 'true');
+      localStorage.setItem('fmabc_admin_name', currentUserName);
+      localStorage.setItem('fmabc_admin_email', currentAdminEmail);
+      localStorage.setItem('fmabc_admin_last_activity', String(Date.now()));
+      // Credenciais mantidas apenas nesta aba para que o painel continue autenticado após recarregar.
       sessionStorage.setItem('fmabc_admin_logged', 'true');
       sessionStorage.setItem('fmabc_admin_name', currentUserName);
+      sessionStorage.setItem('fmabc_admin_email', currentAdminEmail);
+      sessionStorage.setItem('fmabc_admin_senha', currentAdminSenha);
+      registrarAtividadeAdmin();
 
       document.getElementById('modal-login').style.display = 'none';
       document.getElementById('painel-admin').style.display = 'flex';
@@ -2751,16 +2878,28 @@
       currentAdminEmail = '';
       currentAdminSenha = '';
 
+      localStorage.removeItem('fmabc_admin_logged');
+      localStorage.removeItem('fmabc_admin_name');
+      localStorage.removeItem('fmabc_admin_email');
+      localStorage.removeItem('fmabc_admin_last_activity');
       sessionStorage.removeItem('fmabc_admin_logged');
       sessionStorage.removeItem('fmabc_admin_name');
+      sessionStorage.removeItem('fmabc_admin_email');
+      sessionStorage.removeItem('fmabc_admin_senha');
 
-      document.getElementById('painel-admin').style.display = 'none';
-      document.getElementById('modal-login').style.display = 'block';
-      document.getElementById('login-email').value = '';
-      document.getElementById('login-senha').value = '';
+      if (adminIdleTimer) {
+        clearTimeout(adminIdleTimer);
+        adminIdleTimer = null;
+      }
 
-      fecharAdminModal();
       atualizarNavegacaoAdmin();
+
+      const painel = document.getElementById('painel-admin');
+      if (painel) painel.style.display = 'none';
+
+      const login = document.getElementById('modal-login');
+      if (login) login.style.display = 'block';
+
       showToast('Sessão encerrada com sucesso.');
     }
 
@@ -2790,12 +2929,30 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
+      restaurarSessaoAdminPersistente();
+      configurarMonitorAtividadeAdmin();
       await carregarPlanoDeFundoDoBanco();
 
-      if (sessionStorage.getItem('fmabc_admin_logged') === 'true') {
-        // A sessão visual não é restaurada sem as credenciais necessárias para as RPCs protegidas.
-        sessionStorage.removeItem('fmabc_admin_logged');
-        sessionStorage.removeItem('fmabc_admin_name');
+      // A sessão da aba sobrevive ao recarregamento da página.
+      const sessaoAba = sessionStorage.getItem('fmabc_admin_logged') === 'true';
+      if (sessaoAba && !isAdminLoggedIn) {
+        const email = sessionStorage.getItem('fmabc_admin_email') || '';
+        const senha = sessionStorage.getItem('fmabc_admin_senha') || '';
+        const nome = sessionStorage.getItem('fmabc_admin_name') || 'Administrador';
+        const ultima = Number(localStorage.getItem('fmabc_admin_last_activity') || 0);
+
+        if (email && senha && ultima && Date.now() - ultima < ADMIN_IDLE_LIMIT) {
+          isAdminLoggedIn = true;
+          currentUserName = nome;
+          currentAdminEmail = email;
+          currentAdminSenha = senha;
+          atualizarNavegacaoAdmin();
+          document.getElementById('modal-login').style.display = 'none';
+          document.getElementById('painel-admin').style.display = 'flex';
+          iniciarTemporizadorInatividadeAdmin();
+        } else {
+          sessionStorage.clear();
+        }
       }
 
       const formUsuario = document.getElementById('form-usuario');
@@ -3226,6 +3383,7 @@
     }
 
     async function salvarTurmaNoBanco(turma) {
+      registrarAtividadeAdmin();
       try {
         let response;
 
@@ -3605,6 +3763,7 @@
     }
 
     function switchAdminTab(e, tabId) {
+      registrarAtividadeAdmin();
       document.querySelectorAll('.admin-nav-item').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
 
