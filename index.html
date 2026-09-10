@@ -3455,13 +3455,16 @@
       try {
         const { data, error } = await _supabase
           .from('turmas')
-          .select('*');
+          .select('*')
+          .order('created_at', { ascending: true });
 
         if (error) {
           console.error('Erro ao ler do Supabase:', error.message);
           return;
         }
 
+        // A consulta já vem ordenada pelo created_at ASC.
+        // Não aplicar sort aqui: a home deve preservar exatamente a ordem de cadastro.
         if (data && data.length > 0) {
           appState.turmas = data.map(t => ({
             ...t,
