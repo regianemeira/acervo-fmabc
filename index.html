@@ -329,8 +329,69 @@
       }
 .hero-slide-content{width:calc(100% - 38px);padding:42px 19px 180px}.hero-slide-content h1{font-size:2.45rem}.hero-slide-content p{font-size:.95rem}.hero-nav{width:38px;height:38px}.hero-nav-prev{left:10px}.hero-nav-next{right:10px}.hero-search-panel{left:18px;right:18px}.hero-search-panel .search-box{min-width:0;max-width:none}.hero-controls{left:18px;right:18px}.hero-autoplay{font-size:.7rem} }
 
-    .cards-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px; transition: opacity 0.45s ease, transform 0.45s ease; }
-    .cards-grid.carrossel-saindo { opacity: 0; transform: translateY(8px); }
+    
+    .cards-grid {
+      display: grid !important;
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+      gap: 22px;
+      width: 100%;
+      overflow: visible !important;
+      padding: 4px 2px 6px;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .cards-grid.carrossel-saindo {
+      opacity: 1;
+      transform: none;
+    }
+
+    .cards-grid > * {
+      min-width: 0;
+      width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .cards-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+      }
+    }
+/* Em telas pequenas, os cards ficam um pouco mais estreitos,
+       mas continuam todos na mesma linha. */
+    @media (max-width: 900px) {
+      .cards-grid {
+        gap: 16px;
+      }
+
+      .cards-grid > * {
+        flex-basis: 190px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .cards-grid {
+        gap: 12px;
+        padding-bottom: 14px;
+      }
+
+      .cards-grid > * {
+        flex-basis: 175px !important;
+      }
+    }
+.cards-grid.carrossel-saindo { opacity: 0; transform: translateY(8px); }
     @media (max-width: 1100px) { .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 768px) { .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
     @media (max-width: 480px) { .cards-grid { grid-template-columns: 1fr; } }
@@ -1527,6 +1588,16 @@
       }
     }
 
+
+    .turmas-horizontal-area {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .turmas-horizontal-area .cards-grid {
+      width: 100%;
+    }
 </style>
 </head>
 <body>
@@ -1554,7 +1625,7 @@
 
       <div class="hero-controls">
         <div class="hero-dots" id="heroDots" aria-label="Selecionar imagem"></div>
-        <div class="hero-autoplay"><span class="hero-live-dot"></span><span id="heroAutoplayText">Troca automática</span></div>
+        <div class="hero-autoplay"><span class="hero-live-dot"></span><span id="heroAutoplayText">Troca automática • 5 turmas por vez</span></div>
       </div>
     </section>
 
@@ -1585,7 +1656,9 @@
           <span aria-hidden="true">‹</span>
         </button>
 
-        <main class="cards-grid" id="cardsGridContainer"></main>
+        
+          <main class="cards-grid" id="cardsGridContainer"></main>
+        </div>
 
         <button class="carrossel-seta carrossel-seta-dir" id="btnPagProxima" onclick="mudarPagina(1)" aria-label="Mostrar próxima página">
           <span aria-hidden="true">›</span>
@@ -3358,7 +3431,7 @@
       cursoAtivo: "Todos",
       termoBusca: "",
       paginaAtual: 1,
-      itensPorPagina: 10,
+      itensPorPagina: 5,
       intervaloCarrossel: null,
       carrosselPausado: false,
       turmas: [...turmasIniciaisPadrao]
@@ -3579,10 +3652,8 @@
       }
 
       // Pequena transição para a troca automática/manual da página.
-      grid.classList.add('carrossel-saindo');
-
-      setTimeout(() => {
-        grid.innerHTML = '';
+      grid.classList.remove('carrossel-saindo');
+      grid.innerHTML = '';
 
         if (totalTurmas === 0) {
           grid.innerHTML = '<p style="color: var(--slate-muted); font-size: 1rem; grid-column: 1/-1; text-align: center; padding: 40px 0;">Nenhuma turma encontrada para o filtro selecionado.</p>';
@@ -3624,10 +3695,9 @@
           grid.appendChild(card);
         });
 
-        requestAnimationFrame(() => grid.classList.remove('carrossel-saindo'));
+        grid.classList.remove('carrossel-saindo');
         renderControlesPaginacao(totalTurmas, totalPaginas);
         configurarCarrosselAutomatico(totalPaginas);
-      }, 180);
     }
 
     function renderControlesPaginacao(totalItens, totalPaginas) {
@@ -3651,7 +3721,7 @@
 
       btnAnt.disabled = false;
       btnProx.disabled = false;
-      textoInfo.textContent = `Página ${appState.paginaAtual} de ${totalPaginas} • ${totalItens} turmas`;
+      textoInfo.textContent = `Página ${appState.paginaAtual} de ${totalPaginas} • ${totalItens} turmas • 5 por vez`;
 
       if (statusTexto) {
         statusTexto.textContent = totalPaginas > 1
@@ -3680,41 +3750,37 @@
       }
     }
 
-    function configurarCarrosselAutomatico(totalPaginas) {
-      pararCarrosselAutomatico();
+        function configurarCarrosselAutomatico(totalPaginas) {
+      clearInterval(appState.carrosselTimer);
 
-      // Só ativa o carrossel quando houver mais de uma página.
-      if (totalPaginas <= 1 || appState.carrosselPausado) return;
+      if (appState.carrosselPausado || totalPaginas <= 1) return;
 
-      appState.intervaloCarrossel = setInterval(() => {
-        const proximaPagina = appState.paginaAtual >= totalPaginas
-          ? 1
-          : appState.paginaAtual + 1;
-        mudarPagina(proximaPagina - appState.paginaAtual, true);
+      appState.carrosselTimer = setInterval(() => {
+        let proximaPagina = appState.paginaAtual + 1;
+        if (proximaPagina > totalPaginas) proximaPagina = 1;
+
+        appState.paginaAtual = proximaPagina;
+        renderCards();
       }, 7000);
     }
 
-    function mudarPagina(delta, automatico = false) {
+        function mudarPagina(delta) {
       const turmasFiltradas = obterTurmasFiltradas();
       const totalPaginas = Math.ceil(turmasFiltradas.length / appState.itensPorPagina) || 1;
 
-      let novaPagina = appState.paginaAtual + delta;
-
       if (totalPaginas <= 1) return;
 
-      // No carrossel moderno, navegação manual e automática fazem loop.
+      let novaPagina = appState.paginaAtual + delta;
+
       if (novaPagina > totalPaginas) novaPagina = 1;
       if (novaPagina < 1) novaPagina = totalPaginas;
 
-      if (novaPagina === appState.paginaAtual) return;
-
       appState.paginaAtual = novaPagina;
       renderCards();
-
-      if (!automatico) {
-        document.getElementById('cardsGridContainer')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      configurarCarrosselAutomatico(totalPaginas);
     }
+
+
 
     function populateDepoimentoTurmasSelect() {
       const select = document.getElementById('depoimentoTurmaSelect');
@@ -3851,18 +3917,6 @@
       });
 
       const cardsContainer = document.getElementById('cardsGridContainer');
-      cardsContainer?.addEventListener('mouseenter', () => {
-        appState.carrosselPausado = true;
-        pararCarrosselAutomatico();
-        const totalPaginas = Math.ceil(obterTurmasFiltradas().length / appState.itensPorPagina) || 1;
-        renderControlesPaginacao(obterTurmasFiltradas().length, totalPaginas);
-      });
-      cardsContainer?.addEventListener('mouseleave', () => {
-        appState.carrosselPausado = false;
-        const totalPaginas = Math.ceil(obterTurmasFiltradas().length / appState.itensPorPagina) || 1;
-        configurarCarrosselAutomatico(totalPaginas);
-        renderControlesPaginacao(obterTurmasFiltradas().length, totalPaginas);
-      });
 
       document.getElementById('closeModal')?.addEventListener('click', () => {
         document.getElementById('modalAcervo')?.classList.remove('active');
