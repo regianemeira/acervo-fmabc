@@ -371,6 +371,14 @@
       box-sizing: border-box;
     }
 
+    /* Durante a animação o track tem 2 larguras de viewport; cada página
+       deve ocupar exatamente 1 viewport, e não 100% do track. */
+    .turmas-slide-track.animando .cards-grid.turma-slide-page {
+      flex: 0 0 50%;
+      width: 50%;
+      max-width: 50%;
+    }
+
     .status-dot {
       width: 8px;
       height: 8px;
@@ -3673,6 +3681,9 @@
       track.style.transition = 'none';
       track.style.width = '200%';
 
+      // Enquanto o track está com 200% de largura, cada página precisa
+      // ocupar 50% do track (= 100% da área visível). A classe animando
+      // aplica isso antes da transição começar.
       if (direcao > 0) {
         // Próxima: página atual fica à esquerda e a nova entra pela direita.
         track.appendChild(novaPaginaEl);
@@ -3683,9 +3694,12 @@
         track.style.transform = 'translate3d(-50%, 0, 0)';
       }
 
+      // Primeiro aplicamos a classe para que os dois blocos tenham exatamente
+      // a largura do viewport antes de iniciar o movimento.
+      track.classList.add('animando');
+
       // Força o navegador a registrar a posição inicial antes de animar.
       void track.offsetWidth;
-      track.classList.add('animando');
 
       requestAnimationFrame(() => {
         track.style.transform = direcao > 0
