@@ -335,8 +335,10 @@
       grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
       gap: 22px;
       width: 100%;
+      min-width: 0;
       overflow: visible !important;
       padding: 4px 2px 6px;
+      box-sizing: border-box;
     }
 
     .cards-grid > * {
@@ -345,23 +347,27 @@
 
     .turmas-slide-viewport {
       width: 100%;
+      min-width: 0;
       overflow: hidden;
+      position: relative;
     }
 
     .turmas-slide-track {
       display: flex;
-      width: max-content;
+      width: 100%;
       transform: translate3d(0, 0, 0);
       will-change: transform;
+      box-sizing: border-box;
     }
 
     .turmas-slide-track.animando {
       transition: transform 0.52s cubic-bezier(0.22, 0.61, 0.36, 1);
     }
 
-    .turmas-slide-track .cards-grid {
-      flex: 0 0 var(--turma-slide-width, 100%);
-      width: var(--turma-slide-width, 100%);
+    .turmas-slide-track .cards-grid.turma-slide-page {
+      flex: 0 0 100%;
+      width: 100%;
+      max-width: 100%;
       box-sizing: border-box;
     }
 
@@ -3602,7 +3608,7 @@
 
     function criarPaginaTurmas(turmas) {
       const pagina = document.createElement('main');
-      pagina.className = 'cards-grid';
+      pagina.className = 'cards-grid turma-slide-page';
 
       if (!turmas.length) {
         pagina.innerHTML = '<p style="color: var(--slate-muted); font-size: 1rem; grid-column: 1/-1; text-align: center; padding: 40px 0;">Nenhuma turma encontrada para o filtro selecionado.</p>';
@@ -3625,7 +3631,11 @@
       if (appState.paginaAtual > totalPaginas) appState.paginaAtual = totalPaginas;
       if (appState.paginaAtual < 1) appState.paginaAtual = 1;
 
+      track.classList.remove('animando');
       track.innerHTML = '';
+      track.style.transition = 'none';
+      track.style.width = '100%';
+      track.style.transform = 'translate3d(0, 0, 0)';
 
       if (totalTurmas === 0) {
         track.appendChild(criarPaginaTurmas([]));
@@ -3637,11 +3647,13 @@
       const inicio = (appState.paginaAtual - 1) * appState.itensPorPagina;
       const paginaAtual = turmasFiltradas.slice(inicio, inicio + appState.itensPorPagina);
       track.appendChild(criarPaginaTurmas(paginaAtual));
-      track.classList.remove('animando');
-      track.style.transform = 'translate3d(0, 0, 0)';
 
       renderControlesPaginacao(totalTurmas, totalPaginas);
       configurarCarrosselAutomatico(totalPaginas);
+
+      requestAnimationFrame(() => {
+        track.style.transition = '';
+      });
     }
 
     function animarParaPagina(novaPagina, direcao, turmasFiltradas, totalPaginas) {
@@ -3655,38 +3667,31 @@
         inicio + appState.itensPorPagina
       );
       const novaPaginaEl = criarPaginaTurmas(novaPaginaTurmas);
-      const larguraViewport = viewport.getBoundingClientRect().width;
 
       appState.transicaoCarrosselEmAndamento = true;
-      track.style.setProperty('--turma-slide-width', `${larguraViewport}px`);
-      track.classList.add('animando');
+      track.classList.remove('animando');
+      track.style.transition = 'none';
+      track.style.width = '200%';
 
-      // O movimento de ida e volta usa exatamente a mesma animação.
-      // A única diferença é o sentido: próxima entra pela direita;
-      // anterior entra pela esquerda.
       if (direcao > 0) {
-        // PRÓXIMA: atual -> esquerda | nova -> direita
+        // Próxima: página atual fica à esquerda e a nova entra pela direita.
         track.appendChild(novaPaginaEl);
         track.style.transform = 'translate3d(0, 0, 0)';
-
-        // Força o navegador a registrar a posição inicial.
-        void track.offsetWidth;
-
-        requestAnimationFrame(() => {
-          track.style.transform = `translate3d(-${larguraViewport}px, 0, 0)`;
-        });
       } else {
-        // ANTERIOR: nova -> esquerda | atual -> direita
+        // Anterior: nova página começa à esquerda e entra junto com a atual.
         track.insertBefore(novaPaginaEl, track.firstElementChild);
-        track.style.transform = `translate3d(-${larguraViewport}px, 0, 0)`;
-
-        // Força o estado inicial antes de iniciar a mesma transição.
-        void track.offsetWidth;
-
-        requestAnimationFrame(() => {
-          track.style.transform = 'translate3d(0, 0, 0)';
-        });
+        track.style.transform = 'translate3d(-50%, 0, 0)';
       }
+
+      // Força o navegador a registrar a posição inicial antes de animar.
+      void track.offsetWidth;
+      track.classList.add('animando');
+
+      requestAnimationFrame(() => {
+        track.style.transform = direcao > 0
+          ? 'translate3d(-50%, 0, 0)'
+          : 'translate3d(0, 0, 0)';
+      });
 
       let finalizado = false;
       const finalizar = (event) => {
@@ -3697,7 +3702,6 @@
         track.removeEventListener('transitionend', finalizar);
         track.classList.remove('animando');
 
-        // Mantém somente o bloco que acabou de chegar.
         if (direcao > 0) {
           if (track.children.length > 1) track.removeChild(track.firstElementChild);
         } else {
@@ -3705,17 +3709,18 @@
         }
 
         track.style.transition = 'none';
+        track.style.width = '100%';
         track.style.transform = 'translate3d(0, 0, 0)';
-        // Reativa a transição para o próximo clique.
-        requestAnimationFrame(() => {
-          track.style.transition = '';
-        });
 
         appState.paginaAtual = novaPagina;
         appState.transicaoCarrosselEmAndamento = false;
 
         renderControlesPaginacao(turmasFiltradas.length, totalPaginas);
         configurarCarrosselAutomatico(totalPaginas);
+
+        requestAnimationFrame(() => {
+          track.style.transition = '';
+        });
       };
 
       track.addEventListener('transitionend', finalizar);
@@ -3723,7 +3728,7 @@
       // Segurança caso o navegador não dispare transitionend.
       setTimeout(() => {
         if (!finalizado) finalizar();
-      }, 700);
+      }, 750);
     }
 
     function renderControlesPaginacao(totalItens, totalPaginas) {
