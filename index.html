@@ -337,113 +337,32 @@
       width: 100%;
       overflow: visible !important;
       padding: 4px 2px 6px;
-      transition: opacity 0.45s ease, transform 0.45s ease;
-    }
-
-    .cards-grid.carrossel-saindo {
-      opacity: 1;
-      transform: none;
     }
 
     .cards-grid > * {
       min-width: 0;
+    }
+
+    .turmas-slide-viewport {
       width: 100%;
+      overflow: hidden;
     }
 
-    @media (max-width: 1100px) {
-      .cards-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .cards-grid {
-        grid-template-columns: 1fr !important;
-        gap: 12px;
-      }
-    }
-/* Em telas pequenas, os cards ficam um pouco mais estreitos,
-       mas continuam todos na mesma linha. */
-    @media (max-width: 900px) {
-      .cards-grid {
-        gap: 16px;
-      }
-
-      .cards-grid > * {
-        flex-basis: 190px !important;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .cards-grid {
-        gap: 12px;
-        padding-bottom: 14px;
-      }
-
-      .cards-grid > * {
-        flex-basis: 175px !important;
-      }
-    }
-.cards-grid.carrossel-saindo { opacity: 0; transform: translateY(8px); }
-    @media (max-width: 1100px) { .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (max-width: 768px) { .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
-    @media (max-width: 480px) { .cards-grid { grid-template-columns: 1fr; } }
-    .carrossel-turmas-wrapper {
-      margin-top: 2.2rem;
-      background: rgba(255,255,255,0.88);
-      border: 1px solid var(--border-color);
-      border-radius: 22px;
-      padding: 24px 22px 18px;
-      box-shadow: 0 10px 28px rgba(35, 39, 56, 0.08);
-      backdrop-filter: blur(6px);
-    }
-
-    .carrossel-header {
+    .turmas-slide-track {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 18px;
+      width: max-content;
+      transform: translate3d(0, 0, 0);
+      will-change: transform;
     }
 
-    .carrossel-heading { min-width: 0; }
-
-    .carrossel-kicker {
-      display: block;
-      color: var(--verde-principal);
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.9px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+    .turmas-slide-track.animando {
+      transition: transform 0.52s cubic-bezier(0.22, 0.61, 0.36, 1);
     }
 
-    .carrossel-heading h2 {
-      margin: 0;
-      color: var(--azul-institucional);
-      font-size: 1.45rem;
-      line-height: 1.25;
-    }
-
-    .carrossel-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-      background: var(--slate-light);
-      color: var(--slate-muted);
-      border: 1px solid var(--border-color);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
+    .turmas-slide-track .cards-grid {
+      flex: 0 0 var(--turma-slide-width, 100%);
+      width: var(--turma-slide-width, 100%);
+      box-sizing: border-box;
     }
 
     .status-dot {
@@ -611,6 +530,21 @@
     .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 14px; }
     .formandos-count { font-size: 0.85rem; color: var(--navy-dark); font-weight: bold; }
     .btn-acervo { color: var(--verde-principal); font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 6px; }
+
+
+    /* Mantém todas as turmas com a mesma altura, mesmo quando a descrição estiver vazia. */
+    .turmas-slide-track .card {
+      height: 430px;
+    }
+
+    .turmas-slide-track .card-body {
+      min-height: 210px;
+      box-sizing: border-box;
+    }
+
+    .turmas-slide-track .card-desc {
+      min-height: 84px;
+    }
 
     .card-curso {
       background-color: var(--slate-light);
@@ -1656,8 +1590,10 @@
           <span aria-hidden="true">‹</span>
         </button>
 
-        
-          <main class="cards-grid" id="cardsGridContainer"></main>
+        <div class="turmas-slide-viewport" id="turmasSlideViewport">
+          <div class="turmas-slide-track" id="turmasSlideTrack">
+            <main class="cards-grid" id="cardsGridContainer"></main>
+          </div>
         </div>
 
         <button class="carrossel-seta carrossel-seta-dir" id="btnPagProxima" onclick="mudarPagina(1)" aria-label="Mostrar próxima página">
@@ -3636,68 +3572,158 @@
       });
     }
 
+    function criarCardTurmaCarrossel(turma) {
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.onclick = () => abrirModalTurma(turma);
+
+      card.innerHTML = `
+        <div class="card-img-area">
+          <div class="card-img-bg" style="background-image: url('${turma.img || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'}');"></div>
+          <div class="card-img-overlay"></div>
+          <div class="card-img-header">
+            <span class="card-badge">${turma.curso} FMABC</span>
+          </div>
+          <div class="card-title-row">
+            <h2>${turma.titulo || turma.nome}</h2>
+            <span class="ano">${turma.ano}</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <p class="card-desc">${turma.cardDesc || turma.resumo || ''}</p>
+          <div class="card-footer">
+            <div class="formandos-count">${turma.qtdFormandos || turma.formandos || 0} Formandos</div>
+            <span class="btn-acervo">Ver Acervo →</span>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function criarPaginaTurmas(turmas) {
+      const pagina = document.createElement('main');
+      pagina.className = 'cards-grid';
+
+      if (!turmas.length) {
+        pagina.innerHTML = '<p style="color: var(--slate-muted); font-size: 1rem; grid-column: 1/-1; text-align: center; padding: 40px 0;">Nenhuma turma encontrada para o filtro selecionado.</p>';
+        return pagina;
+      }
+
+      turmas.forEach(turma => pagina.appendChild(criarCardTurmaCarrossel(turma)));
+      return pagina;
+    }
+
     function renderCards() {
-      const grid = document.getElementById('cardsGridContainer');
-      if (!grid) return;
+      const viewport = document.getElementById('turmasSlideViewport');
+      const track = document.getElementById('turmasSlideTrack');
+      if (!viewport || !track) return;
 
       const turmasFiltradas = obterTurmasFiltradas();
       const totalTurmas = turmasFiltradas.length;
       const totalPaginas = Math.ceil(totalTurmas / appState.itensPorPagina) || 1;
 
-      if (appState.paginaAtual > totalPaginas) {
-        appState.paginaAtual = totalPaginas;
-      }
-      if (appState.paginaAtual < 1) {
-        appState.paginaAtual = 1;
+      if (appState.paginaAtual > totalPaginas) appState.paginaAtual = totalPaginas;
+      if (appState.paginaAtual < 1) appState.paginaAtual = 1;
+
+      track.innerHTML = '';
+
+      if (totalTurmas === 0) {
+        track.appendChild(criarPaginaTurmas([]));
+        renderControlesPaginacao(0, 1);
+        pararCarrosselAutomatico();
+        return;
       }
 
-      // Pequena transição para a troca automática/manual da página.
-      grid.classList.remove('carrossel-saindo');
-      grid.innerHTML = '';
+      const inicio = (appState.paginaAtual - 1) * appState.itensPorPagina;
+      const paginaAtual = turmasFiltradas.slice(inicio, inicio + appState.itensPorPagina);
+      track.appendChild(criarPaginaTurmas(paginaAtual));
+      track.classList.remove('animando');
+      track.style.transform = 'translate3d(0, 0, 0)';
 
-        if (totalTurmas === 0) {
-          grid.innerHTML = '<p style="color: var(--slate-muted); font-size: 1rem; grid-column: 1/-1; text-align: center; padding: 40px 0;">Nenhuma turma encontrada para o filtro selecionado.</p>';
-          grid.classList.remove('carrossel-saindo');
-          renderControlesPaginacao(0, 1);
-          pararCarrosselAutomatico();
-          return;
+      renderControlesPaginacao(totalTurmas, totalPaginas);
+      configurarCarrosselAutomatico(totalPaginas);
+    }
+
+    function animarParaPagina(novaPagina, direcao, turmasFiltradas, totalPaginas) {
+      const viewport = document.getElementById('turmasSlideViewport');
+      const track = document.getElementById('turmasSlideTrack');
+      if (!viewport || !track) return;
+
+      const inicio = (novaPagina - 1) * appState.itensPorPagina;
+      const novaPaginaTurmas = turmasFiltradas.slice(
+        inicio,
+        inicio + appState.itensPorPagina
+      );
+      const novaPaginaEl = criarPaginaTurmas(novaPaginaTurmas);
+      const larguraViewport = viewport.getBoundingClientRect().width;
+
+      appState.transicaoCarrosselEmAndamento = true;
+      track.style.setProperty('--turma-slide-width', `${larguraViewport}px`);
+      track.classList.add('animando');
+
+      // O movimento de ida e volta usa exatamente a mesma animação.
+      // A única diferença é o sentido: próxima entra pela direita;
+      // anterior entra pela esquerda.
+      if (direcao > 0) {
+        // PRÓXIMA: atual -> esquerda | nova -> direita
+        track.appendChild(novaPaginaEl);
+        track.style.transform = 'translate3d(0, 0, 0)';
+
+        // Força o navegador a registrar a posição inicial.
+        void track.offsetWidth;
+
+        requestAnimationFrame(() => {
+          track.style.transform = `translate3d(-${larguraViewport}px, 0, 0)`;
+        });
+      } else {
+        // ANTERIOR: nova -> esquerda | atual -> direita
+        track.insertBefore(novaPaginaEl, track.firstElementChild);
+        track.style.transform = `translate3d(-${larguraViewport}px, 0, 0)`;
+
+        // Força o estado inicial antes de iniciar a mesma transição.
+        void track.offsetWidth;
+
+        requestAnimationFrame(() => {
+          track.style.transform = 'translate3d(0, 0, 0)';
+        });
+      }
+
+      let finalizado = false;
+      const finalizar = (event) => {
+        if (event && (event.target !== track || event.propertyName !== 'transform')) return;
+        if (finalizado) return;
+        finalizado = true;
+
+        track.removeEventListener('transitionend', finalizar);
+        track.classList.remove('animando');
+
+        // Mantém somente o bloco que acabou de chegar.
+        if (direcao > 0) {
+          if (track.children.length > 1) track.removeChild(track.firstElementChild);
+        } else {
+          if (track.children.length > 1) track.removeChild(track.lastElementChild);
         }
 
-        const inicio = (appState.paginaAtual - 1) * appState.itensPorPagina;
-        const fim = inicio + appState.itensPorPagina;
-        const turmasPagina = turmasFiltradas.slice(inicio, fim);
-
-        turmasPagina.forEach(turma => {
-          const card = document.createElement('article');
-          card.className = 'card';
-          card.onclick = () => abrirModalTurma(turma);
-
-          card.innerHTML = `
-            <div class="card-img-area">
-              <div class="card-img-bg" style="background-image: url('${turma.img || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'}');"></div>
-              <div class="card-img-overlay"></div>
-              <div class="card-img-header">
-                <span class="card-badge">${turma.curso} FMABC</span>
-              </div>
-              <div class="card-title-row">
-                <h2>${turma.titulo || turma.nome}</h2>
-                <span class="ano">${turma.ano}</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <p class="card-desc">${turma.cardDesc || turma.resumo || ''}</p>
-              <div class="card-footer">
-                <div class="formandos-count">${turma.qtdFormandos || turma.formandos || 0} Formandos</div>
-                <span class="btn-acervo">Ver Acervo →</span>
-              </div>
-            </div>
-          `;
-          grid.appendChild(card);
+        track.style.transition = 'none';
+        track.style.transform = 'translate3d(0, 0, 0)';
+        // Reativa a transição para o próximo clique.
+        requestAnimationFrame(() => {
+          track.style.transition = '';
         });
 
-        grid.classList.remove('carrossel-saindo');
-        renderControlesPaginacao(totalTurmas, totalPaginas);
+        appState.paginaAtual = novaPagina;
+        appState.transicaoCarrosselEmAndamento = false;
+
+        renderControlesPaginacao(turmasFiltradas.length, totalPaginas);
         configurarCarrosselAutomatico(totalPaginas);
+      };
+
+      track.addEventListener('transitionend', finalizar);
+
+      // Segurança caso o navegador não dispare transitionend.
+      setTimeout(() => {
+        if (!finalizado) finalizar();
+      }, 700);
     }
 
     function renderControlesPaginacao(totalItens, totalPaginas) {
@@ -3756,30 +3782,32 @@
       if (appState.carrosselPausado || totalPaginas <= 1) return;
 
       appState.carrosselTimer = setInterval(() => {
-        let proximaPagina = appState.paginaAtual + 1;
-        if (proximaPagina > totalPaginas) proximaPagina = 1;
-
-        appState.paginaAtual = proximaPagina;
-        renderCards();
+        mudarPagina(1, true);
       }, 7000);
     }
 
-        function mudarPagina(delta) {
+    function mudarPagina(delta, automatico = false) {
+      if (appState.transicaoCarrosselEmAndamento) return;
+
       const turmasFiltradas = obterTurmasFiltradas();
       const totalPaginas = Math.ceil(turmasFiltradas.length / appState.itensPorPagina) || 1;
-
       if (totalPaginas <= 1) return;
 
       let novaPagina = appState.paginaAtual + delta;
-
       if (novaPagina > totalPaginas) novaPagina = 1;
       if (novaPagina < 1) novaPagina = totalPaginas;
 
-      appState.paginaAtual = novaPagina;
-      renderCards();
-      configurarCarrosselAutomatico(totalPaginas);
-    }
+      appState.ultimaDirecaoCarrossel = delta >= 0 ? 1 : -1;
 
+      // Ao clicar ou usar a troca automática, sempre fazemos a transição
+      // com os dois blocos visíveis simultaneamente.
+      animarParaPagina(
+        novaPagina,
+        appState.ultimaDirecaoCarrossel,
+        turmasFiltradas,
+        totalPaginas
+      );
+    }
 
 
     function populateDepoimentoTurmasSelect() {
